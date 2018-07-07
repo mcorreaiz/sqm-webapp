@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <None Include="sqmappdev - Web Deploy.pubxml" />
     <Content Include="sqmwebapp\static\content\bootstrap.css" />
     <Content Include="sqmwebapp\static\content\bootstrap.min.css" />
     <Content Include="sqmwebapp\static\content\site.css" />
@@ -63,10 +64,10 @@
     <Content Include="sqmwebapp\static\scripts\respond.js" />
     <Content Include="sqmwebapp\static\scripts\respond.min.js" />
     <Content Include="sqmwebapp\static\scripts\_references.js" />
-    <Content Include="sqmwebapp\templates\about.html" />
-    <Content Include="sqmwebapp\templates\contact.html" />
-    <Content Include="sqmwebapp\templates\index.html" />
-    <Content Include="sqmwebapp\templates\layout.html" />
+    <Content Include="about.html" />
+    <Content Include="contact.html" />
+    <Content Include="index.html" />
+    <Content Include="layout.html" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
