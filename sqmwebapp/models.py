@@ -18,7 +18,7 @@ class Comentario(db.EmbeddedDocument):
 
 class Nota(db.Document):
     num                = db.StringField(max_length=5) # Ej. 25.11
-    nombre             = db.StringField(max_length=50)
+    nombre             = db.StringField(max_length=50) # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     aprobadores        = db.ListField(db.ReferenceField(Usuario))
     comentadores       = db.ListField(db.ReferenceField(Usuario))

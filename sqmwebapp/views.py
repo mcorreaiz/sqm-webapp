@@ -3,8 +3,9 @@ Routes and views for the flask application.
 """
 
 from datetime import datetime
-from flask import render_template
-from . import app
+from flask import render_template, jsonify
+from . import app, db
+import sqmwebapp.models as mdl
 
 @app.route('/')
 @app.route('/home')
@@ -46,3 +47,12 @@ def main():
         message='Pagina principal de la App.'
     )
 
+@app.route('/test')
+def test():
+    """For testing purposes"""
+    user = mdl.Usuario()
+    user.nombre = 'Matias Correa'
+    user.sigla = 'MC'
+    user.save()
+    usuarios = mdl.Usuario.objects
+    return jsonify(usuarios)
