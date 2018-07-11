@@ -1,4 +1,5 @@
-from . import db
+from sqmwebapp import db
+import datetime
 
 class Usuario(db.Document):
     nombre = db.StringField(max_length=50)
@@ -9,12 +10,12 @@ class Usuario(db.Document):
 class Version(db.EmbeddedDocument):
     fsid     = db.IntField() # id de GridFS
     redactor = db.ReferenceField(Usuario)
-    fecha    = db.DateTimeField()
+    fecha    = db.DateTimeField(default=datetime.datetime.utcnow)
 
 class Comentario(db.EmbeddedDocument):
     contenido = db.StringField()
     redactor  = db.ReferenceField(Usuario)
-    fecha     = db.DateTimeField()
+    fecha     = db.DateTimeField(default=datetime.datetime.utcnow)
 
 class Nota(db.Document):
     num                = db.StringField(max_length=5) # Ej. 25.11
