@@ -4,7 +4,7 @@ Routes and views for the flask application.
 
 from datetime import datetime
 from flask import render_template, jsonify
-from sqmwebapp import app, db
+from sqmwebapp import app
 import sqmwebapp.models as mdl
 
 @app.route('/')
@@ -55,4 +55,4 @@ def test():
     user.sigla = 'MC'
     user.save()
     usuarios = mdl.Usuario.objects
-    return jsonify(usuarios)
+    return usuarios.to_json()

@@ -1,5 +1,7 @@
-from sqmwebapp import db
+import mongoengine as db
 import datetime
+
+db.connect(host='mongodb://mcorreaiz:zbcI6fmYSvC1pOIufP2gYzo9Gk2O5UCDVH87T8zTrocEj8NpvWeQgeXS3aDIZLRzGx9Oa2zBsVOjWPk8fO5nfA==@mcorreaiz.documents.azure.com:10255/dev?ssl=true&replicaSet=globaldb')
 
 class Usuario(db.Document):
     nombre = db.StringField(max_length=50)
