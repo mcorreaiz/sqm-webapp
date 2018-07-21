@@ -1,3 +1,0 @@
-Flask<1
-flask_mongoengine
-flask_debugtoolbar
