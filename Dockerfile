@@ -4,7 +4,8 @@ RUN mkdir /code
 WORKDIR /code
 ADD . /code/
 RUN pip install -r requirements.txt
-ENV NAME leche
+ARG ENV_MODE
+ENV DEPLOY_MODE ${ENV_MODE}
 
 EXPOSE 5555
 CMD ["python", "/code/runserver.py"]

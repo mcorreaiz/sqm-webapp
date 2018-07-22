@@ -3,19 +3,16 @@ The flask application package.
 """
 
 from flask import Flask
-from mongoengine import connect
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_mongoengine import MongoEngine
+from config import get_config
 import ssl
+import os
 
-DB_URI = 'mongodb://mcorreaiz:zbcI6fmYSvC1pOIufP2gYzo9Gk2O5UCDVH87T8zTrocEj8NpvWeQgeXS3aDIZLRzGx9Oa2zBsVOjWPk8fO5nfA==@mcorreaiz.documents.azure.com:10255/dev?ssl=true&replicaSet=globaldb'
 app = Flask(__name__)
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config['MONGODB_SETTINGS'] = {
-    'host' : DB_URI,
-    'ssl' : True,
-    'ssl_cert_reqs' : ssl.CERT_NONE
-}
-app.debug = True
-# db = MongoEngine(app)
+app.config.from_object(get_config(os.environ.get('DEPLOY_MODE')))
+
+db = MongoEngine(app)
+toolbar = DebugToolbarExtension(app)
 
 import sqmwebapp.views
-

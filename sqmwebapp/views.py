@@ -55,4 +55,8 @@ def test():
     user.sigla = 'MC'
     user.save()
     usuarios = mdl.Usuario.objects
-    return usuarios.to_json()
+    return render_template(
+        'test.html',
+        users=usuarios.to_json(),
+        message='Pagina principal de la App.'
+    )
