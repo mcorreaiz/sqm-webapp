@@ -47,8 +47,8 @@ def main():
         message='Pagina principal de la App.'
     )
 
-@app.route('/test')
-def test():
+@app.route('/testmongo')
+def testmongo():
     """For testing purposes"""
     user = mdl.Usuario()
     user.nombre = 'Matias Correa'
