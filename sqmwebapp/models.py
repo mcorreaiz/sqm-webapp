@@ -7,8 +7,8 @@ class Usuario(db.Document):
     token  = db.StringField(max_length=50)
     email  = db.EmailField()
 
-class Version(db.EmbeddedDocument):
-    fsid     = db.IntField() # id de GridFS
+class Version(db.Document):
+    fsid     = db.FileField() # id de GridFS
     redactor = db.ReferenceField(Usuario)
     fecha    = db.DateTimeField(default=datetime.datetime.utcnow)
 
@@ -25,6 +25,6 @@ class Nota(db.Document):
     comentadores       = db.ListField(db.ReferenceField(Usuario))
     estados_aprobacion = db.DictField() # {sigla: bool}
     ultima_version     = db.IntField()
-    versiones          = db.ListField(db.EmbeddedDocumentField(Version))
+    versiones          = db.ListField(db.ReferenceField(Version))
     ultimo_comentario  = db.IntField()
     comentarios        = db.ListField(db.EmbeddedDocumentField(Comentario))

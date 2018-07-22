@@ -3,7 +3,7 @@ Routes and views for the flask application.
 """
 
 from datetime import datetime
-from flask import render_template, jsonify
+from flask import render_template, jsonify, Response
 from sqmwebapp import app
 import sqmwebapp.models as mdl
 
@@ -43,8 +43,7 @@ def main():
     return render_template(
         'main.html',
         title='Main',
-        year=datetime.now().year,
-        message='Pagina principal de la App.'
+        year=datetime.now().year
     )
 
 @app.route('/testmongo')
@@ -57,6 +56,24 @@ def testmongo():
     usuarios = mdl.Usuario.objects
     return render_template(
         'test.html',
-        users=usuarios.to_json(),
-        message='Pagina principal de la App.'
+        message=usuarios.to_json()
     )
+
+@app.route('/testgridfs')
+def testgridfs():
+    """For testing purposes"""
+    version = mdl.Version(redactor=mdl.Usuario.objects.first())
+    foto = open('pentakill.png', 'rb')
+    version.fsid.put(foto, content_type='image/png')
+    version.save()
+    return render_template(
+        'test.html',
+        message="Archivo subido con exito"
+    )
+
+@app.route('/testgridfs/retrieve')
+def testgridfs_ret():
+    """For testing purposes"""
+    version = mdl.Version.objects.first()
+    foto = version.fsid.read()
+    return Response(foto, mimetype='image/png')

@@ -12,7 +12,7 @@ import os
 app = Flask(__name__)
 app.config.from_object(get_config(os.environ.get('DEPLOY_MODE')))
 
-db = MongoEngine(app)
-toolbar = DebugToolbarExtension(app)
+MongoEngine(app) # Inicializa conexion a db
+DebugToolbarExtension(app)
 
 import sqmwebapp.views
