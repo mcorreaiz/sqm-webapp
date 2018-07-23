@@ -77,3 +77,14 @@ def testgridfs_ret():
     version = mdl.Version.objects.first()
     foto = version.fsid.read()
     return Response(foto, mimetype='image/png')
+
+@app.route('/testgridfs/download')
+def testgridfs_down():
+    """For testing purposes"""
+    version = mdl.Version.objects.first()
+    foto = version.fsid.read()
+    return app.send_static_file("content/site.css")
+    # render_template(
+    #         'test.html',
+    #         message="<a href=\"{{ url_for('get_file', name=name) }}\">{{ name }}</a>"
+    #     )

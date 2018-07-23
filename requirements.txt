@@ -1,4 +1,4 @@
-Flask<1
+Flask
 mongoengine
 flask_mongoengine
 flask_debugtoolbar
