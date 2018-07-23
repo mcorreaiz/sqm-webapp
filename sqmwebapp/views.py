@@ -3,7 +3,7 @@ Routes and views for the flask application.
 """
 
 from datetime import datetime
-from flask import render_template, jsonify, Response
+from flask import render_template, jsonify, make_response
 from sqmwebapp import app
 import sqmwebapp.models as mdl
 
@@ -59,9 +59,18 @@ def testmongo():
         message=usuarios.to_json()
     )
 
+@app.route('/testgridfs/<filename>')
 @app.route('/testgridfs')
-def testgridfs():
+def testgridfs(filename=None):
     """For testing purposes"""
+    if filename is not None:
+        version = mdl.Version.objects.first()
+        foto = version.fsid.read()
+        # Para descargar notas. Se debiera validar el docx
+        r = make_response(foto)
+        r.headers.set('Content-Disposition', 'attachment', filename=filename)
+        r.headers['Content-Type'] = 'application/octet-stream'
+        return r
     version = mdl.Version(redactor=mdl.Usuario.objects.first())
     foto = open('pentakill.png', 'rb')
     version.fsid.put(foto, content_type='image/png')
@@ -76,7 +85,7 @@ def testgridfs_ret():
     """For testing purposes"""
     version = mdl.Version.objects.first()
     foto = version.fsid.read()
-    return Response(foto, mimetype='image/png')
+    return app.response_class(foto, mimetype='image/png')
 
 @app.route('/testgridfs/download')
 def testgridfs_down():
