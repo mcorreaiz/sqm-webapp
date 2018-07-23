@@ -77,7 +77,7 @@ def testgridfs(filename=None):
     version.save()
     return render_template(
         'test.html',
-        message="Archivo subido con exito"
+        message="Archivo subido con exito."
     )
 
 @app.route('/testgridfs/retrieve')
@@ -90,10 +90,6 @@ def testgridfs_ret():
 @app.route('/testgridfs/download')
 def testgridfs_down():
     """For testing purposes"""
-    version = mdl.Version.objects.first()
-    foto = version.fsid.read()
-    return app.send_static_file("content/site.css")
-    # render_template(
-    #         'test.html',
-    #         message="<a href=\"{{ url_for('get_file', name=name) }}\">{{ name }}</a>"
-    #     )
+    return render_template(
+            'download.html'
+        )

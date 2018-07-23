@@ -30,5 +30,5 @@ def get_config(mode):
         print('{} Environment'.format(mode), file=sys.stderr)
     except KeyError:
         config = deploy_mode['DEV']
-        print("Incorrect deploy mode, defaulting to DEV", file=sys.stderr)
+        print("Incorrect or missing deploy mode, defaulting to DEV", file=sys.stderr)
     return config
