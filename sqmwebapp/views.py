@@ -3,8 +3,11 @@ Routes and views for the flask application.
 """
 
 from datetime import datetime
-from flask import render_template, jsonify, make_response
+from flask import render_template, request, make_response, flash, redirect
+from werkzeug.utils import secure_filename
+
 from sqmwebapp import app
+import sqmwebapp.utils as u
 import sqmwebapp.models as mdl
 
 @app.route('/')
@@ -60,25 +63,46 @@ def testmongo():
     )
 
 @app.route('/testgridfs/<filename>')
-@app.route('/testgridfs')
+@app.route('/testgridfs', methods=['GET', 'POST'])
 def testgridfs(filename=None):
     """For testing purposes"""
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        # If user submits an empty form. TODO: Acivate submit iif selected file
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file and u.valid_extension(file.filename):
+            filename = secure_filename(file.filename) # Never trust user input
+            version = mdl.Version(redactor=mdl.Usuario.objects.first())
+            version.fsid.put(file, content_type='application/octet-stream', 
+                            filename=filename)
+            version.save()
+            return render_template(
+                'test.html',
+                message="Archivo subido con exito."
+            )
+		
+
     if filename is not None:
-        version = mdl.Version.objects.first()
-        foto = version.fsid.read()
-        # Para descargar notas. Se debiera validar el docx
-        r = make_response(foto)
-        r.headers.set('Content-Disposition', 'attachment', filename=filename)
-        r.headers['Content-Type'] = 'application/octet-stream'
-        return r
-    version = mdl.Version(redactor=mdl.Usuario.objects.first())
-    foto = open('pentakill.png', 'rb')
-    version.fsid.put(foto, content_type='image/png')
-    version.save()
-    return render_template(
-        'test.html',
-        message="Archivo subido con exito."
-    )
+        version = mdl.Version.objects.order_by('-fecha').first() # Query the newest
+        doc = version.fsid
+        down = u.download_file(doc)
+        return down if down else render_template(
+            'test.html',
+            message="Nada que hacer por hoy."
+        )
+    else:
+        return render_template(
+            'test.html',
+            message="Nada que hacer por hoy."
+        )
 
 @app.route('/testgridfs/retrieve')
 def testgridfs_ret():

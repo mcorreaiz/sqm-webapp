@@ -4,6 +4,7 @@ class Config():
     DEBUG = False
     MONGODB_HOST = 'mongodb://mcorreaiz:zbcI6fmYSvC1pOIufP2gYzo9Gk2O5UCDVH87T8zTrocEj8NpvWeQgeXS3aDIZLRzGx9Oa2zBsVOjWPk8fO5nfA==@mcorreaiz.documents.azure.com:10255/dev?ssl=true&replicaSet=globaldb'
     SECRET_KEY = 'password'
+    ALLOWED_EXTENSIONS = set(['docx'])
 
 
 class ProductionConfig(Config):
