@@ -4,11 +4,9 @@
 
 ### Container build Instructions:
 ```
-$ docker build --build-arg "ENV_MODE=[PROD|DEV]" -f Dockerfile -t sqmapp:<tag> .
-
 $ docker login
 
-$ docker tag sqmapp:<tag> mcorreaiz/sqmapp
+$ docker build --build-arg "ENV_MODE=[PROD|DEV]" -f Dockerfile -t mcorreaiz/sqmapp:latest .
 
 $ docker push mcorreaiz/sqmapp
 ```
