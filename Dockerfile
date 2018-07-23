@@ -7,5 +7,5 @@ RUN pip install -r requirements.txt
 ARG ENV_MODE
 ENV DEPLOY_MODE ${ENV_MODE}
 
-EXPOSE 5555
+EXPOSE 5000
 CMD ["python", "/code/runserver.py"]

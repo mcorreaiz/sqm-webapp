@@ -14,4 +14,4 @@ $ docker push mcorreaiz/sqmapp
 
 ### To test container locally:
 
-`$ docker run -p 5000:5000 sqmapp`
+`$ docker run -p 5000:5000 mcorreaiz/sqmapp`
