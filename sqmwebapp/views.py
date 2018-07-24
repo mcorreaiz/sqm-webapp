@@ -50,10 +50,24 @@ def main():
     )
 
 @app.route('/notas/<num>')
-def nota_panel():
+def nota_panel(num):
     """Renders the description of a Nota object."""
+    # num
+    # nombre
+    # redactores
+    # aprobadores
+    # comentadores
+    # redacciones
+    # comentarios
     return render_template(
-        'nota-panel.html'
+        'nota-panel.html', 
+        num = "19.3",
+        nombre = "Pico pal que lee",
+        redactores = ["PC Pija Corta", "CP Chupa Corneta"],
+        aprobadores = ["SC Saca Caca", "TQ Trola Qlia", "VM Vagina Mortal"],
+        comentadores = ["JV Jefe Violador"],
+        redacciones = [["RR", "23_03", "R_b"], ["JJ", "69_420", "R_1"]],
+        comentarios = [["RR", "23_03", "R_b"], ["JJ", "69_420", "R_1"]]
     )
 
 @app.route('/testmongo')
