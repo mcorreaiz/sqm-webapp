@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Nota {{ num }}.</h2>
+<h3>{{ nombre }}</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>Redactores:</h3>>
+        <ul class="list-group">
+            {% for redactor in redactores %}
+                <li class="list-group-item">{{ redactor }}</li>
+            {% endfor %}
+        </ul>
+        <h3>Aprobadores:</h3>>
+        <ul class="list-group">
+            {% for aprobador in aprobadores %}
+                <li class="list-group-item">{{ aprobador }}</li>
+            {% endfor %}
+        </ul>
+        <h3>Comentadores:</h3>>
+        <ul class="list-group">
+            {% for comentador in comentadores %}
+                <li class="list-group-item">{{ comentador }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-4">
+        <h2>Redacciones</h2>
+        <div class="table-hover">
+            <table class="table">
+                <tbody>
+                    {% for version in redacciones %}
+                        <tr>
+                            <td>{{ version.redactor.sigla }}_{{ version.fecha.strftime('%m_%d') }}</td>
+                            <td>{{ version.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h2>Comentarios</h2>
+        <div class="table-hover">
+            <table class="table">
+                <tbody>
+                    {% for comentario in comentarios %}
+                        <tr>
+                            <td>{{ comentario.redactor.sigla }}_{{ comentario.fecha.strftime('%m_%d') }}</td>
+                            <td>{{ comentario.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <p><a class="btn btn-default">Cargar </a></p>
+    <p><a class="btn btn-default">Comentar </a></p>
+    <p><a class="btn btn-default">Aprobar/Desaprobar </a></p>
+    <p><a class="btn btn-default" href="{{ url_for('home') }}">Volver </a></p>
+</div>
+
+{% endblock %}

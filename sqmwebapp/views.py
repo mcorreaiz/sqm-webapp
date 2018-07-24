@@ -49,6 +49,13 @@ def main():
         year=datetime.now().year
     )
 
+@app.route('/notas/<num>')
+def nota_panel():
+    """Renders the description of a Nota object."""
+    return render_template(
+        'nota-panel.html'
+    )
+
 @app.route('/testmongo')
 def testmongo():
     """For testing purposes"""
