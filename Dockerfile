@@ -5,7 +5,7 @@ WORKDIR /code
 ADD . /code/
 RUN pip install -r requirements.txt
 ARG ENV_MODE
-ENV DEPLOY_MODE ${ENV_MODE}
+ENV FLASK_ENV ${ENV_MODE}
 
 EXPOSE 5000
 CMD ["python", "/code/runserver.py"]

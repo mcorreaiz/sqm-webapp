@@ -6,7 +6,7 @@
 ```
 $ docker login
 
-$ docker build --build-arg "ENV_MODE=[PROD|DEV]" -f Dockerfile -t mcorreaiz/sqmapp:latest .
+$ docker build --build-arg "ENV_MODE=[production|development]" -f Dockerfile -t mcorreaiz/sqmapp:latest .
 
 $ docker push mcorreaiz/sqmapp
 ```
