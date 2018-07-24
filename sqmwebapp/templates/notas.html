@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h4>Notas</h4>
+<h3>{{ user }}</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <h4>Redacciones</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    {% for version in redacciones %}
+                        <tr>
+                            <td>{{ version.num }}</td>
+                            <td>{{ version.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h4>Aprobaciones</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    {% for aprobacion in aprobaciones %}
+                        <tr>
+                            <td>{{ aprobacion.num }}</td>
+                            <td>{{ aprobacion.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h4>Comentarios</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    {% for comentario in comentarios %}
+                        <tr>
+                            <td>{{ comentario.num }}</td>
+                            <td>{{ comentario.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-2">
+        <p><a class="btn btn-default btn-block">Descargar </a></p>
+    </div>
+    <div class="col-md-2">
+        <p><a class="btn btn-default btn-block">Salir </a></p>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+{% endblock %}

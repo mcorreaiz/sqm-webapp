@@ -5,6 +5,7 @@ Routes and views for the flask application.
 from datetime import datetime
 from flask import render_template, request, make_response, flash, redirect
 from werkzeug.utils import secure_filename
+from urllib.parse import unquote
 
 from sqmwebapp import app
 import sqmwebapp.utils as u
@@ -49,25 +50,31 @@ def main():
         year=datetime.now().year
     )
 
+@app.route('/notas')
+def notas():
+    """Renders the overview of the Notas state."""
+    return render_template(
+        'notas.html',
+        user = "Mutas Pija Chica",
+        redacciones = [],
+        aprobaciones = [],
+        comentarios = []
+    )
+
 @app.route('/notas/<num>')
 def nota_panel(num):
     """Renders the description of a Nota object."""
-    # num
-    # nombre
-    # redactores
-    # aprobadores
-    # comentadores
-    # redacciones
-    # comentarios
+    num = unquote(num)
+    nota = mdl.Nota.objects.get(num=num)
     return render_template(
-        'nota-panel.html', 
-        num = "19.3",
-        nombre = "Pico pal que lee",
-        redactores = ["PC Pija Corta", "CP Chupa Corneta"],
-        aprobadores = ["SC Saca Caca", "TQ Trola Qlia", "VM Vagina Mortal"],
-        comentadores = ["JV Jefe Violador"],
-        redacciones = [["RR", "23_03", "R_b"], ["JJ", "69_420", "R_1"]],
-        comentarios = [["RR", "23_03", "R_b"], ["JJ", "69_420", "R_1"]]
+        'nota-panel.html',
+        num = nota.num,
+        nombre = nota.nombre,
+        redactores = nota.redactores,
+        aprobadores = nota.aprobadores,
+        comentadores = nota.comentadores,
+        redacciones = nota.versiones,
+        comentarios = nota.comentarios
     )
 
 @app.route('/testmongo')
