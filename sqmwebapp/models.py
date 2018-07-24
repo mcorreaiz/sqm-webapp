@@ -11,11 +11,13 @@ class Version(db.Document):
     fsid     = db.FileField() # id de GridFS
     redactor = db.ReferenceField(Usuario)
     fecha    = db.DateTimeField(default=datetime.datetime.utcnow)
+    nombre   = db.StringField(max_length=50) # Ej. R_2
 
 class Comentario(db.EmbeddedDocument):
     contenido = db.StringField()
     redactor  = db.ReferenceField(Usuario)
     fecha     = db.DateTimeField(default=datetime.datetime.utcnow)
+    nombre    = db.StringField(max_length=50) # Ej. C_2
 
 class Nota(db.Document):
     num                = db.StringField(max_length=5) # Ej. 25.11
