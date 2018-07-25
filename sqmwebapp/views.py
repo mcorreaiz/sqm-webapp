@@ -53,12 +53,13 @@ def main():
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
+    usuario = mdl.Usuario.objects.filter(sigla="JN")[1]
     return render_template(
         'notas.html',
-        user = "Mutas Pija Chica",
-        redacciones = [],
-        aprobaciones = [],
-        comentarios = []
+        user = usuario.nombre,
+        redacciones = mdl.Nota.objects(redactores__in=[usuario]),
+        aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
+        comentarios = mdl.Nota.objects(comentadores__in=[usuario])
     )
 
 @app.route('/notas/<num>')
@@ -145,3 +146,120 @@ def testgridfs_down():
     return render_template(
             'download.html'
         )
+
+@app.route('/seed')
+def seed():
+    """Seeds the DB."""
+    user1 = mdl.Usuario()
+    user1.sigla = "RR"
+    user1.nombre = "Ricardo Ramos"
+    user1.email = "ricardoramos@sqm.cl"
+    user1.save()
+    user2 = mdl.Usuario()
+    user2.sigla = "JN"
+    user2.nombre = "Juan Nestler"
+    user2.email = "jjnestler@sqm.cl"
+    user2.save()
+    user3 = mdl.Usuario()
+    user3.sigla = "BG"
+    user3.nombre = "Beatriz Garcia"
+    user3.email = "bgarcia@sqm.cl"
+    user3.save()
+    user4 = mdl.Usuario()
+    user4.sigla = "GA"
+    user4.nombre = "Gonzalo Aguirre"
+    user4.email = "gaguirre@sqm.cl"
+    user4.save()
+    user5 = mdl.Usuario()
+    user5.sigla = "GI"
+    user5.nombre = "Gerardo Illanes"
+    user5.email = "gillanes@sqm.cl"
+    user5.save()
+    user6 = mdl.Usuario()
+    user6.sigla = "PS"
+    user6.nombre = "Patricio de Solminihac"
+    user6.email = "psolminihac@sqm.cl"
+    user6.save()
+
+    version1 = mdl.Version()
+    version1.redactor = user1
+    version1.nombre = "R_b"
+    version1.save()
+    version2 = mdl.Version()
+    version2.redactor = user2
+    version2.nombre = "R_b"
+    version2.save()
+    version3 = mdl.Version()
+    version3.redactor = user3
+    version3.nombre = "R_1"
+    version3.save()
+    version4 = mdl.Version()
+    version4.redactor = user4
+    version4.nombre = "R_b"
+    version4.save()
+    version5 = mdl.Version()
+    version5.redactor = user5
+    version5.nombre = "R_1"
+    version5.save()
+    version6 = mdl.Version()
+    version6.redactor = user6
+    version6.nombre = "R_2"
+    version6.save()
+
+    #comentario1 = mdl.Comentario()
+    #comentario1.redactor = user1
+    #comentario1.nombre = "C_1"
+    #comentario1.save()
+    #comentario2 = mdl.Comentario()
+    #comentario2.redactor = user3
+    #comentario2.nombre = "C_1"
+    #comentario2.save()
+    #comentario3 = mdl.Comentario()
+    #comentario3.redactor = user5
+    #comentario3.nombre = "C_1"
+    #comentario3.save()
+
+    nota = mdl.Nota()
+    nota.num = "1"
+    nota.nombre = "Analisis de Compras"
+    nota.redactores = [user1, user2]
+    nota.aprobadores = [user3, user4]
+    nota.comentadores = [user5, user6]
+    nota.estados_aprobacion = {"RR": False, "JN": False, "BG": True, "GA": False}
+    nota.ultima_version = 0
+    nota.versiones = [version1]
+    nota.ultimo_comentario = 0
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "1.1"
+    nota.nombre = "Analisis de Ventas"
+    nota.redactores = [user3, user4]
+    nota.aprobadores = [user5, user6]
+    nota.comentadores = [user1, user2]
+    nota.estados_aprobacion = {"PS": True, "GI": True, "BG": True, "GA": False}
+    nota.ultima_version = 1
+    nota.versiones = [version2, version3]
+    nota.ultimo_comentario = 0
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "2"
+    nota.nombre = "Proyecciones"
+    nota.redactores = [user5, user6]
+    nota.aprobadores = [user1, user2]
+    nota.comentadores = [user3, user4]
+    nota.estados_aprobacion = {"RR": False, "JN": False, "GI": False, "PS": True}
+    nota.ultima_version = 2
+    nota.versiones = [version4, version5, version6]
+    nota.ultimo_comentario = 0
+    nota.comentarios = []
+    nota.save()
+
+    return render_template(
+        'main.html',
+        title='Todo Ok',
+        year=datetime.now().year
+    )

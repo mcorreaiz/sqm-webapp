@@ -6,72 +6,76 @@
 <h3>{{ nombre }}</h3>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-2">
         <h4>Redactores:</h4>
         <ul class="list-group">
             {% for redactor in redactores %}
-                <li class="list-group-item">{{ redactor }}</li>
+                <li class="list-group-item">{{ redactor.sigla }} {{ redactor.nombre }}</li>
             {% endfor %}
         </ul>
         <h4>Aprobadores:</h4>
         <ul class="list-group">
             {% for aprobador in aprobadores %}
-                <li class="list-group-item">{{ aprobador }}</li>
+                <li class="list-group-item">{{ aprobador.sigla }} {{ aprobador.nombre }}</li>
             {% endfor %}
         </ul>
         <h4>Comentadores:</h4>
         <ul class="list-group">
             {% for comentador in comentadores %}
-                <li class="list-group-item">{{ comentador }}</li>
+                <li class="list-group-item">{{ comentador.sigla }} {{ comentador.nombre }}</li>
             {% endfor %}
         </ul>
     </div>
-    <div class="col-md-4">
-        <h4>Redacciones</h4>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <tbody>
-                    {% for version in redacciones %}
-                        <tr>
-                            <td>{{ version.redactor.sigla }}_{{ version.fecha.strftime('%m_%d') }}</td>
-                            <td>{{ version.nombre }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-5">
+                <h4>Redacciones</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <tbody>
+                            {% for version in redacciones %}
+                                <tr>
+                                    <td>{{ version.redactor.sigla }}_{{ version.fecha.strftime('%m_%d') }}</td>
+                                    <td>{{ version.nombre }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <h4>Comentarios</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <tbody>
+                            {% for comentario in comentarios %}
+                                <tr>
+                                    <td>{{ comentario.redactor.sigla }}_{{ comentario.fecha.strftime('%m_%d') }}</td>
+                                    <td>{{ comentario.nombre }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <h4>Comentarios</h4>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <tbody>
-                    {% for comentario in comentarios %}
-                        <tr>
-                            <td>{{ comentario.redactor.sigla }}_{{ comentario.fecha.strftime('%m_%d') }}</td>
-                            <td>{{ comentario.nombre }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-2">
+                <p><a class="btn btn-default btn-block">Cargar </a></p>
+            </div>
+            <div class="col-md-2">
+                <p><a class="btn btn-default btn-block">Comentar </a></p>
+            </div>
+            <div class="col-md-2">
+                <!-- TODO javascript de Aprobar - Desaprobar -->
+                <p><a class="btn btn-default btn-block">Aprobar/Desaprobar </a></p>
+            </div>
+            <div class="col-md-2">
+                <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver </a></p>
+            </div>
+            <div class="col-md-1"></div>
         </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-2">
-        <p><a class="btn btn-default btn-block">Cargar </a></p>
-    </div>
-    <div class="col-md-2">
-        <p><a class="btn btn-default btn-block">Comentar </a></p>
-    </div>
-    <div class="col-md-2">
-        <!-- TODO javascript de Aprobar - Desaprobar -->
-        <p><a class="btn btn-default btn-block">Aprobar/Desaprobar </a></p>
-    </div>
-    <div class="col-md-2">
-        <p><a class="btn btn-default btn-block" href="{{ url_for('home') }}">Volver </a></p>
     </div>
 </div>
 
