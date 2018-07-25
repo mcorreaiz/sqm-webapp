@@ -13,8 +13,8 @@
                 <tbody>
                     {% for version in redacciones %}
                         <tr>
-                            <td>{{ version.num }}</td>
-                            <td>{{ version.nombre }}</td>
+                            <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.num }} </a></td>
+                            <td><a href="{{ url_for('nota_panel', num=version.num) }}">{{ version.nombre }} </a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -28,8 +28,8 @@
                 <tbody>
                     {% for aprobacion in aprobaciones %}
                         <tr>
-                            <td>{{ aprobacion.num }}</td>
-                            <td>{{ aprobacion.nombre }}</td>
+                            <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.num }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -43,8 +43,8 @@
                 <tbody>
                     {% for comentario in comentarios %}
                         <tr>
-                            <td>{{ comentario.num }}</td>
-                            <td>{{ comentario.nombre }}</td>
+                            <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.num }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
