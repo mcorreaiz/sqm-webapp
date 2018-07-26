@@ -40,12 +40,11 @@ def register():
 #         return utl.microsoft.authorize(callback=url_for('authorized', _external=True), state=guid)
 
 
-# @app.route('/logout')
-# def logout():
-#     session.pop('login_token', None)
-#     session.pop('state', None)
-#     return redirect(url_for('home'))
-#     # return redirect('/.auth/logout?post_logout_redirect_uri=/home') 
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
+    # return redirect('/.auth/logout?post_logout_redirect_uri=/home') 
 
 # @app.route('/login/authorized')
 # def authorized():
