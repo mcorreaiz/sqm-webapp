@@ -118,7 +118,7 @@ def main():
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
-    usuario = mdl.Usuario.objects.filter(sigla="JN")[1]
+    usuario = mdl.Usuario.objects.filter(nombre=session['user'])[2]
     return render_template(
         'notas.html',
         user = usuario.nombre,
@@ -220,7 +220,7 @@ def seed():
     user1 = mdl.Usuario()
     user1.nombre = "Ricardo Ramos"
     user1.email = "ricardoramos@sqm.cl"
-    user1.user_id = "ricardoramos@sqm.cl"
+    user1.user_id = "1"
     user1.save()
     user2 = mdl.Usuario()
     user2.nombre = "Juan Nestler"
@@ -230,27 +230,27 @@ def seed():
     user3 = mdl.Usuario()
     user3.nombre = "Beatriz Garcia"
     user3.email = "bgarcia@sqm.cl"
-    user3.user_id = "ricardoramos@sqm.cl"
+    user3.user_id = "2"
     user3.save()
     user4 = mdl.Usuario()
     user4.nombre = "Gonzalo Aguirre"
     user4.email = "gaguirre@sqm.cl"
-    user4.user_id = "ricardoramos@sqm.cl"
+    user4.user_id = "3"
     user4.save()
     user5 = mdl.Usuario()
     user5.nombre = "Gerardo Illanes"
     user5.email = "gillanes@sqm.cl"
-    user5.user_id = "ricardoramos@sqm.cl"
+    user5.user_id = "4"
     user5.save()
     user6 = mdl.Usuario()
     user6.nombre = "Patricio de Solminihac"
     user6.email = "psolminihac@sqm.cl"
-    user6.user_id = "ricardoramos@sqm.cl"
+    user6.user_id = "5"
     user6.save()
     user7 = mdl.Usuario()
     user7.nombre = "Matias Correa"
     user7.email = "mcorrea@sqm.cl"
-    user7.user_id = "ricardoramos@sqm.cl"
+    user7.user_id = "f0a69c76-d294-4a9a-b43f-8a23dba60b45"
     user7.save()
 
     version1 = mdl.Version()

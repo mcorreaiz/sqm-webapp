@@ -2,9 +2,9 @@ import mongoengine as db
 import datetime
 
 class Usuario(db.Document):
-    user_id = db.StringField(max_length=50, required=True)
+    user_id = db.StringField(max_length=50, required=True, unique=True)
     nombre  = db.StringField(max_length=50, required=True)
-    email   = db.EmailField(required=True)
+    email   = db.EmailField(required=True, unique=True)
 
     @property
     def iniciales(self):
