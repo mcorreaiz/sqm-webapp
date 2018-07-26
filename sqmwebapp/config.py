@@ -1,6 +1,9 @@
 import sys
 
 # class Config():
+
+APP_URL = 'trimestral.azurewebsites.net'
+PREFERRED_URL_SCHEME = 'https'
 MONGODB_HOST = 'mongodb://127.0.0.1:27017'
 ALLOWED_EXTENSIONS = set(['doc', 'docx'])
 DEBUG_TB_PANELS = ['flask_debugtoolbar.panels.versions.VersionDebugPanel',

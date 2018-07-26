@@ -2,10 +2,14 @@ import mongoengine as db
 import datetime
 
 class Usuario(db.Document):
-    nombre = db.StringField(max_length=50)
-    sigla  = db.StringField(max_length=2)
-    token  = db.StringField(max_length=50)
-    email  = db.EmailField()
+    user_id = db.StringField(max_length=50, required=True)
+    nombre  = db.StringField(max_length=50, required=True)
+    email   = db.EmailField(required=True)
+
+    @property
+    def iniciales(self):
+        splitted = self.nombre.split()
+        return ('{}'*len(splitted)).format(*(i[0] for i in splitted))
 
 class Version(db.Document):
     fsid     = db.FileField() # id de GridFS
@@ -13,7 +17,7 @@ class Version(db.Document):
     fecha    = db.DateTimeField(default=datetime.datetime.utcnow)
     nombre   = db.StringField(max_length=50) # Ej. R_2
 
-class Comentario(db.EmbeddedDocument):
+class Comentario(db.Document):
     contenido = db.StringField()
     redactor  = db.ReferenceField(Usuario)
     fecha     = db.DateTimeField(default=datetime.datetime.utcnow)
@@ -29,4 +33,4 @@ class Nota(db.Document):
     ultima_version     = db.IntField()
     versiones          = db.ListField(db.ReferenceField(Version))
     ultimo_comentario  = db.IntField()
-    comentarios        = db.ListField(db.EmbeddedDocumentField(Comentario))
+    comentarios        = db.ListField(db.ReferenceField(Comentario))

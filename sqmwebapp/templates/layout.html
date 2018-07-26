@@ -18,7 +18,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/" class="navbar-brand">Leche name</a>
+                <a href="/" class="navbar-brand">{{ session['user'] }}</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -28,6 +28,7 @@
                     <li><a href="{{ url_for('testmongo') }}">Mongo</a></li>
                     <li><a href="{{ url_for('testgridfs') }}">GridFS</a></li>
                     <li><a href="{{ url_for('notas') }}">Notas</a></li>
+                    <li><a href="{{ url_for('logout') }}">Salir</a></li>
                 </ul>
             </div>
         </div>
