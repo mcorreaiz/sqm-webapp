@@ -3,6 +3,5 @@ mongoengine
 flask_mongoengine
 flask_debugtoolbar
 pymongo==3.5.1
-urllib
 adal
 flask-oauthlib

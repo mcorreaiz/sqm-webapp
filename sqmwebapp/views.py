@@ -218,35 +218,40 @@ def testgridfs_down():
 def seed():
     """Seeds the DB."""
     user1 = mdl.Usuario()
-    user1.sigla = "RR"
     user1.nombre = "Ricardo Ramos"
     user1.email = "ricardoramos@sqm.cl"
+    user1.user_id = "ricardoramos@sqm.cl"
     user1.save()
     user2 = mdl.Usuario()
-    user2.sigla = "JN"
     user2.nombre = "Juan Nestler"
     user2.email = "jjnestler@sqm.cl"
+    user2.user_id = "7e5b5d5e-e151-4e78-a6b8-ea0dcbc0d3fd"
     user2.save()
     user3 = mdl.Usuario()
-    user3.sigla = "BG"
     user3.nombre = "Beatriz Garcia"
     user3.email = "bgarcia@sqm.cl"
+    user3.user_id = "ricardoramos@sqm.cl"
     user3.save()
     user4 = mdl.Usuario()
-    user4.sigla = "GA"
     user4.nombre = "Gonzalo Aguirre"
     user4.email = "gaguirre@sqm.cl"
+    user4.user_id = "ricardoramos@sqm.cl"
     user4.save()
     user5 = mdl.Usuario()
-    user5.sigla = "GI"
     user5.nombre = "Gerardo Illanes"
     user5.email = "gillanes@sqm.cl"
+    user5.user_id = "ricardoramos@sqm.cl"
     user5.save()
     user6 = mdl.Usuario()
-    user6.sigla = "PS"
     user6.nombre = "Patricio de Solminihac"
     user6.email = "psolminihac@sqm.cl"
+    user6.user_id = "ricardoramos@sqm.cl"
     user6.save()
+    user7 = mdl.Usuario()
+    user7.nombre = "Matias Correa"
+    user7.email = "mcorrea@sqm.cl"
+    user7.user_id = "ricardoramos@sqm.cl"
+    user7.save()
 
     version1 = mdl.Version()
     version1.redactor = user1
@@ -273,18 +278,21 @@ def seed():
     version6.nombre = "R_2"
     version6.save()
 
-    #comentario1 = mdl.Comentario()
-    #comentario1.redactor = user1
-    #comentario1.nombre = "C_1"
-    #comentario1.save()
-    #comentario2 = mdl.Comentario()
-    #comentario2.redactor = user3
-    #comentario2.nombre = "C_1"
-    #comentario2.save()
-    #comentario3 = mdl.Comentario()
-    #comentario3.redactor = user5
-    #comentario3.nombre = "C_1"
-    #comentario3.save()
+    comentario1 = mdl.Comentario()
+    comentario1.redactor = user1
+    comentario1.contenido = "Se subio versión base equivocada"
+    comentario1.nombre = "C_1"
+    comentario1.save()
+    comentario2 = mdl.Comentario()
+    comentario2.redactor = user3
+    comentario2.contenido = "Figura 3 esta girada"
+    comentario2.nombre = "C_1"
+    comentario2.save()
+    comentario3 = mdl.Comentario()
+    comentario3.redactor = user5
+    comentario3.contenido = "Cambiar linea 5, la redacción es erronea"
+    comentario3.nombre = "C_1"
+    comentario3.save()
 
     nota = mdl.Nota()
     nota.num = "1"
@@ -295,8 +303,8 @@ def seed():
     nota.estados_aprobacion = {"RR": False, "JN": False, "BG": True, "GA": False}
     nota.ultima_version = 0
     nota.versiones = [version1]
-    nota.ultimo_comentario = 0
-    nota.comentarios = []
+    nota.ultimo_comentario = 1
+    nota.comentarios = [comentario1]
     nota.save()
 
     nota = mdl.Nota()
@@ -308,8 +316,8 @@ def seed():
     nota.estados_aprobacion = {"PS": True, "GI": True, "BG": True, "GA": False}
     nota.ultima_version = 1
     nota.versiones = [version2, version3]
-    nota.ultimo_comentario = 0
-    nota.comentarios = []
+    nota.ultimo_comentario = 1
+    nota.comentarios = [comentario2]
     nota.save()
 
     nota = mdl.Nota()
@@ -321,8 +329,8 @@ def seed():
     nota.estados_aprobacion = {"RR": False, "JN": False, "GI": False, "PS": True}
     nota.ultima_version = 2
     nota.versiones = [version4, version5, version6]
-    nota.ultimo_comentario = 0
-    nota.comentarios = []
+    nota.ultimo_comentario = 1
+    nota.comentarios = [comentario3]
     nota.save()
 
     return render_template(
