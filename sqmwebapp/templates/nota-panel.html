@@ -2,21 +2,31 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <h2>Nota {{ num }}</h2>
 <h3>{{ nombre }}</h3>
 
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-4">
         <h4>Redactores:</h4>
         <ul class="list-group">
             {% for redactor in redactores %}
-                <li class="list-group-item">{{ redactor.sigla }} {{ redactor.nombre }}</li>
+                {% if estados_aprobacion[redactor.sigla] %}
+                    <li class="list-group-item">{{ redactor.sigla }} {{ redactor.nombre }} <i class="fa fa-square" style="font-size:24px;color:green"></i></li>
+                {% else %}
+                    <li class="list-group-item">{{ redactor.sigla }} {{ redactor.nombre }} <i class="fa fa-square-o" style="font-size:24px;color:green"></i></li>
+                {% endif %}
             {% endfor %}
         </ul>
         <h4>Aprobadores:</h4>
         <ul class="list-group">
             {% for aprobador in aprobadores %}
-                <li class="list-group-item">{{ aprobador.sigla }} {{ aprobador.nombre }}</li>
+                {% if estados_aprobacion[aprobador.sigla] %}
+                    <li class="list-group-item">{{ aprobador.sigla }} {{ aprobador.nombre }} <i class="fa fa-square" style="font-size:24px;color:green"></i></li>
+                {% else %}
+                    <li class="list-group-item">{{ aprobador.sigla }} {{ aprobador.nombre }} <i class="fa fa-square-o" style="font-size:24px;color:green"></i></li>
+                {% endif %}
             {% endfor %}
         </ul>
         <h4>Comentadores:</h4>
@@ -26,9 +36,9 @@
             {% endfor %}
         </ul>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-8">
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <h4>Redacciones</h4>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
@@ -43,7 +53,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <h4>Comentarios</h4>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
@@ -60,7 +70,6 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-1"></div>
             <div class="col-md-2">
                 <p><a class="btn btn-default btn-block">Cargar </a></p>
             </div>
@@ -74,7 +83,6 @@
             <div class="col-md-2">
                 <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver </a></p>
             </div>
-            <div class="col-md-1"></div>
         </div>
     </div>
 </div>
