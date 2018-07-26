@@ -2,59 +2,78 @@
 Routes and views for the flask application.
 """
 
-from datetime import datetime
-from flask import render_template, request, make_response, flash, redirect, url_for, session, jsonify
-from werkzeug.utils import secure_filename
 import uuid
+from datetime import datetime
 
-from sqmwebapp import app
-import sqmwebapp.utils as u
-import sqmwebapp.models as mdl
 import requests
+from flask import (flash, jsonify, make_response, redirect, render_template,
+                   request, session, url_for)
+from werkzeug.utils import secure_filename
+
+import sqmwebapp.models as mdl
+import sqmwebapp.utils as utl
+from sqmwebapp import app
 
 @app.before_request
 def get_authorization():
-    print('before request')
-    if not session.get('login_token') and not session.get('state'):
-        print(1)
-        # Generate the guid to only accept initiated logins
-        guid = uuid.uuid4()
-        session['state'] = guid
-        return u.microsoft.authorize(callback=url_for('authorized', _external=True), state=guid)
-	
-@app.route('/logout')
-def logout():
-    session.pop('login_token', None)
-    session.pop('state', None)
-    return redirect(url_for('home')) 
+    if 'user' not in session: # Not registered with DB
+        # Lazy auth
+        user = utl.get_user_via_headers(request.headers)
+        if user is None: # New user, or header failed somehow
+            data = me()
+            if not data:
+                return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
+            user = utl.get_or_create_user_via_api(data.get_json())
+            print(user.nombre)
 
-@app.route('/login/authorized')
-def authorized():
-    response = u.microsoft.authorized_response()
 
-    if response is None:
-        raise Exception( "Access Denied: Reason=%s\nError=%s" % (
-            response.get('error'), 
-            request.get('error_description')
-            )
-        )
+# @app.before_request
+# def get_authorization():
+#     if request.endpoint == 'logout':
+#         return
+#     print('before request')
+#     if not (session.get('login_token') or session.get('state')):
+#         print(1)
+#         # Generate the guid to only accept initiated logins
+#         guid = uuid.uuid4()
+#         session['state'] = guid
+#         return utl.microsoft.authorize(callback=url_for('authorized', _external=True), state=guid)
+
+
+# @app.route('/logout')
+# def logout():
+#     session.pop('login_token', None)
+#     session.pop('state', None)
+#     return redirect(url_for('home'))
+#     # return redirect('/.auth/logout?post_logout_redirect_uri=/home') 
+
+# @app.route('/login/authorized')
+# def authorized():
+#     response = utl.microsoft.authorized_response()
+
+#     if response is None:
+#         raise Exception( "Access Denied: Reason=%s\nError=%s" % (
+#             response.get('error'), 
+#             request.get('error_description')
+#             )
+#         )
         
-    if str(session['state']) != str(request.args['state']):
-        raise Exception('State has been messed with, end authentication')
+#     if str(session['state']) != str(request.args['state']):
+#         raise Exception('State has been messed with, end authentication')
          
-    session['login_token'] = (response['access_token'], '')
-    return redirect(url_for('home')) 
+#     session['login_token'] = (response['access_token'], '')
+#     return redirect(url_for('home')) 
 
-@app.route('/me')
-def me():
-    def create_oauth_getter(key):
-        def getter():
-            return session.get(key)
-        return getter
-    u.microsoft.tokengetter(create_oauth_getter('login_token'))
-    me = u.microsoft.get('me')
+# @app.route('/me', methods=['POST'])
+# def me():
+#     def create_oauth_getter(key):
+#         def getter():
+#             return session.get(key)
+#         return getter
+#     utl.microsoft.tokengetter(create_oauth_getter('login_token'))
+#     me = utl.microsoft.get('me')
     
-    return jsonify(me.data)
+#     return jsonify(me.data)
 
 
 @app.route('/')
@@ -92,7 +111,8 @@ def testmongo():
     """For testing purposes"""
     user = mdl.Usuario()
     user.nombre = 'Matias Correa'
-    user.sigla = 'MC'
+    user.user_id = '123456qwerty'
+    user.email = 'yo@aaa.aaa'
     user.save()
     usuarios = mdl.Usuario.objects
     return render_template(
@@ -116,7 +136,7 @@ def testgridfs(filename=None):
             flash('No selected file')
             return redirect(request.url)
 
-        if file and u.valid_extension(file.filename):
+        if file and utl.valid_extension(file.filename):
             filename = secure_filename(file.filename) # Never trust user input
             version = mdl.Version(redactor=mdl.Usuario.objects.first())
             version.fsid.put(file, content_type='application/octet-stream', 
@@ -131,7 +151,7 @@ def testgridfs(filename=None):
     if filename is not None:
         version = mdl.Version.objects.order_by('-fecha').first() # Query the newest
         doc = version.fsid
-        down = u.download_file(doc)
+        down = utl.download_file(doc)
         return down if down else render_template(
             'test.html',
             message="Nada que hacer por hoy."
@@ -156,27 +176,55 @@ def testgridfs_down():
             'download.html'
         )
 
-@app.route('/adal')
-def adal():
-    import adal
+@app.route('/me')
+def me():
+    """For testing purposes"""
+    # import adal
 
-    #Static / Dont change
-    authentication_endpoint = 'https://login.microsoftonline.com/'  #Static
-    resource = 'https://graph.microsoft.com'  #Static
+    # #Static / Dont change
+    # authentication_endpoint = 'https://login.microsoftonline.com/'
+    # resource = 'https://graph.microsoft.com'
 
-    tenant_id = app.config['TENANT_ID']  #AAD->Properties->Directory ID
-    application_id = app.config['CLIENT_ID'] #register app in AAD -> app registrations -> new application registration
-    application_secret = app.config['CLIENT_SECRET'] #open registered app and create a key with whatever name. when you save, you will get a secret.
+    tenant_id = app.config['TENANT_ID']
+    application_id = app.config['CLIENT_ID']
+    application_secret = app.config['CLIENT_SECRET']
 
-    ## get an Azure access token using the service principal
-    context = adal.AuthenticationContext(authentication_endpoint + tenant_id)
-    token_response = context.acquire_token_with_client_credentials(resource, application_id, application_secret)
-    access_token = token_response.get('accessToken')
+    # ## get an Azure access token using the service principal
+    # context = adal.AuthenticationContext(authentication_endpoint + tenant_id)
+    # token_response = context.acquire_token_with_client_credentials(resource, application_id, application_secret)
+    # access_token = token_response.get('accessToken')
 
-    r = requests.get('https://graph.microsoft.com/v1.0/$metadata#users/$entity', headers={"Authorization": "Bearer "+access_token})
+    r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={"Authorization": "Bearer "+app.config['AAD_TOKEN']})
+    body = r.json()
 
+    if r.status_code == 401: # Access token expired
+        data = {'client_id':application_id,
+        'refresh_token':app.config['AAD_REFRESH_TOKEN'],
+        'grant_type':'refresh_token',
+        'resource':application_id,
+        'client_secret':application_secret}
+
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        # Request new token
+        r = requests.post('https://login.microsoftonline.com/{tenant}/oauth2/token'.format(tenant=tenant_id),
+        data=data, headers=headers)
+
+        app.config['AAD_TOKEN'] = r.json()['access_token']
+        app.config['AAD_REFRESH_TOKEN'] = r.json()['refresh_token']
+
+        r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={"Authorization": "Bearer "+app.config['AAD_TOKEN']})
+        body = r.json()
+
+    if not body: # Empty body means the API requires new auth
+        return None
+        
+    return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
+
+
+@app.route('/headers')
+def headers():
     """For testing purposes"""
     return render_template(
             'test.html',
-            message=r.text
+            message=request.headers
         )

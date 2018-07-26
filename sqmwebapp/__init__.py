@@ -14,7 +14,6 @@ app.config.from_pyfile('config.py', silent=True)
 
 MongoEngine(app) # Inicializa conexion a db
 DebugToolbarExtension(app)
-
 oauth = OAuth(app)
 
 import sqmwebapp.views
