@@ -75,7 +75,8 @@ def nota_panel(num):
         aprobadores = nota.aprobadores,
         comentadores = nota.comentadores,
         redacciones = nota.versiones,
-        comentarios = nota.comentarios
+        comentarios = nota.comentarios,
+        estados_aprobacion = nota.estados_aprobacion
     )
 
 @app.route('/testmongo')
