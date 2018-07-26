@@ -53,8 +53,10 @@ def get_user_via_headers(headers):
 
     id_header = 'x_ms_client_principal_id'
     user_id = headers.get(id_header)
-    user = mdl.Usuario.objects(user_id=user_id).first()
-    return user
+    if user_id:
+        user = mdl.Usuario.objects(user_id=user_id).first()
+        return user
+    return None
 
 
 def get_or_create_user_via_api(data):

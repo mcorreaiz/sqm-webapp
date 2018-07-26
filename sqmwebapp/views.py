@@ -15,7 +15,7 @@ import sqmwebapp.utils as utl
 from sqmwebapp import app
 
 @app.before_request
-def get_authorization():
+def register():
     if 'user' not in session: # Not registered with DB
         # Lazy auth
         user = utl.get_user_via_headers(request.headers)
@@ -24,7 +24,7 @@ def get_authorization():
             if not data:
                 return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
             user = utl.get_or_create_user_via_api(data.get_json())
-            print(user.nombre)
+        session['user'] = user.nombre
 
 
 # @app.before_request
@@ -176,7 +176,7 @@ def testgridfs_down():
             'download.html'
         )
 
-@app.route('/me')
+@app.route('/me') # TODO: remove decorator and move to utils
 def me():
     """For testing purposes"""
     # import adal
