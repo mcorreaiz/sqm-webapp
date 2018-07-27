@@ -80,6 +80,7 @@ def notas():
     return render_template(
         'notas.html',
         user = usuario.nombre,
+        user_id = usuario.user_id,
         redacciones = mdl.Nota.objects(redactores__in=[usuario]),
         aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
         comentarios = mdl.Nota.objects(comentadores__in=[usuario])
@@ -259,7 +260,7 @@ def seed():
     nota.redactores = [user1, user2, user7]
     nota.aprobadores = [user3, user4]
     nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: False, user2.user_id: False, user7.user_id: True, user3.user_id: False, user4.user_id: True}
+    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = [version1]
     nota.comentarios = [comentario1]
     nota.save()
@@ -270,7 +271,7 @@ def seed():
     nota.redactores = [user3, user4]
     nota.aprobadores = [user5, user6, user7]
     nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: True, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = [version2, version3]
     nota.comentarios = [comentario2]
     nota.save()

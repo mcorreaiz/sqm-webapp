@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <h4>Notas</h4>
 <h3>{{ user }}</h3>
 
@@ -13,6 +15,19 @@
                 <tbody>
                     {% for version in redacciones %}
                         <tr>
+                            {% if version.full_aprobado %}
+                                {% if version.estados_aprobacion[user_id] %}
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                {% else %}
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                {% endif %}
+                            {% else %}
+                                {% if version.estados_aprobacion[user_id] %}
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                {% else %}
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                {% endif %}
+                            {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.num }} </a></td>
                             <td><a href="{{ url_for('nota_panel', num=version.num) }}">{{ version.nombre }} </a></td>
                         </tr>
