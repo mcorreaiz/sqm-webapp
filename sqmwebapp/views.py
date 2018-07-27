@@ -118,7 +118,7 @@ def main():
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
-    usuario = mdl.Usuario.objects.filter(nombre=session['user'])[2]
+    usuario = mdl.Usuario.objects.get(nombre=session['user'])
     return render_template(
         'notas.html',
         user = usuario.nombre,
@@ -297,13 +297,11 @@ def seed():
     nota = mdl.Nota()
     nota.num = "1"
     nota.nombre = "Analisis de Compras"
-    nota.redactores = [user1, user2]
+    nota.redactores = [user1, user2, user7]
     nota.aprobadores = [user3, user4]
     nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {"RR": False, "JN": False, "BG": True, "GA": False}
-    nota.ultima_version = 0
+    nota.estados_aprobacion = {user1.user_id: False, user2.user_id: False, user7.user_id: True, user3.user_id: False, user4.user_id: True}
     nota.versiones = [version1]
-    nota.ultimo_comentario = 1
     nota.comentarios = [comentario1]
     nota.save()
 
@@ -311,12 +309,10 @@ def seed():
     nota.num = "1.1"
     nota.nombre = "Analisis de Ventas"
     nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6]
+    nota.aprobadores = [user5, user6, user7]
     nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {"PS": True, "GI": True, "BG": True, "GA": False}
-    nota.ultima_version = 1
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: True, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = [version2, version3]
-    nota.ultimo_comentario = 1
     nota.comentarios = [comentario2]
     nota.save()
 
@@ -325,11 +321,9 @@ def seed():
     nota.nombre = "Proyecciones"
     nota.redactores = [user5, user6]
     nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4]
-    nota.estados_aprobacion = {"RR": False, "JN": False, "GI": False, "PS": True}
-    nota.ultima_version = 2
+    nota.comentadores = [user3, user4, user7]
+    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = [version4, version5, version6]
-    nota.ultimo_comentario = 1
     nota.comentarios = [comentario3]
     nota.save()
 

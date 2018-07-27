@@ -9,7 +9,7 @@ class Usuario(db.Document):
     @property
     def iniciales(self):
         splitted = self.nombre.split()
-        return ('{}'*len(splitted)).format(*(i[0] for i in splitted))
+        return ('{}'*len(splitted)).format(*(i[0].upper() for i in splitted))
 
 class Version(db.Document):
     fsid     = db.FileField() # id de GridFS
@@ -24,13 +24,11 @@ class Comentario(db.Document):
     nombre    = db.StringField(max_length=50) # Ej. C_2
 
 class Nota(db.Document):
-    num                = db.StringField(max_length=5) # Ej. 25.11
+    num                = db.StringField(max_length=5, unique=True) # Ej. 25.11
     nombre             = db.StringField(max_length=50) # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     aprobadores        = db.ListField(db.ReferenceField(Usuario))
     comentadores       = db.ListField(db.ReferenceField(Usuario))
     estados_aprobacion = db.DictField() # {sigla: bool}
-    ultima_version     = db.IntField()
     versiones          = db.ListField(db.ReferenceField(Version))
-    ultimo_comentario  = db.IntField()
     comentarios        = db.ListField(db.ReferenceField(Comentario))
