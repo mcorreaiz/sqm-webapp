@@ -86,7 +86,6 @@ def nota_panel(num):
     if request.method == 'POST':
         if 'file' not in request.files:
             if 'change_type' in request.form:
-                print(request.form['change_type'])
                 if nota.estados_aprobacion[session['user_id']]:
                     nota.estados_aprobacion[session['user_id']] = False
                     flash('Se ha desaprobado la Nota', 'success')
