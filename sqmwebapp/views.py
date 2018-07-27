@@ -70,7 +70,7 @@ def notas():
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     return render_template(
         'notas.html',
-        user = usuario.nombre,
+        user = usuario,
         redacciones = mdl.Nota.objects(redactores__in=[usuario]),
         aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
         comentarios = mdl.Nota.objects(comentadores__in=[usuario])
@@ -79,32 +79,35 @@ def notas():
 @app.route('/notas/<num>', methods=['GET', 'POST'])
 def nota_panel(num):
     """Renders the description of a Nota object."""
+    num = unquote(num)
+    nota = mdl.Nota.objects.get(num=num)
+
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part', 'error')
+            flash('Form incorrecto. Contactar soporte si reitera', 'error')
             return redirect(request.url)
 
         file = request.files['file']
 
         # If user submits an empty form. TODO: Acivate submit iif selected file
         if file.filename == '':
-            flash('No selected file', 'error')
-            return redirect(request.url)
+            flash('Ningun archivo seleccionado', 'error')
 
         if file and utl.valid_extension(file.filename):
             filename = secure_filename(file.filename) # Never trust user input
             version = mdl.Version(redactor=mdl.Usuario.objects.get(user_id=session['user_id']))
             version.fsid.put(file, content_type='application/octet-stream', 
-                            filename=file.filename)
+                            filename=filename)
+            version.nombre = "R_{}".format(len(nota.versiones))
             version.save()
-            flash('Version subida con exito.', 'success')
-            return redirect(request.url)
+            nota.versiones.append(version)
+            nota.save()
+            flash('Version subida con exito', 'success')
         else:
-            flash('Extension invalida', 'error')
-            return redirect(request.url)
+            flash('Version no subida; extension invalida', 'error')
 
-    num = unquote(num)
-    nota = mdl.Nota.objects.get(num=num)
+        return redirect(request.url)
+
     return render_template(
         'nota-panel.html',
         num = nota.num,
@@ -115,7 +118,7 @@ def nota_panel(num):
         redacciones = nota.versiones,
         comentarios = nota.comentarios,
         estados_aprobacion = nota.estados_aprobacion,
-        user = mdl.Usuario.objects.get(nombre=session['user'])
+        user = mdl.Usuario.objects.get(user_id=session['user_id'])
     )
 
 @app.route('/testmongo')
