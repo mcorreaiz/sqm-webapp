@@ -64,15 +64,6 @@ def about():
         message='Your application description page.'
     )
 
-@app.route('/main')
-def main():
-    """Renders the about page."""
-    return render_template(
-        'main.html',
-        title='Main',
-        year=datetime.now().year
-    )
-
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
@@ -90,14 +81,14 @@ def nota_panel(num):
     """Renders the description of a Nota object."""
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('No file part', 'error')
             return redirect(request.url)
 
         file = request.files['file']
 
         # If user submits an empty form. TODO: Acivate submit iif selected file
         if file.filename == '':
-            flash('No selected file')
+            flash('No selected file', 'error')
             return redirect(request.url)
 
         if file and utl.valid_extension(file.filename):
@@ -106,12 +97,10 @@ def nota_panel(num):
             version.fsid.put(file, content_type='application/octet-stream', 
                             filename=file.filename)
             version.save()
-            return render_template(
-                'test.html',
-                message="Archivo subido con exito."
-            )
+            flash('Version subida con exito.', 'success')
+            return redirect(request.url)
         else:
-            flash('Extension invalida')
+            flash('Extension invalida', 'error')
             return redirect(request.url)
 
     num = unquote(num)
@@ -149,14 +138,14 @@ def testgridfs(filename=None):
     """For testing purposes"""
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('No file part', category='error')
             return redirect(request.url)
 
         file = request.files['file']
 
         # If user submits an empty form. TODO: Acivate submit iif selected file
         if file.filename == '':
-            flash('No selected file')
+            flash('No selected file', category='error')
             return redirect(request.url)
 
         if file and utl.valid_extension(file.filename):
@@ -165,10 +154,8 @@ def testgridfs(filename=None):
             version.fsid.put(file, content_type='application/octet-stream', 
                             filename=filename)
             version.save()
-            return render_template(
-                'test.html',
-                message="Archivo subido con exito."
-            )
+            flash('Version subida con exito.', 'info')
+            return redirect(request.url)
 		
 
     if filename is not None:
@@ -336,7 +323,7 @@ def me():
             body = r.json()
             return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
         else:
-            return redirect(url_for('logout'))
+            return make_response()
     
     access_token = request.headers.get(utl.ACCESS_TOKEN_HEADER)
     if not access_token: # Logout required

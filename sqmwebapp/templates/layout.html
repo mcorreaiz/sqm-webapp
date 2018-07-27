@@ -17,7 +17,6 @@
 
 
 </head>
-
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -43,6 +42,31 @@
         </div>
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          <div style="display:none; position:absolute; padding-top: 5px" class="col-md-2 col-md-offset-5 flashes">
+            {% for message in messages %}
+                {% if message[0] == 'error' %}
+                    <div class="alert alert-danger">
+                        <i class="fa fa-warning"></i>
+                        <strong> {{ message[1] }}</strong>
+                    </div>
+                {% elif message[0] == 'success' %}
+                    <div class="alert alert-success">
+                        <i class="fa fa-check"></i>
+                        <strong> {{ message[1] }}</strong>
+                    </div>
+                {% elif message[0] == 'info' %}
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        <strong> {{ message[1] }}</strong>
+                    </div>
+                {% endif %}
+            {% endfor %}
+          </div>
+          <div class="col-md-5" ></div>
+        {% endif %}
+    {% endwith %}
     <div class="container body-content">
         {% block content %}{% endblock %}
         <hr />
@@ -55,6 +79,15 @@
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
     {% block scripts %}{% endblock %}
+    <script>
+        $(document).ready(function() {
+            $(".flashes").slideDown(function() {
+                setTimeout(function() {
+                    $(".flashes").slideUp();
+                }, 3000);
+            });
+        });
+    </script>
 
 </body>
 </html>
