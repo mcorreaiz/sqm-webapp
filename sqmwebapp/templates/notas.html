@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <h4>Notas</h4>
 <h3>{{ user }}</h3>
 
@@ -10,9 +12,29 @@
         <h4>Redacciones</h4>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>full - yo</th>
+                        <th>Nota</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for version in redacciones %}
                         <tr>
+                            {% if version.full_aprobado %}
+                                {% if version.estados_aprobacion[user_id] %}
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                {% else %}
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                {% endif %}
+                            {% else %}
+                                {% if version.estados_aprobacion[user_id] %}
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                {% else %}
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                {% endif %}
+                            {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.num }} </a></td>
                             <td><a href="{{ url_for('nota_panel', num=version.num) }}">{{ version.nombre }} </a></td>
                         </tr>
@@ -25,9 +47,29 @@
         <h4>Aprobaciones</h4>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>full - yo</th>
+                        <th>Nota</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for aprobacion in aprobaciones %}
                         <tr>
+                            {% if aprobacion.full_aprobado %}
+                                {% if aprobacion.estados_aprobacion[user_id] %}
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                {% else %}
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                {% endif %}
+                            {% else %}
+                                {% if aprobacion.estados_aprobacion[user_id] %}
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                {% else %}
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                {% endif %}
+                            {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.num }}</a></td>
                             <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
                         </tr>
@@ -40,9 +82,21 @@
         <h4>Comentarios</h4>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>yo</th>
+                        <th>Nota</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for comentario in comentarios %}
                         <tr>
+                            {% if comentario.full_aprobado %}
+                                <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                            {% else %}
+                                <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                            {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.num }}</a></td>
                             <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
                         </tr>

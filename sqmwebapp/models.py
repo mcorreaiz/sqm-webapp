@@ -35,7 +35,7 @@ class Nota(db.Document):
 
     @property
     def full_aprobado(self):
-        for estado in estados_aprobacion.values():
+        for estado in self.estados_aprobacion.values():
             if not estado:
                 return False
         return True
