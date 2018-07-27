@@ -99,7 +99,8 @@ def nota_panel(num):
         comentadores = nota.comentadores,
         redacciones = nota.versiones,
         comentarios = nota.comentarios,
-        estados_aprobacion = nota.estados_aprobacion
+        estados_aprobacion = nota.estados_aprobacion,
+        user = mdl.Usuario.objects.get(nombre=session['user'])
     )
 
 @app.route('/testmongo')

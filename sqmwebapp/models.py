@@ -12,23 +12,30 @@ class Usuario(db.Document):
         return ('{}'*len(splitted)).format(*(i[0].upper() for i in splitted))
 
 class Version(db.Document):
-    fsid     = db.FileField() # id de GridFS
+    fsid     = db.FileField()                                      # id de GridFS
     redactor = db.ReferenceField(Usuario)
     fecha    = db.DateTimeField(default=datetime.datetime.utcnow)
-    nombre   = db.StringField(max_length=50) # Ej. R_2
+    nombre   = db.StringField(max_length=50)                       # Ej. R_2
 
 class Comentario(db.Document):
     contenido = db.StringField()
     redactor  = db.ReferenceField(Usuario)
     fecha     = db.DateTimeField(default=datetime.datetime.utcnow)
-    nombre    = db.StringField(max_length=50) # Ej. C_2
+    nombre    = db.StringField(max_length=50)                      # Ej. C_2
 
 class Nota(db.Document):
     num                = db.StringField(max_length=5, unique=True) # Ej. 25.11
-    nombre             = db.StringField(max_length=50) # Ej. Contingencias tributarias
+    nombre             = db.StringField(max_length=50)             # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     aprobadores        = db.ListField(db.ReferenceField(Usuario))
     comentadores       = db.ListField(db.ReferenceField(Usuario))
-    estados_aprobacion = db.DictField() # {sigla: bool}
+    estados_aprobacion = db.DictField()                            # {user_id: bool}
     versiones          = db.ListField(db.ReferenceField(Version))
     comentarios        = db.ListField(db.ReferenceField(Comentario))
+
+    @property
+    def full_aprobado(self):
+        for estado in estados_aprobacion.values():
+            if not estado:
+                return False
+        return True

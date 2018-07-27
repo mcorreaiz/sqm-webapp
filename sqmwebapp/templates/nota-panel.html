@@ -70,21 +70,43 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-2">
-                <p><a class="btn btn-default btn-block">Cargar </a></p>
-            </div>
-            <div class="col-md-2">
-                <p><a class="btn btn-default btn-block">Comentar </a></p>
-            </div>
-            <div class="col-md-2">
-                <!-- TODO javascript de Aprobar - Desaprobar -->
-                <p><a class="btn btn-default btn-block">Aprobar/Desaprobar </a></p>
-            </div>
-            <div class="col-md-2">
-                <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver </a></p>
-            </div>
+            {% if ((user in aprobadores) or (user in redactores)) %}
+                <div class="col-md-2">
+                    <p><a class="btn btn-default btn-block">Cargar</a></p>
+                </div>
+                <div class="col-md-2">
+                    <p><a class="btn btn-default btn-block">Comentar</a></p>
+                </div>
+                <div class="col-md-2">
+                    <p><button id="boton" onclick="cambiarAprobacion()" class="btn btn-default btn-block">Aprobar</button></p>
+                </div>
+                <div class="col-md-2">
+                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+                </div>
+            {% else %}
+                <div class="col-md-3">
+                    <p><a class="btn btn-default btn-block">Cargar</a></p>
+                </div>
+                <div class="col-md-3">
+                    <p><a class="btn btn-default btn-block">Comentar</a></p>
+                </div>
+                <div class="col-md-3">
+                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<script>
+    function cambiarAprobacion() {
+        if (document.getElementById("boton").innerHTML == "Aprobar") {
+            document.getElementById("boton").innerHTML = "Desaprobar";
+        } 
+        else {
+            document.getElementById("boton").innerHTML = "Aprobar";
+        }
+    }
+</script>
 
 {% endblock %}
