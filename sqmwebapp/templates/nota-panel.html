@@ -2,16 +2,75 @@
 
 {% block content %}
 
+<style>
+        /* Popup container - can be anything you want */
+        .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* The actual popup */
+        .popup .popuptext {
+            visibility: hidden;
+            width: 160px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -80px;
+        }
+        
+        /* Popup arrow */
+        .popup .popuptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        /* Toggle this class - hide and show the popup */
+        .popup .show {
+            visibility: visible;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+        }
+        
+        /* Add animation (fade in the popup) */
+        @-webkit-keyframes fadeIn {
+            from {opacity: 0;} 
+            to {opacity: 1;}
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity:1 ;}
+        }
+        </style>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<h2>Nota {{ num }}</h2>
-<h3>{{ nombre }}</h3>
+<h2>Nota {{ nota.num }}</h2>
+<h3>{{ nota.nombre }}</h3>
 
 <div class="row">
     <div class="col-md-4">
         <h4>Redactores:</h4>
         <ul class="list-group">
-            {% for redactor in redactores %}
-                {% if estados_aprobacion[redactor.user_id] %}
+            {% for redactor in nota.redactores %}
+                {% if nota.estados_aprobacion[redactor.user_id] %}
                     <li class="list-group-item"><i class="fa fa-square" style="font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} </li>
                 {% else %}
                     <li class="list-group-item"><i class="fa fa-square-o" style="font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} </li>
@@ -20,8 +79,8 @@
         </ul>
         <h4>Aprobadores:</h4>
         <ul class="list-group">
-            {% for aprobador in aprobadores %}
-                {% if estados_aprobacion[aprobador.user_id] %}
+            {% for aprobador in nota.aprobadores %}
+                {% if nota.estados_aprobacion[aprobador.user_id] %}
                     <li class="list-group-item"><i class="fa fa-square" style="font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
                 {% else %}
                     <li class="list-group-item"><i class="fa fa-square-o" style="font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
@@ -30,7 +89,7 @@
         </ul>
         <h4>Comentadores:</h4>
         <ul class="list-group">
-            {% for comentador in comentadores %}
+            {% for comentador in nota.comentadores %}
                 <li class="list-group-item">{{ comentador.iniciales }} {{ comentador.nombre }}</li>
             {% endfor %}
         </ul>
@@ -42,7 +101,7 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <tbody>
-                            {% for version in redacciones %}
+                            {% for version in nota.versiones %}
                                 <tr>
                                     <td>{{ version.redactor.iniciales }}_{{ version.fecha.strftime('%m_%d') }}</td>
                                     <td>{{ version.nombre }}</td>
@@ -57,9 +116,13 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <tbody>
-                            {% for comentario in comentarios %}
+                            {% for comentario in nota.comentarios %}
                                 <tr>
-                                    <td>{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}</td>
+                                    <td>
+                                        <div class="popup" onclick="myFunction()">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
+                                            <span class="popuptext" id="myPopup">{{ comentario.contenido  }}</span>
+                                        </div>
+                                    </td>
                                     <td>{{ comentario.nombre }}</td>
                                 </tr>
                             {% endfor %}
@@ -69,8 +132,8 @@
             </div>
         </div>
         <div class="row">
-            {% if ((user in aprobadores) or (user in redactores)) %}
-                {% if (user in redactores) %}
+            {% if ((user in nota.aprobadores) or (user in nota.redactores)) %}
+                {% if (user in nota.redactores) %}
                     <div class="col-md-2">
                         <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
                             <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
@@ -92,10 +155,16 @@
                         <p><a class="btn btn-default btn-block">Comentar</a></p>
                     </div>
                     <div class="col-md-2">
-                        {% if estados_aprobacion[session['user_id']] %}
-                            <p><button id="boton" onclick="cambiarAprobacion()" class="btn btn-default btn-block">Desaprobar</button></p>
+                        {% if nota.estados_aprobacion[session['user_id']] %}
+                            <form action="#" method="post">
+                                <input type="hidden" name="change_type" value = "approval" />
+                                <button id="boton" type="submit" class="btn btn-default btn-block">Desaprobar</button>
+                            </form>
                         {% else %}
-                            <p><button id="boton" onclick="cambiarAprobacion()" class="btn btn-default btn-block">Aprobar</button></p>
+                            <form action="#" method="post">
+                                <input type="hidden" name="change_type" value = "approval" />
+                                <button id="boton" type="submit" class="btn btn-default btn-block">Aprobar</button>
+                            </form>
                         {% endif %}
                     </div>
                     <div class="col-md-2">
@@ -106,10 +175,16 @@
                         <p><a class="btn btn-default btn-block">Comentar</a></p>
                     </div>
                     <div class="col-md-3">
-                        {% if estados_aprobacion[session['user_id']] %}
-                            <p><button id="boton" onclick="cambiarAprobacion()" class="btn btn-default btn-block">Desaprobar</button></p>
+                        {% if nota.estados_aprobacion[session['user_id']] %}
+                            <form action="#" method="post">
+                                <input type="hidden" name="change_type" value = "approval" />
+                                <button id="boton" type="submit" class="btn btn-default btn-block">Desaprobar</button>
+                            </form>
                         {% else %}
-                            <p><button id="boton" onclick="cambiarAprobacion()" class="btn btn-default btn-block">Aprobar</button></p>
+                            <form action="#" method="post">
+                                <input type="hidden" name="change_type" value = "approval" />
+                                <button id="boton" type="submit" class="btn btn-default btn-block">Aprobar</button>
+                            </form>
                         {% endif %}
                     </div>
                     <div class="col-md-3">
@@ -149,14 +224,11 @@
         event.preventDefault();
     }
 
-    function cambiarAprobacion() {       
-        if (document.getElementById("boton").innerHTML == "Aprobar") {
-            document.getElementById("boton").innerHTML = "Desaprobar";
-        } 
-        else {
-            document.getElementById("boton").innerHTML = "Aprobar";
-        }
+    function myFunction() {
+        var popup = document.getElementById("myPopup");
+        popup.classList.toggle("show");
     }
+
 </script>
 
 {% endblock %}
