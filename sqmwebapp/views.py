@@ -64,15 +64,6 @@ def about():
         message='Your application description page.'
     )
 
-@app.route('/main')
-def main():
-    """Renders the about page."""
-    return render_template(
-        'main.html',
-        title='Main',
-        year=datetime.now().year
-    )
-
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
@@ -80,8 +71,7 @@ def notas():
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     return render_template(
         'notas.html',
-        user = usuario.nombre,
-        user_id = usuario.user_id,
+        user = usuario,
         redacciones = mdl.Nota.objects(redactores__in=[usuario]),
         aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
         comentarios = mdl.Nota.objects(comentadores__in=[usuario])
@@ -90,34 +80,35 @@ def notas():
 @app.route('/notas/<num>', methods=['GET', 'POST'])
 def nota_panel(num):
     """Renders the description of a Nota object."""
+    num = unquote(num)
+    nota = mdl.Nota.objects.get(num=num)
+
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('Form incorrecto. Contactar soporte si reitera', 'error')
             return redirect(request.url)
 
         file = request.files['file']
 
         # If user submits an empty form. TODO: Acivate submit iif selected file
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+            flash('Ningun archivo seleccionado', 'error')
 
         if file and utl.valid_extension(file.filename):
             filename = secure_filename(file.filename) # Never trust user input
             version = mdl.Version(redactor=mdl.Usuario.objects.get(user_id=session['user_id']))
             version.fsid.put(file, content_type='application/octet-stream', 
-                            filename=file.filename)
+                            filename=filename)
+            version.nombre = "R_{}".format(len(nota.versiones))
             version.save()
-            return render_template(
-                'test.html',
-                message="Archivo subido con exito."
-            )
+            nota.versiones.append(version)
+            nota.save()
+            flash('Version subida con exito', 'success')
         else:
-            flash('Extension invalida')
-            return redirect(request.url)
+            flash('Version no subida; extension invalida', 'error')
 
-    num = unquote(num)
-    nota = mdl.Nota.objects.get(num=num)
+        return redirect(request.url)
+
     return render_template(
         'nota-panel.html',
         num = nota.num,
@@ -128,7 +119,7 @@ def nota_panel(num):
         redacciones = nota.versiones,
         comentarios = nota.comentarios,
         estados_aprobacion = nota.estados_aprobacion,
-        user = mdl.Usuario.objects.get(nombre=session['user'])
+        user = mdl.Usuario.objects.get(user_id=session['user_id'])
     )
 
 @app.route('/testmongo')
@@ -151,14 +142,14 @@ def testgridfs(filename=None):
     """For testing purposes"""
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('No file part', category='error')
             return redirect(request.url)
 
         file = request.files['file']
 
         # If user submits an empty form. TODO: Acivate submit iif selected file
         if file.filename == '':
-            flash('No selected file')
+            flash('No selected file', category='error')
             return redirect(request.url)
 
         if file and utl.valid_extension(file.filename):
@@ -167,10 +158,8 @@ def testgridfs(filename=None):
             version.fsid.put(file, content_type='application/octet-stream', 
                             filename=filename)
             version.save()
-            return render_template(
-                'test.html',
-                message="Archivo subido con exito."
-            )
+            flash('Version subida con exito.', 'info')
+            return redirect(request.url)
 		
 
     if filename is not None:
@@ -338,7 +327,7 @@ def me():
             body = r.json()
             return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
         else:
-            return redirect(url_for('logout'))
+            return make_response()
     
     access_token = request.headers.get(utl.ACCESS_TOKEN_HEADER)
     if not access_token: # Logout required
