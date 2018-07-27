@@ -85,7 +85,17 @@ def nota_panel(num):
 
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('Form incorrecto. Contactar soporte si reitera', 'error')
+            if 'change_type' in request.form:
+                print(request.form['change_type'])
+                if nota.estados_aprobacion[session['user_id']]:
+                    nota.estados_aprobacion[session['user_id']] = False
+                    flash('Se ha desaprobado la Nota', 'success')
+                else:
+                    nota.estados_aprobacion[session['user_id']] = True
+                    flash('Se ha aprobado la Nota', 'success')
+                nota.save()
+                return redirect(request.url)
+            flash('Form incorrecto. Contactar soporte si persiste', 'error')
             return redirect(request.url)
 
         file = request.files['file']
@@ -99,9 +109,14 @@ def nota_panel(num):
             version = mdl.Version(redactor=mdl.Usuario.objects.get(user_id=session['user_id']))
             version.fsid.put(file, content_type='application/octet-stream', 
                             filename=filename)
-            version.nombre = "R_{}".format(len(nota.versiones))
+            if len(nota.versiones) == 0:
+                version.nombre = "R_b"
+            else:
+                version.nombre = "R_{}".format(len(nota.versiones))
             version.save()
             nota.versiones.append(version)
+            for user in nota.estados_aprobacion.keys():
+                nota.estados_aprobacion[user] = False
             nota.save()
             flash('Version subida con exito', 'success')
         else:
@@ -111,14 +126,7 @@ def nota_panel(num):
 
     return render_template(
         'nota-panel.html',
-        num = nota.num,
-        nombre = nota.nombre,
-        redactores = nota.redactores,
-        aprobadores = nota.aprobadores,
-        comentadores = nota.comentadores,
-        redacciones = nota.versiones,
-        comentarios = nota.comentarios,
-        estados_aprobacion = nota.estados_aprobacion,
+        nota = nota,
         user = mdl.Usuario.objects.get(user_id=session['user_id'])
     )
 
