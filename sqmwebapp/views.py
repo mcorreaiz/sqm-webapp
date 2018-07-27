@@ -80,8 +80,7 @@ def notas():
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     return render_template(
         'notas.html',
-        user = usuario.nombre,
-        user_id = usuario.user_id,
+        user = usuario,
         redacciones = mdl.Nota.objects(redactores__in=[usuario]),
         aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
         comentarios = mdl.Nota.objects(comentadores__in=[usuario])

@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <h4>Notas</h4>
-<h3>{{ user }}</h3>
+<h3>{{ user.nombre }}</h3>
 
 <div class="row">
     <div class="col-md-4">
@@ -14,7 +14,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>full - yo</th>
+                        <th>yo - full</th>
                         <th>Nota</th>
                         <th></th>
                     </tr>
@@ -22,14 +22,14 @@
                 <tbody>
                     {% for version in redacciones %}
                         <tr>
-                            {% if version.full_aprobado %}
-                                {% if version.estados_aprobacion[user_id] %}
+                            {% if version.estados_aprobacion[user.user_id] %}
+                                {% if version.full_aprobado %}
                                     <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
                                     <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% else %}
-                                {% if version.estados_aprobacion[user_id] %}
+                                {% if version.full_aprobado %}
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
@@ -49,7 +49,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>full - yo</th>
+                        <th>yo - full</th>
                         <th>Nota</th>
                         <th></th>
                     </tr>
@@ -57,14 +57,14 @@
                 <tbody>
                     {% for aprobacion in aprobaciones %}
                         <tr>
-                            {% if aprobacion.full_aprobado %}
-                                {% if aprobacion.estados_aprobacion[user_id] %}
+                            {% if aprobacion.estados_aprobacion[user.user_id] %}
+                                {% if aprobacion.full_aprobado %}
                                     <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
                                     <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% else %}
-                                {% if aprobacion.estados_aprobacion[user_id] %}
+                                {% if aprobacion.full_aprobado %}
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
@@ -84,7 +84,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>yo</th>
+                        <th>full</th>
                         <th>Nota</th>
                         <th></th>
                     </tr>
