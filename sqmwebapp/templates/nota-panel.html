@@ -3,7 +3,6 @@
 {% block content %}
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <h2>Nota {{ num }}</h2>
 <h3>{{ nombre }}</h3>
 
@@ -72,7 +71,21 @@
         <div class="row">
             {% if ((user in aprobadores) or (user in redactores)) %}
                 <div class="col-md-2">
-                    <p><a class="btn btn-default btn-block">Cargar</a></p>
+                    <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
+                        <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
+                            Cargar
+                        </label>
+                        <div style='padding-top: 5px; display: none' class="slider">
+                            <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-default btn-block">Enviar</label>
+                            <button onclick="removeFile()" class="btn btn-default btn-block">Eliminar</button>
+                        </div>
+                        <div style='display: none'>
+                            <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
+                        </div>
+                        <div style='display: none'>
+                            <input id="fileSubmit" type="submit">
+                        </div>
+                    </form>
                 </div>
                 <div class="col-md-2">
                     <p><a class="btn btn-default btn-block">Comentar</a></p>
@@ -99,7 +112,26 @@
 </div>
 
 <script>
-    function cambiarAprobacion() {
+    $(document).ready(function() {
+        console.log('ready');
+    });
+
+    function fileLoaded(obj){
+        var file = obj.value;
+        var fileName = file.split("\\");
+        document.getElementById("fileInputLabel").innerHTML = fileName[fileName.length-1];
+        $(".slider").slideDown()
+        event.preventDefault();
+    }
+
+    function removeFile(){
+        $(".slider").slideUp();
+        document.getElementById("fileForm").reset();
+        document.getElementById("fileInputLabel").innerHTML = "Cargar";
+        event.preventDefault();
+    }
+
+    function cambiarAprobacion() {       
         if (document.getElementById("boton").innerHTML == "Aprobar") {
             document.getElementById("boton").innerHTML = "Desaprobar";
         } 

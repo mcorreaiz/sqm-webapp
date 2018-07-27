@@ -85,9 +85,35 @@ def notas():
         comentarios = mdl.Nota.objects(comentadores__in=[usuario])
     )
 
-@app.route('/notas/<num>')
+@app.route('/notas/<num>', methods=['GET', 'POST'])
 def nota_panel(num):
     """Renders the description of a Nota object."""
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        # If user submits an empty form. TODO: Acivate submit iif selected file
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        print(file.filename)
+        if file and utl.valid_extension(file.filename):
+            filename = secure_filename(file.filename) # Never trust user input
+            version = mdl.Version(redactor=mdl.Usuario.objects.get(user_id=session['user_id']))
+            version.fsid.put(file, content_type='application/octet-stream', 
+                            filename=file.filename)
+            version.save()
+            return render_template(
+                'test.html',
+                message="Archivo subido con exito."
+            )
+        else:
+            flash('Extension invalida')
+            return redirect(request.url)
+
     num = unquote(num)
     nota = mdl.Nota.objects.get(num=num)
     return render_template(
