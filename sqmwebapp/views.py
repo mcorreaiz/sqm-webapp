@@ -7,7 +7,7 @@ from datetime import datetime
 
 import requests
 from flask import (flash, jsonify, make_response, redirect, render_template,
-                   request, session, url_for)
+                   request, session, url_for, g)
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote
 
@@ -22,10 +22,10 @@ def register():
         user = utl.get_user_via_headers(request.headers)
         if user is None: # New user, or header failed somehow
             data = me()
-            if not data:
+            if not data.get_json(): # Empty body means the API requires new auth
                 return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
             user = utl.get_or_create_user_via_api(data.get_json())
-        session['user'] = user.nombre
+        session['user'] = user.user_id
 
 
 # @app.before_request
@@ -45,7 +45,12 @@ def register():
 def logout():
     session.pop('user', None)
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
-    # return redirect('/.auth/logout?post_logout_redirect_uri=/home') 
+
+@app.route('/login')
+def login():
+    if request.args.get("code"):
+        session['auth_code'] = request.args.get("code")
+    return redirect(url_for('home'))
 
 # @app.route('/login/authorized')
 # def authorized():
@@ -187,7 +192,7 @@ def testgridfs(filename=None):
 		
 
     if filename is not None:
-        version = mdl.Version.objects.order_by('-fecha').first() # Query the newest
+        version = mdl.Nota.objects(nun=num).versiones[-1] # Query the newest
         doc = version.fsid
         down = utl.download_file(doc)
         return down if down else render_template(
@@ -333,52 +338,120 @@ def seed():
 @app.route('/me') # TODO: remove decorator and move to utils
 def me():
     """For testing purposes"""
-    # import adal
+    auth_cookie = request.cookies.get(utl.AZURE_COOKIE_NAME)
 
-    # #Static / Dont change
-    # authentication_endpoint = 'https://login.microsoftonline.com/'
-    # resource = 'https://graph.microsoft.com'
+    if utl.running_localhost(request):
+        r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), cookies={utl.AZURE_COOKIE_NAME:utl.COOKIE_VALUE})
+        body = r.json()
+        return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
 
-    tenant_id = app.config['TENANT_ID']
-    application_id = app.config['CLIENT_ID']
-    application_secret = app.config['CLIENT_SECRET']
+    if not auth_cookie: # Logout required
+        return make_response() #Empty response
 
-    # ## get an Azure access token using the service principal
-    # context = adal.AuthenticationContext(authentication_endpoint + tenant_id)
-    # token_response = context.acquire_token_with_client_credentials(resource, application_id, application_secret)
-    # access_token = token_response.get('accessToken')
-
-    r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={"Authorization": "Bearer "+app.config['AAD_TOKEN']})
+    r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), cookies={utl.AZURE_COOKIE_NAME:auth_cookie})
     body = r.json()
 
-    if r.status_code == 401: # Access token expired
-        data = {'client_id':application_id,
-        'refresh_token':app.config['AAD_REFRESH_TOKEN'],
-        'grant_type':'refresh_token',
-        'resource':application_id,
-        'client_secret':application_secret}
-
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        # Request new token
-        r = requests.post('https://login.microsoftonline.com/{tenant}/oauth2/token'.format(tenant=tenant_id),
-        data=data, headers=headers)
-
-        app.config['AAD_TOKEN'] = r.json()['access_token']
-        app.config['AAD_REFRESH_TOKEN'] = r.json()['refresh_token']
-
-        r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={"Authorization": "Bearer "+app.config['AAD_TOKEN']})
-        body = r.json()
-
-    if not body: # Empty body means the API requires new auth
-        return None
+    if r.status_code == 401 or not body: # Access token expired or error
+        return make_response() #Empty response
         
     return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
 
 
 @app.route('/headers')
 def headers():
+    print(request.cookies)
     """For testing purposes"""
     return render_template(
             'test.html',
             message=request.headers
         )
+
+@app.route('/test')
+def test():
+    """For testing purposes"""
+    auth_cookie = request.cookies.get(utl.AZURE_COOKIE_NAME)
+    return render_template(
+            'test.html',
+            message=auth_cookie
+        )
+
+@app.route('/test2')
+def test2():
+    """For testing purposes"""
+    auth_cookie = request.headers.get('x-ms-token-aad-access-token')
+    return render_template(
+            'test.html',
+            message=auth_cookie
+        )
+
+@app.route('/me2') # TODO: remove decorator and move to utils
+def me2():
+    """For testing purposes"""
+    auth = request.headers.get('x-ms-token-aad-access-token')
+
+    if utl.running_localhost(request):
+        r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={'Authorization':'Bearer '+auth})
+        body = r.json()
+        return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
+
+    if not auth: # Logout required
+        return make_response() #Empty response
+
+    r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), cookies={utl.AZURE_COOKIE_NAME:auth_cookie})
+    body = r.json()
+
+    if r.status_code == 401 or not body: # Access token expired or error
+        return make_response() #Empty response
+        
+    return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
+
+# @app.route('/test')
+# def test():
+#     """For testing purposes"""
+
+#     tenant_id = app.config['TENANT_ID']
+#     application_id = app.config['CLIENT_ID']
+#     application_secret = app.config['CLIENT_SECRET']
+
+#     data = {'client_id':application_id,
+#         'grant_type':'client_credentials',
+#         'resource':application_id,
+#         'client_assertion':'8N/+5dG73G8LM04aIOX0wOWefcYYah70zPKBguy6R0PsitZ1QIOh6rwOoyQaqkHnZHQKanaqFsYEGPRLqnIQldON/OhHwIYPZNfv3zOLCYH110pSk8Xx2b6QQx20XGb30G/M16k82Lx5/q+q+5AblcIuuCCIjld7di4X+9Inh/n5F7loJ1x6iA+1sdLmhYtbGqrSw10urmopo/c4qnEBEfHieDvHEEtOTZoMOJRxHBmiOk7B11bHOX3XayHxoo+/Z/SnwJegZYTXrEIAhb9MukSQlGBzktVrJnJh/OSKAtClhuhh83wd3vNoV1HdNNeIB++7ucbJGF6pKCXDoCelAeNpYCzPxqPTR8T1R2afVdX0QQoShIQe6py3T0HlKeQTX3CoLMEVperJG7QaQWG1VeOhuQDC9Me2ympaNzEnDrXhnqNYQpJjFwAvK5+vMwuJurdo37ObCFrU5zu2k+dYIzfmJryujwMR86UeJbYNUCII+/uMBAAlKoxChwOyaMaLp77Pb5KzFGvJPacg3lAG6fyJHSGzhlhb5OKfzPL3jMC/cG8NUs4clOuMSEkQlC5vrGDnjFrnt95ucJpltcKbFjupfF97W3k63ZPrVZs508ajrX+/xl24aXzF/j3UOTvE19ich9FgrigqsdM2Fii4oqXW7ET8XR5yIMTRekLPnfO34z8MSuJumO16ZggA4ppcjmjblD/5I8+rD0c723e1IK7N1NZgQFGP7JtRDNxZZ2UvfbR4wKsEtWg3lapbz9XsunwvOkx2xXajQASBAwy4yjnSJkqj4o4TN/NhyCUKO/IWitsMJcq+qIOuhLPZ3F6pNRq025CCsENQZ+BudH/X6lFynbiIgIL29MtqQ6C'}
+#     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+#     # Request new token
+#     cookies={"AppServiceAuthSession":'8N/ay2pqABcDH55Bn7mC99V5MgyJrpNX19WeAycAdQRAIMZODtzCPvgSUpwpG94fBUpuflICY0eBxUD43hFPsBOCCGw+5dG7a3G8LM04aIOX0wOWefcYYah70zPKBguy6R0PsitZ1QIOh6rwOoyQaqkHnZHQKanaqFsYEGPRLqnIQldON/OhHwIYPZNfv3zOLCYH110pSk8Xx2b6QQx20XGb30G/M16k82Lx5/q+q+5AblcIuuCCIjld7di4X+9Inh/n5F7loJ1x6iA+1sdLmhYtbGqrSw10urmopo/c4qnEBEfHieDvHEEtOTZoMOJRxHBmiOk7B11bHOX3XayHxoo+/Z/SnwJegZYTXrEIAhb9MukSQlGBzktVrJnJh/OSKAtClhuhh83wd3vNoV1HdNNeIB++7ucbJGF6pKCXDoCelAeNpYCzPxqPTR8T1R2afVdX0QQoShIQe6py3T0HlKeQTX3CoLMEVperJG7QaQWG1VeOhuQDC9Me2ympaNzEnDrXhnqNYQpJjFwAvK5+vMwuJurdo37ObCFrU5zu2k+dYIzfmJryujwMR86UeJbYNUCII+/uMBAAlKoxChwOyaMaLp77Pb5KzFGvJPacg3lAG6fyJHSGzhlhb5OKfzPL3jMC/cG8NUs4clOuMSEkQlC5vrGDnjFrnt95ucJpltcKbFjupfF97W3k63ZPrVZs508ajrX+/xl24aXzF/j3UOTvE19ich9FgrigqsdM2Fii4oqXW7ET8XR5yIMTRekLPnfO34z8MSuJumO16ZggA4ppcjmjblD/5I8+rD0c723e1IK7N1NZgQFGP7JtRDNxZZ2UvfbR4wKsEtWg3lapbz9XsunwvOkx2xXajQASBAwy4yjnSJkqj4o4TN/NhyCUKO/IWitsMJcq+qIOuhLPZ3F6pNRq025CCsENQZ+BudH/X6lFynbiIgIL29MtqQ6C'}
+
+#     r = requests.post('https://login.microsoftonline.com/{tenant}/oauth2/token'.format(tenant=tenant_id),
+#     data=data, headers=headers, cookies=cookies)
+#     print(r.content)
+
+#     r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={'Authorization':'Bearer '+r.json()['access_token']})
+#     print(r.content)
+
+#     return r.content
+
+
+# @app.route('/adal')
+# def adal():
+#     """For testing purposes"""
+#     import adal
+
+#     #Static / Dont change
+
+#     tenant_id = app.config['TENANT_ID']
+#     application_id = app.config['CLIENT_ID']
+#     application_secret = app.config['CLIENT_SECRET']
+
+#     authentication_endpoint = 'https://login.microsoftonline.com/'
+#     resource = application_id
+#     # get an Azure access token using the service principal
+#     context = adal.AuthenticationContext(authentication_endpoint + tenant_id)
+#     token_response = context.acquire_token_with_client_credentials(resource, application_id, application_secret)
+#     access_token = token_response.get('accessToken')
+#     r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={"Authorization": "Bearer "+access_token})
+#     return jsonify(r.json())
+
+
+# TODO: Tokens en session, probar dictfield(Usuario:Bool), session[user]: user_id
+
+# TODO sprint: Viste notas completa con cargar/descargar veriones. Sitema de aprobaciones. Poder leer y escribir comentarios.
