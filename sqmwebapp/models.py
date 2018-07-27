@@ -2,9 +2,9 @@ import mongoengine as db
 import datetime
 
 class Usuario(db.Document):
-    user_id = db.StringField(max_length=50, required=True)
+    user_id = db.StringField(max_length=50, required=True, unique=True)
     nombre  = db.StringField(max_length=50, required=True)
-    email   = db.EmailField(required=True)
+    email   = db.EmailField(required=True, unique=True)
 
     @property
     def iniciales(self):
@@ -24,7 +24,7 @@ class Comentario(db.Document):
     nombre    = db.StringField(max_length=50) # Ej. C_2
 
 class Nota(db.Document):
-    num                = db.StringField(max_length=5) # Ej. 25.11
+    num                = db.StringField(max_length=5, unique=True) # Ej. 25.11
     nombre             = db.StringField(max_length=50) # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     aprobadores        = db.ListField(db.ReferenceField(Usuario))
