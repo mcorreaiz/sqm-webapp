@@ -76,7 +76,8 @@ def main():
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
-    usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
+    print(session['user'])
+    usuario = mdl.Usuario.objects.get(user_id=session['user'])
     return render_template(
         'notas.html',
         user = usuario.nombre,
