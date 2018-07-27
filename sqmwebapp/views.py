@@ -101,7 +101,7 @@ def nota_panel(num):
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
-        print(file.filename)
+
         if file and utl.valid_extension(file.filename):
             filename = secure_filename(file.filename) # Never trust user input
             version = mdl.Version(redactor=mdl.Usuario.objects.get(user_id=session['user_id']))
@@ -332,13 +332,15 @@ def headers():
 @app.route('/me') # TODO: remove decorator and move to utils
 def me():
     """For testing purposes"""
-    access_token = request.headers.get(utl.ACCESS_TOKEN_HEADER)
-
     if utl.running_localhost(request):
-        r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), cookies={utl.AZURE_COOKIE_NAME:utl.COOKIE_VALUE})
-        body = r.json()
-        return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
-
+        r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), cookies={utl.AZURE_COOKIE_NAME:app.config['COOKIE_VALUE']})
+        if r.content:
+            body = r.json()
+            return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
+        else:
+            return redirect(url_for('logout'))
+    
+    access_token = request.headers.get(utl.ACCESS_TOKEN_HEADER)
     if not access_token: # Logout required
         return make_response() #Empty response
 
