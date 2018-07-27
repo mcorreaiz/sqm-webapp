@@ -76,7 +76,7 @@ def main():
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
-    usuario = mdl.Usuario.objects.get(user_id=session['user'])
+    usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     return render_template(
         'notas.html',
         user = usuario.nombre,
@@ -145,7 +145,7 @@ def testgridfs(filename=None):
 		
 
     if filename is not None:
-        version = mdl.Nota.objects(nun=num).versiones[-1] # Query the newest
+        version = mdl.Nota.objects(num=num).versiones[-1] # Query the newest
         doc = version.fsid
         down = utl.download_file(doc)
         return down if down else render_template(
@@ -320,7 +320,5 @@ def me():
         return make_response() #Empty response
         
     return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
-
-# TODO: Tokens en session, probar dictfield(Usuario:Bool), session[user]: user_id
 
 # TODO sprint: Viste notas completa con cargar/descargar veriones. Sitema de aprobaciones. Poder leer y escribir comentarios.

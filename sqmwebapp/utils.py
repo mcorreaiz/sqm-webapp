@@ -5,18 +5,6 @@ AZURE_COOKIE_NAME = 'AppServiceAuthSession' # Name of azure session cookie
 ACCESS_TOKEN_HEADER = 'x-ms-token-aad-access-token'
 COOKIE_VALUE = '8N/ay2pqABcDH55Bn7mC99V5MgyJrpNX19WeAycAdQRAIMZODtzCPvgSUpwpG94fBUpuflICY0eBxUD43hFPsBOCCGw+5dG7a3G8LM04aIOX0wOWefcYYah70zPKBguy6R0PsitZ1QIOh6rwOoyQaqkHnZHQKanaqFsYEGPRLqnIQldON/OhHwIYPZNfv3zOLCYH110pSk8Xx2b6QQx20XGb30G/M16k82Lx5/q+q+5AblcIuuCCIjld7di4X+9Inh/n5F7loJ1x6iA+1sdLmhYtbGqrSw10urmopo/c4qnEBEfHieDvHEEtOTZoMOJRxHBmiOk7B11bHOX3XayHxoo+/Z/SnwJegZYTXrEIAhb9MukSQlGBzktVrJnJh/OSKAtClhuhh83wd3vNoV1HdNNeIB++7ucbJGF6pKCXDoCelAeNpYCzPxqPTR8T1R2afVdX0QQoShIQe6py3T0HlKeQTX3CoLMEVperJG7QaQWG1VeOhuQDC9Me2ympaNzEnDrXhnqNYQpJjFwAvK5+vMwuJurdo37ObCFrU5zu2k+dYIzfmJryujwMR86UeJbYNUCII+/uMBAAlKoxChwOyaMaLp77Pb5KzFGvJPacg3lAG6fyJHSGzhlhb5OKfzPL3jMC/cG8NUs4clOuMSEkQlC5vrGDnjFrnt95ucJpltcKbFjupfF97W3k63ZPrVZs508ajrX+/xl24aXzF/j3UOTvE19ich9FgrigqsdM2Fii4oqXW7ET8XR5yIMTRekLPnfO34z8MSuJumO16ZggA4ppcjmjblD/5I8+rD0c723e1IK7N1NZgQFGP7JtRDNxZZ2UvfbR4wKsEtWg3lapbz9XsunwvOkx2xXajQASBAwy4yjnSJkqj4o4TN/NhyCUKO/IWitsMJcq+qIOuhLPZ3F6pNRq025CCsENQZ+BudH/X6lFynbiIgIL29MtqQ6C'
 
-# microsoft = oauth.remote_app(
-# 	'microsoft',
-# 	consumer_key=app.config['CLIENT_ID'],
-# 	consumer_secret=app.config['CLIENT_SECRET'],
-# 	request_token_params={'scope': 'offline_access User.Read'},
-# 	base_url='https://graph.microsoft.com/v1.0/',
-# 	request_token_url=None,
-# 	access_token_method='POST',
-# 	access_token_url=str.format('https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token', tenant=app.config['TENANT_ID']),
-# 	authorize_url=str.format('https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize', tenant=app.config['TENANT_ID'])
-#     )
-
 def valid_extension(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
@@ -36,11 +24,11 @@ def parse_auth_claims(claims):
     identifiers = {
         'nombre':'name',
         'user_id':'http://schemas.microsoft.com/identity/claims/objectidentifier',
-        'email':'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'
+        'email':'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
     }
 
     claims = {claim['typ']:claim['val'] for claim in claims}
-    return {k:claims[identifiers[k]] for k in identifiers.keys()}
+    return {k:claims.get(identifiers[k]) for k in identifiers.keys()}
 
 def running_localhost(request):
     return 'localhost' in request.host
