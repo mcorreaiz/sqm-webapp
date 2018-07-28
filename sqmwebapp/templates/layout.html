@@ -7,12 +7,69 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/fileinput.min.css" />
-    <script src="/static/scripts/modernizr-2.6.2.js"></script>
     
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="/static/scripts/locales/LANG.js"></script>
-    <script src="/static/scripts/fileinput.min.js"></script>
+    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+
+    
+    <style>
+        /* Popup container - can be anything you want */
+        .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* The actual popup */
+        .popup .popuptext {
+            visibility: hidden;
+            width: 160px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -80px;
+        }
+        
+        /* Popup arrow */
+        .popup .popuptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        /* Toggle this class - hide and show the popup */
+        .popup .show {
+            visibility: visible;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+        }
+        
+        /* Add animation (fade in the popup) */
+        @-webkit-keyframes fadeIn {
+            from {opacity: 0;} 
+            to {opacity: 1;}
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity:1 ;}
+        }
+    </style>
 
 
 
@@ -42,9 +99,9 @@
         </div>
     </div>
 
+    <div style="display:none; position:absolute; padding-top: 5px" class="col-md-2 col-md-offset-5 flashes">
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
-          <div style="display:none; position:absolute; padding-top: 5px" class="col-md-2 col-md-offset-5 flashes">
             {% for message in messages %}
                 {% if message[0] == 'error' %}
                     <div class="alert alert-danger">
@@ -63,10 +120,9 @@
                     </div>
                 {% endif %}
             {% endfor %}
-          </div>
-          <div class="col-md-5" ></div>
         {% endif %}
     {% endwith %}
+    </div>
     <div class="container body-content">
         {% block content %}{% endblock %}
         <hr />
@@ -79,17 +135,36 @@
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
 
-    {% block scripts %}{% endblock %}
-
     <script>
-        $(document).ready(function() {
+        function displayFlash() {
             $(".flashes").slideDown(function() {
                 setTimeout(function() {
                     $(".flashes").slideUp();
                 }, 5000);
             });
+        };
+
+        function flash(msg, type) {
+            if (type == 'error'){
+                var icon='warning';
+                type='danger';
+                }
+            else if (type == 'success')
+            var icon='check';
+            else
+            var icon='info-circle';      
+        
+            $(".flashes").children().remove();
+            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>'+ msg +'</strong></div>').prependTo($(".flashes")).hide().slideDown();
+            displayFlash();             
+        };
+
+        $(document).ready(function() {
+            displayFlash();
         });
     </script>
+    
+    {% block scripts %}{% endblock %}
 
 </body>
 </html>

@@ -348,4 +348,16 @@ def me():
         
     return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
 
+@app.route('/testapprove')
+def testapprove():
+    nota = mdl.Nota.objects.get(num='1')
+    if nota.estados_aprobacion[session['user_id']]:
+        nota.estados_aprobacion[session['user_id']] = False
+        nota.save()
+        return jsonify(aprobado=False, msg='Se ha desaprobado la Nota', tipo='success')
+    else:
+        nota.estados_aprobacion[session['user_id']] = True
+        nota.save()
+        return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
+
 # TODO sprint: Viste notas completa con cargar/descargar veriones. Sitema de aprobaciones. Poder leer y escribir comentarios.
