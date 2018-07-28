@@ -11,21 +11,17 @@
         <h4>Redactores:</h4>
         <ul class="list-group">
             {% for redactor in nota.redactores %}
-                {% if nota.estados_aprobacion[redactor.user_id] %}
-                    <li class="list-group-item"><i class="fa fa-square" style="font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} </li>
-                {% else %}
-                    <li class="list-group-item"><i class="fa fa-square-o" style="font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} </li>
-                {% endif %}
+                <li class="list-group-item"><i id="estado-aprobacion-{{ redactor.user_id }}" class="fa 
+                    {{ 'fa-square' if nota.estados_aprobacion[redactor.user_id] else 'fa-square-o' }}
+                    " style="font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} </li>
             {% endfor %}
         </ul>
         <h4>Aprobadores:</h4>
         <ul class="list-group">
             {% for aprobador in nota.aprobadores %}
-                {% if nota.estados_aprobacion[aprobador.user_id] %}
-                    <li class="list-group-item"><i class="fa fa-square" style="font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
-                {% else %}
-                    <li class="list-group-item"><i class="fa fa-square-o" style="font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
-                {% endif %}
+                <li class="list-group-item"><i id="estado-aprobacion-{{ aprobador.user_id }}" class="fa 
+                    {{ 'fa-square' if nota.estados_aprobacion[aprobador.user_id] else 'fa-square-o' }}
+                    " style="font-size:24px;color:green"></i></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
             {% endfor %}
         </ul>
         <h4>Comentadores:</h4>
@@ -73,61 +69,47 @@
             </div>
         </div>
         <div class="row">
-            {% if ((user in nota.aprobadores) or (user in nota.redactores)) %}
-                {% if (user in nota.redactores) %}
-                    <div class="col-md-2">
-                        <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
-                            <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
-                                Cargar
-                            </label>
-                            <div style='padding-top: 5px; display: none' class="slider">
-                                <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-default btn-block">Enviar</label>
-                                <button onclick="removeFile()" class="btn btn-default btn-block">Eliminar</button>
-                            </div>
-                            <div style='display: none'>
-                                <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
-                            </div>
-                            <div style='display: none'>
-                                <input id="fileSubmit" type="submit">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-md-2">
-                        <p><a class="btn btn-default btn-block">Comentar</a></p>
-                    </div>
-                    <div class="col-md-2">
-                        <button id="boton1" class="btn btn-default btn-block">
-                            {% if nota.estados_aprobacion[session['user_id']] %}
-                                Desaprobar
-                            {% else %}
-                                Aprobar
-                            {% endif %}
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
-                    </div>
-                {% else %}
-                    <div class="col-md-3">
-                        <p><a class="btn btn-default btn-block">Comentar</a></p>
-                    </div>
-                    <div class="col-md-3">
-                        {% if nota.estados_aprobacion[session['user_id']] %}
-                            <form action="#" method="post">
-                                <input type="hidden" name="change_type" value = "approval" />
-                                <button id="boton" type="submit" class="btn btn-default btn-block">Desaprobar</button>
-                            </form>
-                        {% else %}
-                            <form action="#" method="post">
-                                <input type="hidden" name="change_type" value = "approval" />
-                                <button id="boton" type="submit" class="btn btn-default btn-block">Aprobar</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-3">
-                        <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
-                    </div>
-                {% endif %}
+            {% if user in nota.redactores %}
+                <div class="col-md-2">
+                    <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
+                        <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
+                            Cargar
+                        </label>
+                        <div style='padding-top: 5px; display: none' class="slider">
+                            <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-default btn-block">Enviar</label>
+                            <button onclick="removeFile()" class="btn btn-default btn-block">Eliminar</button>
+                        </div>
+                        <div style='display: none'>
+                            <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
+                        </div>
+                        <div style='display: none'>
+                            <input id="fileSubmit" type="submit">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2">
+                    <p><a class="btn btn-default btn-block">Comentar</a></p>
+                </div>
+                <div class="col-md-2">
+                    <button id="boton-aprobacion" class="btn btn-default btn-block">
+                        {{ 'Desaprobar' if nota.estados_aprobacion[session['user_id']] else 'Aprobar' }}
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+                </div>
+            {% elif user in nota.aprobadores %}
+                <div class="col-md-3">
+                    <p><a class="btn btn-default btn-block">Comentar</a></p>
+                </div>
+                <div class="col-md-3">
+                    <button id="boton-aprobacion" class="btn btn-default btn-block">
+                        {{ 'Desaprobar' if nota.estados_aprobacion[session['user_id']] else 'Aprobar' }}
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+                </div>
             {% else %}
                 <div class="col-md-4">
                     <p><a class="btn btn-default btn-block">Comentar</a></p>
@@ -135,7 +117,7 @@
                 <div class="col-md-4">
                     <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
                 </div>
-                {% endif %}
+            {% endif %}
             </div>
         </div>
     </div>
@@ -147,16 +129,18 @@
         console.log("ready");
     });
 
-    $("#boton1").click(function(a) {
+    $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
         var self = this;
-        $.get("{{ url_for('testapprove') }}", function(data) {
+        var aprobacion = document.getElementById("estado-aprobacion-{{ session['user_id'] }}");
+        $.post("{{ url_for('testapprove') }}", data={'nota': '{{ nota.num  }}'}, function(data) {
             flash(data['msg'], data['tipo']);
-            
-            if (data['aprobado'] == true) {
+            if (data['aprobado']) {
                 self.innerHTML = "Desaprobar";
             } else {
                 self.innerHTML = 'Aprobar';
             }
+            aprobacion.classList.toggle('fa-square-o');
+            aprobacion.classList.toggle('fa-square');
         });
     });
 

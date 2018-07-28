@@ -348,9 +348,9 @@ def me():
         
     return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
 
-@app.route('/testapprove')
+@app.route('/testapprove', methods=['POST'])
 def testapprove():
-    nota = mdl.Nota.objects.get(num='1')
+    nota = mdl.Nota.objects.get(num=request.form['nota'])
     if nota.estados_aprobacion[session['user_id']]:
         nota.estados_aprobacion[session['user_id']] = False
         nota.save()
