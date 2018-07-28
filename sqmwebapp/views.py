@@ -44,26 +44,6 @@ def home():
         year=datetime.now().year,
     )
 
-@app.route('/contact')
-def contact():
-    """Renders the contact page."""
-    return render_template(
-        'contact.html',
-        title='Contact',
-        year=datetime.now().year,
-        message='Your contact page.'
-    )
-
-@app.route('/about')
-def about():
-    """Renders the about page."""
-    return render_template(
-        'about.html',
-        title='About',
-        year=datetime.now().year,
-        message='Your application description page.'
-    )
-
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
@@ -85,15 +65,6 @@ def nota_panel(num):
 
     if request.method == 'POST':
         if 'file' not in request.files:
-            if 'change_type' in request.form:
-                if nota.estados_aprobacion[session['user_id']]:
-                    nota.estados_aprobacion[session['user_id']] = False
-                    flash('Se ha desaprobado la Nota', 'success')
-                else:
-                    nota.estados_aprobacion[session['user_id']] = True
-                    flash('Se ha aprobado la Nota', 'success')
-                nota.save()
-                return redirect(request.url)
             flash('Form incorrecto. Contactar soporte si persiste', 'error')
             return redirect(request.url)
 
@@ -127,20 +98,6 @@ def nota_panel(num):
         'nota-panel.html',
         nota = nota,
         user = mdl.Usuario.objects.get(user_id=session['user_id'])
-    )
-
-@app.route('/testmongo')
-def testmongo():
-    """For testing purposes"""
-    user = mdl.Usuario()
-    user.nombre = 'Matias Correa'
-    user.user_id = '123456qwerty'
-    user.email = 'yo@aaa.aaa'
-    user.save()
-    usuarios = mdl.Usuario.objects
-    return render_template(
-        'test.html',
-        message=usuarios.to_json()
     )
 
 @app.route('/testgridfs/<filename>')
@@ -181,20 +138,6 @@ def testgridfs(filename=None):
         return render_template(
             'test.html',
             message="Nada que hacer por hoy."
-        )
-
-@app.route('/testgridfs/retrieve')
-def testgridfs_ret():
-    """For testing purposes"""
-    version = mdl.Version.objects.first()
-    foto = version.fsid.read()
-    return app.response_class(foto, mimetype='image/png')
-
-@app.route('/testgridfs/download')
-def testgridfs_down():
-    """For testing purposes"""
-    return render_template(
-            'download.html'
         )
 
 @app.route('/seed')
@@ -348,8 +291,8 @@ def me():
         
     return jsonify(utl.parse_auth_claims(body[0]['user_claims']))
 
-@app.route('/testapprove', methods=['POST'])
-def testapprove():
+@app.route('/approval', methods=['POST'])
+def approval():
     nota = mdl.Nota.objects.get(num=request.form['nota'])
     if nota.estados_aprobacion[session['user_id']]:
         nota.estados_aprobacion[session['user_id']] = False
@@ -360,4 +303,4 @@ def testapprove():
         nota.save()
         return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
 
-# TODO sprint: Viste notas completa con cargar/descargar veriones. Sitema de aprobaciones. Poder leer y escribir comentarios.
+# TODO sprint: Viste notas completa con cargar/descargar veriones. Poder leer y escribir comentarios.

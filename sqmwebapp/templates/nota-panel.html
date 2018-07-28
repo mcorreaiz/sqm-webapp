@@ -132,7 +132,7 @@
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
         var self = this;
         var aprobacion = document.getElementById("estado-aprobacion-{{ session['user_id'] }}");
-        $.post("{{ url_for('testapprove') }}", data={'nota': '{{ nota.num  }}'}, function(data) {
+        $.post("{{ url_for('approval') }}", data={'nota': '{{ nota.num  }}'}, function(data) {
             flash(data['msg'], data['tipo']);
             if (data['aprobado']) {
                 self.innerHTML = "Desaprobar";
