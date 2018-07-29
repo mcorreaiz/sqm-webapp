@@ -360,8 +360,16 @@ def testapprove():
         nota.save()
         return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
 
-@app.route('/testcomment/<num>')
-def testcomment(num):
-    nota = mdl.Nota.objects.get(num=num)
-    return jsonify(msg='Se ha guardado el comentario', tipo='success')
+@app.route('/testcomment', methods=['POST'])
+def testcomment():
+    print(request.form, request.form['nota'])
+    nota = mdl.Nota.objects.get(num=request.form['nota'])
+    comentario = mdl.Comentario()
+    comentario.contenido = request.form['comment']
+    comentario.redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
+    comentario.nombre = 'C_' + str(len(nota.comentarios) + 1)
+    comentario.save()
+    nota.comentarios.append(comentario)
+    nota.save()
+    return jsonify(msg='Se ha guardado el comentario', tipo='success', nombre='C_' + str(len(nota.comentarios)), info="{0}_{1}".format(mdl.Usuario.objects.get(user_id=session['user_id']).iniciales, comentario.fecha.strftime('%m_%d')))
 # TODO sprint: Viste notas completa con cargar/descargar veriones. Sitema de aprobaciones. Poder leer y escribir comentarios.
