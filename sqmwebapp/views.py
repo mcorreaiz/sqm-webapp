@@ -127,7 +127,7 @@ def testgridfs(filename=None):
 		
 
     if filename is not None:
-        version = mdl.Nota.objects(num=num).versiones[-1] # Query the newest
+        version = mdl.Nota.objects.get(num="1").versiones[-1] # Query the newest
         doc = version.fsid
         down = utl.download_file(doc)
         return down if down else render_template(
@@ -302,5 +302,14 @@ def approval():
         nota.estados_aprobacion[session['user_id']] = True
         nota.save()
         return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
+
+@app.route('/download')
+def download():
+    version_id = request.args['version_id']
+    version = mdl.Version.objects.get(id=version_id)
+    doc = version.fsid
+    down = utl.download_file(doc)
+    return down
+
 
 # TODO sprint: Viste notas completa con cargar/descargar veriones. Poder leer y escribir comentarios.

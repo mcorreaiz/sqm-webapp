@@ -39,9 +39,10 @@
                     <table class="table table-bordered table-hover">
                         <tbody>
                             {% for version in nota.versiones %}
-                                <tr>
+                                <tr id="{{ version.id }}" ondblclick="downloadVersion(this.id)">
                                     <td>{{ version.redactor.iniciales }}_{{ version.fecha.strftime('%m_%d') }}</td>
                                     <td>{{ version.nombre }}</td>
+                                    <a id="download-{{ version.id }}" href="{{ url_for('download', version_id=version.id) }}"></a>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -87,6 +88,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="col-md-2">
                     <p><a class="btn btn-default btn-block">Comentar</a></p>
                 </div>
@@ -121,6 +123,7 @@
             </div>
         </div>
     </div>
+
 {% endblock %}
     
 {% block scripts %}
@@ -132,7 +135,7 @@
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
         var self = this;
         var aprobacion = document.getElementById("estado-aprobacion-{{ session['user_id'] }}");
-        $.post("{{ url_for('approval') }}", data={'nota': '{{ nota.num  }}'}, function(data) {
+        $.post("{{ url_for('approval') }}", {'nota': '{{ nota.num  }}'}, function(data) {
             flash(data['msg'], data['tipo']);
             if (data['aprobado']) {
                 self.innerHTML = "Desaprobar";
@@ -163,6 +166,10 @@
         var popup = document.getElementById("popup-comentario-" + i);
         popup.classList.toggle("show");
     }
+
+    function downloadVersion(num) {
+        document.getElementById('download-' + num).click();
+    };
 
 </script>
 {% endblock %}

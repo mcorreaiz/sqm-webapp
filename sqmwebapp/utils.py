@@ -8,7 +8,6 @@ def valid_extension(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 
-# For Version document downloading. TODO: validate extension.
 def download_file(file):
     from flask import make_response
     r = make_response(file.read())
