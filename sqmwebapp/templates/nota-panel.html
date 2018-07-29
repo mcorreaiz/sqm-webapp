@@ -54,10 +54,10 @@
                     <table class="table table-bordered table-hover">
                         <tbody>
                             {% for comentario in nota.comentarios %}
-                                <tr>
+                                <tr onclick="verComentario('{{ loop.index }}')">
                                     <td>
-                                        <div class="popup" onclick="myFunction()">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
-                                            <span class="popuptext" id="myPopup">{{ comentario.contenido  }}</span>
+                                        <div class="popup">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
+                                            <span class="popuptext" id="popup-comentario-{{ loop.index }}">{{ comentario.contenido  }}</span>
                                         </div>
                                     </td>
                                     <td>{{ comentario.nombre }}</td>
@@ -159,8 +159,8 @@
         event.preventDefault();
     }
 
-    function myFunction() {
-        var popup = document.getElementById("myPopup");
+    function verComentario(i) {
+        var popup = document.getElementById("popup-comentario-" + i);
         popup.classList.toggle("show");
     }
 
