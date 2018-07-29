@@ -60,7 +60,7 @@
                             {% for comentario in nota.comentarios %}
                                 <tr>
                                     <td>
-                                        <div class="popup" onclick="myFunction()">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
+                                        <div class="popup" onclick="mostrarComentario()">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
                                             <span class="popuptext" id="myPopup">{{ comentario.contenido  }}</span>
                                         </div>
                                     </td>
@@ -92,9 +92,12 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-2">
-                        <p><a class="btn btn-default btn-block">Comentar</a></p>
-                    </div>
+                    <form>
+                        <div class="col-md-2">
+                            <button id="boton_comentar" class="btn btn-default btn-block">Comentar</button>
+                        </div>
+                    </form>
+                
                     <div class="col-md-2">
                         <button id="boton1" class="btn btn-default btn-block">
                             {% if nota.estados_aprobacion[session['user_id']] %}
@@ -160,6 +163,13 @@
         });
     });
 
+    $("#boton_comentar").click(function(a) {
+        $.get("{{ url_for('testcomment', num=nota.num) }}", function(data) {
+            flash(data['msg'], data['tipo']);
+            
+        });
+    });
+
     function fileLoaded(obj){
         var file = obj.value;
         var fileName = file.split("\\");
@@ -175,7 +185,7 @@
         event.preventDefault();
     }
 
-    function myFunction() {
+    function mostrarComentario() {
         var popup = document.getElementById("myPopup");
         popup.classList.toggle("show");
     }

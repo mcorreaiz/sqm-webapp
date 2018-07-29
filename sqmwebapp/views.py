@@ -360,4 +360,8 @@ def testapprove():
         nota.save()
         return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
 
+@app.route('/testcomment/<num>')
+def testcomment(num):
+    nota = mdl.Nota.objects.get(num=num)
+    return jsonify(msg='Se ha guardado el comentario', tipo='success')
 # TODO sprint: Viste notas completa con cargar/descargar veriones. Sitema de aprobaciones. Poder leer y escribir comentarios.
