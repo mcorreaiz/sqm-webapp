@@ -303,6 +303,25 @@ def approval():
         nota.save()
         return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
 
+@app.route('/comment', methods=['POST'])
+def comment():
+    nota = mdl.Nota.objects.get(num=request.form['nota'])
+    contenido = request.form['comment']
+    redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
+    nombre = 'C_' + str(len(nota.comentarios) + 1)
+
+    comentario = mdl.Comentario()
+    comentario.contenido = contenido
+    comentario.redactor = redactor
+    comentario.nombre = nombre
+    comentario.save()
+    nota.comentarios.append(comentario)
+    nota.save()
+    return jsonify(msg='Se ha guardado el comentario', tipo='success', 
+    nombre=nombre, 
+    info="{0}_{1}".format(redactor.iniciales, comentario.fecha.strftime('%m_%d')), 
+    contenido=contenido)
+
 @app.route('/download')
 def download():
     version_id = request.args['version_id']
