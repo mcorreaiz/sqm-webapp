@@ -91,7 +91,7 @@
             margin: auto;
             padding: 0;
             border: 1px solid #888;
-            width: 60%;
+            width: 40%;
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
             -webkit-animation-name: animatetop;
             -webkit-animation-duration: 0.4s;
@@ -131,8 +131,6 @@
             color: white;
         }
 
-        .modal-body {padding: 2px 16px;}
-
         .modal-footer {
             padding: 2px 16px;
             background-color: #5cb85c;
@@ -170,17 +168,17 @@
             {% for message in messages %}
                 {% if message[0] == 'error' %}
                     <div class="alert alert-danger">
-                        <i class="fa fa-warning"></i>
+                        <i class="fas fa-exclamation-triangle"></i>
                         <strong> {{ message[1] }}</strong>
                     </div>
                 {% elif message[0] == 'success' %}
                     <div class="alert alert-success">
-                        <i class="fa fa-check"></i>
+                        <i class="fas fa-check"></i>
                         <strong> {{ message[1] }}</strong>
                     </div>
                 {% elif message[0] == 'info' %}
                     <div class="alert alert-info">
-                        <i class="fa fa-info-circle"></i>
+                        <i class="fas fa-info-circle"></i>
                         <strong> {{ message[1] }}</strong>
                     </div>
                 {% endif %}
@@ -220,7 +218,7 @@
             var icon='info-circle';      
         
             $(".flashes").children().remove();
-            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>'+ msg +'</strong></div>').prependTo($(".flashes")).hide().slideDown();
+            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>  '+ msg +'</strong></div>').prependTo($(".flashes")).hide().slideDown();
             displayFlash();             
         };
 

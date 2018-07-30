@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 <h2>Nota {{ nota.num }}</h2>
 <h3>{{ nota.nombre }}</h3>
 
@@ -11,17 +11,18 @@
         <h4>Redactores:</h4>
         <ul class="list-group">
             {% for redactor in nota.redactores %}
-                <li class="list-group-item"><i id="estado-aprobacion-{{ redactor.user_id }}" class="fa 
-                    {{ 'fa-square' if nota.estados_aprobacion[redactor.user_id] else 'fa-square-o' }}
-                    " style="font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} </li>
+                <li class="list-group-item"><i id="estado-aprobacion-{{ redactor.user_id }}" class="fa-square 
+                    {{ 'fas' if nota.estados_aprobacion[redactor.user_id] else 'far' }}
+                    " style="vertical-align:sub;font-size:24px;color:green"></i> {{ redactor.iniciales }} {{ redactor.nombre }} 
+                </li>
             {% endfor %}
         </ul>
         <h4>Aprobadores:</h4>
         <ul class="list-group">
             {% for aprobador in nota.aprobadores %}
-                <li class="list-group-item"><i id="estado-aprobacion-{{ aprobador.user_id }}" class="fa 
-                    {{ 'fa-square' if nota.estados_aprobacion[aprobador.user_id] else 'fa-square-o' }}
-                    " style="font-size:24px;color:green"></i></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
+                <li class="list-group-item"><i id="estado-aprobacion-{{ aprobador.user_id }}" class="fa-square 
+                    {{ 'fas' if nota.estados_aprobacion[aprobador.user_id] else 'far' }}
+                    " style="vertical-align:sub;font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
             {% endfor %}
         </ul>
         <h4>Comentadores:</h4>
@@ -33,7 +34,7 @@
     </div>
     <div class="col-md-8">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <h4>Redacciones</h4>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
@@ -49,7 +50,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <h4>Comentarios</h4>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" id="comments_table">
@@ -70,81 +71,75 @@
             </div>
         </div>
         <div class="row">
-
             {% if user in nota.redactores %}
-                <div class="col-md-2">
-                    <button id="uploadButton" class="btn btn-default btn-block">Cargar</button>
-
-                    <div id="uploadModal" class="modal">
-
-                    <div class="modal-content">
-                        <span id="closeUploadModal" class="close">&times;</span>
-                        <p>Some text in the Modal..</p>
-                    </div>
-
-                    </div>
-                    <!-- <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
-                        <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
-                            Cargar
-                        </label>
-                        <div style='padding-top: 5px; display: none' class="slider">
-                            <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-default btn-block">Enviar</label>
-                            <button onclick="removeFile()" class="btn btn-default btn-block">Eliminar</button>
-                        </div>
-                        <div style='display: none'>
-                            <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
-                        </div>
-                        <div style='display: none'>
-                            <input id="fileSubmit" type="submit">
-                        </div>
-                    </form> -->
-                </div>
-
-                <div class="col-md-2">
-                    <button id="boton_comentar" class="btn btn-default btn-block">Comentar</button>
-                </div>
-                <div class="col-md-2">
-                    <button id="boton-aprobacion" class="btn btn-default btn-block">
-                        {{ 'Desaprobar' if nota.estados_aprobacion[session['user_id']] else 'Aprobar' }}
+                <div class="col-md-3">
+                    <button id="uploadButton" class="btn btn-default btn-block">
+                        <i class="far fa-file-word"></i> Cargar
                     </button>
                 </div>
-                <div class="col-md-2">
-                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+
+                <div class="col-md-3">
+                    <button id="boton_comentar" class="btn btn-default btn-block">
+                        <i class="far fa-comment-alt"></i> Comentar
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button id="boton-aprobacion" class="btn btn-default btn-block">
+                            <i class="fas {{ 'fa-times' if nota.estados_aprobacion[session['user_id']] else 'fa-check' }}"></i>
+                            <span>
+                                {{ 'Desaprobar' if nota.estados_aprobacion[session['user_id']] else 'Aprobar' }}
+                            </span>
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-default btn-block">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </button>
                 </div>
             {% elif user in nota.aprobadores %}
-                <div class="col-md-3">
-                    <button id="boton_comentar" class="btn btn-default btn-block">Comentar</button>
-                </div>
-                <div class="col-md-3">
-                    <button id="boton-aprobacion" class="btn btn-default btn-block">
-                        {{ 'Desaprobar' if nota.estados_aprobacion[session['user_id']] else 'Aprobar' }}
+                <div class="col-md-4">
+                    <button id="boton_comentar" class="btn btn-default btn-block">
+                        <i class="far fa-comment-alt"></i> Comentar
                     </button>
                 </div>
-                <div class="col-md-3">
-                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+                <div class="col-md-4">
+                    <button id="boton-aprobacion" class="btn btn-default btn-block">
+                        <i class="fas {{ 'fa-times' if nota.estados_aprobacion[session['user_id']] else 'fa-check' }}"></i>
+                        <span>
+                            {{ 'Desaprobar' if nota.estados_aprobacion[session['user_id']] else 'Aprobar' }}
+                        </span>
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-default btn-block">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </button>
                 </div>
 
             {% else %}
-                <div class="col-md-4">
-                    <p><a class="btn btn-default btn-block">Comentar</a></p>
+                <div class="col-md-6">
+                    <button class="btn btn-default btn-block">
+                        <i class="far fa-comment-alt"></i> Comentar
+                    </button>
                 </div>
-                <div class="col-md-4">
-                    <p><a class="btn btn-default btn-block" href="{{ url_for('notas') }}">Volver</a></p>
+                <div class="col-md-6">
+                    <button class="btn btn-default btn-block">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </button>
                 </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-<div id="myModal" class="modal">
-    <!-- Modal content -->
+<div id="commentModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <span class="close">&times;</span>
-            <h2>Nuevo Comentario:</h2>
+            <h2>Nuevo Comentario</h2>
         </div>
         <div class="modal-body">
-            <br>
+            <!-- Use textarea instead? -->
             <input type="text" class="form-control" id="comment" placeholder="Ingrese el comentario"><br>
             <div class="row">
                 <div class="col-md-3"></div>
@@ -152,7 +147,48 @@
                 <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancel_comment"> Cancelar</button></div>
                 <div class="col-md-3"></div>
             </div>
-            <br>
+        </div>
+    </div>
+</div>
+
+<div id="uploadModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeUploadModal" class="close">&times;</span>
+            <h2>Cargar Nueva Versi&oacute;n</h2>
+        </div>
+        <div class="modal-body">
+            <div style="padding: 10px 0 10px 0;">
+                <strong id="filename">Ning&uacute;n archivo elegido</strong>
+                <span id="filesize" style="position:absolute;left:80%;"></span>
+            </div>
+            <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
+                <div class="checkbox">
+                    <label style="vertical-align: text-top;">
+                        <input type="checkbox" value="">
+                        Borrador
+                    </label>
+                </div>
+                <div style='display: none'>
+                    <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
+                </div>
+                <div style='display: none'>
+                    <input id="fileSubmit" type="submit">
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
+                        Explorar...
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-success btn-block" id="fileSubmit">
+                        Cargar version
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -166,38 +202,40 @@
     });
 
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
-        var self = this;
+        var text = $(this).find('span')[0];
+        var icon = $(this).find('i')[0];
         var aprobacion = document.getElementById("estado-aprobacion-{{ session['user_id'] }}");
+        icon.className = "fas fa-spinner fa-spin";
         $.post("{{ url_for('approval') }}", {'nota': '{{ nota.num  }}'}, function(data) {
             flash(data['msg'], data['tipo']);
             if (data['aprobado']) {
-                self.innerHTML = "Desaprobar";
+                icon.className = "fas fa-times"
+                text.innerHTML = 'Desaprobar';
             } else {
-                self.innerHTML = 'Aprobar';
+                icon.className = "fas fa-check"
+                text.innerHTML = 'Aprobar';
             }
-            aprobacion.classList.toggle('fa-square-o');
-            aprobacion.classList.toggle('fa-square');
+            aprobacion.classList.toggle('far');
+            aprobacion.classList.toggle('fas');
         });
     });
 
 
     function fileLoaded(obj){
-        var file = obj.value;
-        var fileName = file.split("\\");
-        document.getElementById("fileInputLabel").innerHTML = fileName[fileName.length-1];
-        $(".slider").slideDown()
+        var file = obj.files[0];
+        document.getElementById("filename").innerHTML = file.name;
+        document.getElementById("filesize").innerHTML = (file.size/(1024 * 1024)).toFixed(2) + " MB";
         event.preventDefault();
     }
 
-    function removeFile(){
-        $(".slider").slideUp();
+    function resetUploadModal() {
         document.getElementById("fileForm").reset();
-        document.getElementById("fileInputLabel").innerHTML = "Cargar";
-        event.preventDefault();
+        document.getElementById("filename").innerHTML = "Ning&uacute;n archivo elegido";
+        document.getElementById("filesize").innerHTML = ''
     }
 
     // Get the modal
-    var modal = document.getElementById('myModal');
+    var modal = document.getElementById('commentModal');
 
     // Get the button that opens the modal
     var btn = document.getElementById("boton_comentar");
@@ -222,7 +260,6 @@
         }
     }
 
-    // TODO (maybe) Comment table shows comment preview
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
         $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
@@ -247,23 +284,21 @@
         });
     });
 
-    var cancel_btn = document.getElementById("cancel_comment");
-    cancel_btn.onclick = function() {
-        document.getElementById("comment").value = '';
+    document.getElementById("cancel_comment").onclick = function() {
+        document.getElementById("comment").value = ''; // Clear form
         modal.style.display = "none"; 
-    }
+    };
 
     function verComentario(i) {
-        console.log(i)
         var popup = document.getElementById("popup-comentario-" + i);
         popup.classList.toggle("show");
     }
 
     function downloadVersion(num) {
         document.getElementById('download-' + num).click();
-    };
+    }
 
-    var modal = document.getElementById('uploadModal');
+    var uploadModal = document.getElementById('uploadModal');
 
     var open = document.getElementById("uploadButton");
 
@@ -271,19 +306,21 @@
 
     // When the user clicks on the button, open the modal 
     open.onclick = function() {
-        modal.style.display = "block";
+        uploadModal.style.display = "block";
     }
 
     // When the user clicks on <span> (x), close the modal
     close.onclick = function() {
-        modal.style.display = "none";
+        uploadModal.style.display = "none";
+        resetUploadModal();
     }
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
+        if (event.target == uploadModal) {
+            uploadModal.style.display = "none";
+            resetUploadModal();
+        };
     }
 
 </script>

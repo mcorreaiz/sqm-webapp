@@ -65,7 +65,7 @@ def nota_panel(num):
 
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('Form incorrecto. Contactar soporte si persiste', 'error')
+            flash('Ningun archivo seleccionado', 'error')
             return redirect(request.url)
 
         file = request.files['file']
