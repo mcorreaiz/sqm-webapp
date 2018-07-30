@@ -39,9 +39,10 @@
                     <table class="table table-bordered table-hover">
                         <tbody>
                             {% for version in nota.versiones %}
-                                <tr>
+                                <tr id="{{ version.id }}" ondblclick="downloadVersion(this.id)">
                                     <td>{{ version.redactor.iniciales }}_{{ version.fecha.strftime('%m_%d') }}</td>
                                     <td>{{ version.nombre }}</td>
+                                    <a id="download-{{ version.id }}" href="{{ url_for('download', version_id=version.id) }}"></a>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -54,10 +55,10 @@
                     <table class="table table-bordered table-hover" id="comments_table">
                         <tbody>
                             {% for comentario in nota.comentarios %}
-                                <tr>
+                                <tr onclick="verComentario('{{ loop.index }}')">
                                     <td>
-                                        <div class="popup" onclick="mostrarComentario()">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
-                                            <span class="popuptext" id="myPopup">{{ comentario.contenido  }}</span>
+                                        <div class="popup">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
+                                            <span class="popuptext" id="popup-comentario-{{ loop.index }}">{{ comentario.contenido  }}</span>
                                         </div>
                                     </td>
                                     <td>{{ comentario.nombre }}</td>
@@ -88,6 +89,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="col-md-2">
                     <button id="boton_comentar" class="btn btn-default btn-block">Comentar</button>
                 </div>
@@ -125,7 +127,6 @@
 </div>
 
 <div id="myModal" class="modal">
-
     <!-- Modal content -->
     <div class="modal-content">
         <div class="modal-header">
@@ -144,7 +145,6 @@
             <br>
         </div>
     </div>
-  
 </div>
 
 {% endblock %}
@@ -158,7 +158,7 @@
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
         var self = this;
         var aprobacion = document.getElementById("estado-aprobacion-{{ session['user_id'] }}");
-        $.post("{{ url_for('testapprove') }}", data={'nota': '{{ nota.num  }}'}, function(data) {
+        $.post("{{ url_for('approval') }}", {'nota': '{{ nota.num  }}'}, function(data) {
             flash(data['msg'], data['tipo']);
             if (data['aprobado']) {
                 self.innerHTML = "Desaprobar";
@@ -184,11 +184,6 @@
         document.getElementById("fileForm").reset();
         document.getElementById("fileInputLabel").innerHTML = "Cargar";
         event.preventDefault();
-    }
-
-    function mostrarComentario() {
-        var popup = document.getElementById("myPopup");
-        popup.classList.toggle("show");
     }
 
     // Get the modal
@@ -217,22 +212,29 @@
         }
     }
 
+    // TODO (maybe) Comment table shows comment preview
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
-        $.post("{{ url_for('testcomment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
+        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
             flash(data['msg'], data['tipo']);
             modal.style.display = "none";
-            var comment_info = data['info'];
+            document.getElementById("comment").value = ''; // Clear form
+            
+            // Update view
+            var num_row = $('#comments_table tr').length + 1;
+            var comment_info = `
+            <div class="popup">${data['info']}
+                <span class="popuptext" id="popup-comentario-${num_row}">${data['contenido']}</span>
+            </div>
+            `;
             var comment_name = data['nombre'];
-            document.getElementById("comment").value = '';
-            var table = document.getElementById("comments_table");
-            var row = table.insertRow(-1);
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            cell1.innerHTML = comment_info;
-            cell2.innerHTML = comment_name;
+            var row = document.getElementById("comments_table").insertRow(-1);
+            row.insertCell(0).innerHTML = comment_info;
+            row.insertCell(1).innerHTML = comment_name;
+            row.onclick = function() {
+                verComentario(num_row);
+            };
         });
-        
     });
 
     var cancel_btn = document.getElementById("cancel_comment");
@@ -240,6 +242,16 @@
         document.getElementById("comment").value = '';
         modal.style.display = "none"; 
     }
+
+    function verComentario(i) {
+        console.log(i)
+        var popup = document.getElementById("popup-comentario-" + i);
+        popup.classList.toggle("show");
+    }
+
+    function downloadVersion(num) {
+        document.getElementById('download-' + num).click();
+    };
 
 </script>
 {% endblock %}

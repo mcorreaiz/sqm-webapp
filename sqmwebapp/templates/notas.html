@@ -21,7 +21,8 @@
                 </thead>
                 <tbody>
                     {% for version in redacciones %}
-                        <tr>
+                    <!-- TODO: usar template inclusion para esta tabla! -->
+                        <tr> 
                             {% if version.estados_aprobacion[user.user_id] %}
                                 {% if version.full_aprobado %}
                                     <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
