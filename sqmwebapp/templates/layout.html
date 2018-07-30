@@ -6,11 +6,7 @@
     <title>{{ title }} - My Flask Application</title>
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
-    <link rel="stylesheet" type="text/css" href="/static/content/fileinput.min.css" />
-    
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="/static/scripts/modernizr-2.6.2.js"></script>
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     
     <style>
         /* Popup container - can be anything you want */
@@ -136,6 +132,14 @@
             background-color: #5cb85c;
             color: white;
         }
+
+        input:disabled {
+            background: #dddddd;
+          }
+          
+        input:disabled+label {
+            color: #ccc;
+        }
     </style>
 
 
@@ -202,7 +206,6 @@
                 <h2>Nuevo Comentario</h2>
             </div>
             <div class="modal-body">
-                <!-- Use textarea instead? -->
                 <input type="text" class="form-control" id="comment" placeholder="Ingrese el comentario"><br>
                 <div class="row">
                     <div class="col-md-3"></div>
@@ -227,8 +230,8 @@
                 </div>
                 <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
                     <div class="checkbox">
-                        <label style="vertical-align: text-top;">
-                            <input type="checkbox" value="on" name="borrador">
+                        <input id="checkbox-borrador" disabled type="checkbox" value="on" name="borrador">
+                        <label style="vertical-align: text-top;" for="checkbox-borrador">
                             Borrador
                         </label>
                     </div>
@@ -247,8 +250,9 @@
                         </label>
                     </div>
                     <div class="col-md-4">
-                        <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-success btn-block" id="fileSubmit">
-                            Cargar version
+                        <label id="fileSubmitLabel" disabled for="fileSubmit" class="btn btn-success btn-block">
+                            <i></i>
+                            <span>Cargar version</span>
                         </label>
                     </div>
                 </div>
@@ -259,12 +263,14 @@
     <script src="/static/scripts/jquery-1.10.2.js"></script>
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
+    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
     <script>
         $(document).ready(function() {
             displayFlash();
         });
-        
+
         function displayFlash() {
             $(".flashes").slideDown(function() {
                 setTimeout(function() {
@@ -289,6 +295,9 @@
         };
 
         function fileLoaded(obj){
+            $('#fileSubmitLabel').attr('disabled', false);
+            $('#checkbox-borrador').attr('disabled', false);
+
             var file = obj.files[0];
             document.getElementById("filename").innerHTML = file.name;
             document.getElementById("filesize").innerHTML = (file.size/(1024 * 1024)).toFixed(2) + " MB";
@@ -300,6 +309,8 @@
             document.getElementById("fileForm").reset();
             document.getElementById("filename").innerHTML = "Ning&uacute;n archivo elegido";
             document.getElementById("filesize").innerHTML = ''
+            $('#fileSubmitLabel').attr('disabled', true);
+            $('#checkbox-borrador').attr('disabled', true);
         }
     
         function closeCommentModal() {
@@ -315,6 +326,11 @@
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
             closeUploadModal();
+        };
+
+        document.getElementById('fileSubmitLabel').onclick = function() {
+            $(this).find('i')[0].className = "fas fa-spinner fa-spin";
+            $(this).find('span')[0].innerHTML = 'Cargando...'
         };
 
         // When the user clicks the button, open the modal 

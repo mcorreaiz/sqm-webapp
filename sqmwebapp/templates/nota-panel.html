@@ -2,7 +2,6 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 <h2>Nota {{ nota.num }}</h2>
 <h3>{{ nota.nombre }}</h3>
 
@@ -113,7 +112,7 @@
                 <div class="col-md-4">
                     <a class="btn btn-default btn-block" href="{{ url_for('notas') }}">
                         <i class="fas fa-arrow-left"></i> Volver
-                    </a>>
+                    </a>
                 </div>
 
             {% else %}
