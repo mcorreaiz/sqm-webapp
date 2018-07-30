@@ -92,9 +92,9 @@
                     </button>
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-default btn-block">
+                    <a class="btn btn-default btn-block" href="{{ url_for('notas') }}">
                         <i class="fas fa-arrow-left"></i> Volver
-                    </button>
+                    </a>
                 </div>
             {% elif user in nota.aprobadores %}
                 <div class="col-md-4">
@@ -111,9 +111,9 @@
                     </button>
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-default btn-block">
+                    <a class="btn btn-default btn-block" href="{{ url_for('notas') }}">
                         <i class="fas fa-arrow-left"></i> Volver
-                    </button>
+                    </a>>
                 </div>
 
             {% else %}
@@ -123,9 +123,9 @@
                     </button>
                 </div>
                 <div class="col-md-6">
-                    <button class="btn btn-default btn-block">
+                    <a class="btn btn-default btn-block" href="{{ url_for('notas') }}">
                         <i class="fas fa-arrow-left"></i> Volver
-                    </button>
+                    </a>
                 </div>
             {% endif %}
         </div>
@@ -135,7 +135,7 @@
 <div id="commentModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <span class="close">&times;</span>
+            <span id="closeCommentModal" class="close">&times;</span>
             <h2>Nuevo Comentario</h2>
         </div>
         <div class="modal-body">
@@ -165,7 +165,7 @@
             <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
                 <div class="checkbox">
                     <label style="vertical-align: text-top;">
-                        <input type="checkbox" value="">
+                        <input type="checkbox" value="on" name="borrador">
                         Borrador
                     </label>
                 </div>
@@ -196,6 +196,7 @@
 {% endblock %}
     
 {% block scripts %}
+
 <script>
     $(document).ready(function() {
         console.log("ready");
@@ -220,7 +221,6 @@
         });
     });
 
-
     function fileLoaded(obj){
         var file = obj.files[0];
         document.getElementById("filename").innerHTML = file.name;
@@ -232,32 +232,6 @@
         document.getElementById("fileForm").reset();
         document.getElementById("filename").innerHTML = "Ning&uacute;n archivo elegido";
         document.getElementById("filesize").innerHTML = ''
-    }
-
-    // Get the modal
-    var modal = document.getElementById('commentModal');
-
-    // Get the button that opens the modal
-    var btn = document.getElementById("boton_comentar");
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks the button, open the modal 
-    btn.onclick = function() {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
     }
 
     $("#confirm_comment").click(function(a) {
@@ -298,30 +272,39 @@
         document.getElementById('download-' + num).click();
     }
 
-    var uploadModal = document.getElementById('uploadModal');
-
-    var open = document.getElementById("uploadButton");
-
-    var close = document.getElementById('closeUploadModal');
-
     // When the user clicks on the button, open the modal 
-    open.onclick = function() {
-        uploadModal.style.display = "block";
+    document.getElementById("uploadButton").onclick = function() {
+        document.getElementById('uploadModal').style.display = "block";
     }
 
     // When the user clicks on <span> (x), close the modal
-    close.onclick = function() {
-        uploadModal.style.display = "none";
+    document.getElementById('closeUploadModal').onclick = function() {
+        document.getElementById('uploadModal').style.display = "none";
         resetUploadModal();
+    }
+
+    // When the user clicks the button, open the modal 
+    document.getElementById("boton_comentar").onclick = function() {
+        document.getElementById('commentModal').style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    document.getElementById('closeCommentModal').onclick = function() {
+        document.getElementById('commentModal').style.display = "none";
     }
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
+        var commentModal = document.getElementById('commentModal');
+        var uploadModal = document.getElementById('uploadModal');
+        if (event.target == commentModal) {
+            commentModal.style.display = "none";
+        };
         if (event.target == uploadModal) {
             uploadModal.style.display = "none";
             resetUploadModal();
         };
     }
-
 </script>
+
 {% endblock %}

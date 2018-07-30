@@ -82,7 +82,7 @@ def nota_panel(num):
             if len(nota.versiones) == 0:
                 version.nombre = "R_b"
             else:
-                version.nombre = "R_{}".format(len(nota.versiones))
+                version.nombre = "R_{}{}".format(len(nota.versiones), 'b' if request.form.get('borrador') else '')
             version.save()
             nota.versiones.append(version)
             for user in nota.estados_aprobacion.keys():
