@@ -132,67 +132,6 @@
     </div>
 </div>
 
-<div id="commentModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span id="closeCommentModal" class="close">&times;</span>
-            <h2>Nuevo Comentario</h2>
-        </div>
-        <div class="modal-body">
-            <!-- Use textarea instead? -->
-            <input type="text" class="form-control" id="comment" placeholder="Ingrese el comentario"><br>
-            <div class="row">
-                <div class="col-md-3"></div>
-                <div class="col-md-3"><button class="btn btn-success btn-block" id="confirm_comment"> Confirmar</button></div>
-                <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancel_comment"> Cancelar</button></div>
-                <div class="col-md-3"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="uploadModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span id="closeUploadModal" class="close">&times;</span>
-            <h2>Cargar Nueva Versi&oacute;n</h2>
-        </div>
-        <div class="modal-body">
-            <div style="padding: 10px 0 10px 0;">
-                <strong id="filename">Ning&uacute;n archivo elegido</strong>
-                <span id="filesize" style="position:absolute;left:80%;"></span>
-            </div>
-            <form id="fileForm" action="#" method="POST" enctype=multipart/form-data>
-                <div class="checkbox">
-                    <label style="vertical-align: text-top;">
-                        <input type="checkbox" value="on" name="borrador">
-                        Borrador
-                    </label>
-                </div>
-                <div style='display: none'>
-                    <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
-                </div>
-                <div style='display: none'>
-                    <input id="fileSubmit" type="submit">
-                </div>
-            </form>
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-4">
-                    <label id="fileInputLabel" for="fileInput" class="btn btn-default btn-block">
-                        Explorar...
-                    </label>
-                </div>
-                <div class="col-md-4">
-                    <label id="fileSubmitLabel" for="fileSubmit" class="btn btn-success btn-block" id="fileSubmit">
-                        Cargar version
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 {% endblock %}
     
 {% block scripts %}
@@ -221,25 +160,11 @@
         });
     });
 
-    function fileLoaded(obj){
-        var file = obj.files[0];
-        document.getElementById("filename").innerHTML = file.name;
-        document.getElementById("filesize").innerHTML = (file.size/(1024 * 1024)).toFixed(2) + " MB";
-        event.preventDefault();
-    }
-
-    function resetUploadModal() {
-        document.getElementById("fileForm").reset();
-        document.getElementById("filename").innerHTML = "Ning&uacute;n archivo elegido";
-        document.getElementById("filesize").innerHTML = ''
-    }
-
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
         $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
             flash(data['msg'], data['tipo']);
-            modal.style.display = "none";
-            document.getElementById("comment").value = ''; // Clear form
+            closeCommentModal();
             
             // Update view
             var num_row = $('#comments_table tr').length + 1;
@@ -257,54 +182,16 @@
             };
         });
     });
-
-    document.getElementById("cancel_comment").onclick = function() {
-        document.getElementById("comment").value = ''; // Clear form
-        modal.style.display = "none"; 
-    };
-
+    
     function verComentario(i) {
         var popup = document.getElementById("popup-comentario-" + i);
         popup.classList.toggle("show");
     }
-
+    
     function downloadVersion(num) {
         document.getElementById('download-' + num).click();
     }
-
-    // When the user clicks on the button, open the modal 
-    document.getElementById("uploadButton").onclick = function() {
-        document.getElementById('uploadModal').style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    document.getElementById('closeUploadModal').onclick = function() {
-        document.getElementById('uploadModal').style.display = "none";
-        resetUploadModal();
-    }
-
-    // When the user clicks the button, open the modal 
-    document.getElementById("boton_comentar").onclick = function() {
-        document.getElementById('commentModal').style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    document.getElementById('closeCommentModal').onclick = function() {
-        document.getElementById('commentModal').style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        var commentModal = document.getElementById('commentModal');
-        var uploadModal = document.getElementById('uploadModal');
-        if (event.target == commentModal) {
-            commentModal.style.display = "none";
-        };
-        if (event.target == uploadModal) {
-            uploadModal.style.display = "none";
-            resetUploadModal();
-        };
-    }
+   
 </script>
 
 {% endblock %}
