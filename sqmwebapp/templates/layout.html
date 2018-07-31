@@ -153,6 +153,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
                 <a href="/" class="navbar-brand">{{ session['user'] }}</a>
             </div>
@@ -317,11 +318,6 @@
             document.getElementById('commentModal').style.display = "none"; 
             document.getElementById("comment").value = '';
         }
-
-        // When the user clicks on the button, open the modal 
-        document.getElementById("uploadButton").onclick = function() {
-            document.getElementById('uploadModal').style.display = "block";
-        };
         
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
@@ -331,11 +327,6 @@
         document.getElementById('fileSubmitLabel').onclick = function() {
             $(this).find('i')[0].className = "fas fa-spinner fa-spin";
             $(this).find('span')[0].innerHTML = 'Cargando...'
-        };
-
-        // When the user clicks the button, open the modal 
-        document.getElementById("boton_comentar").onclick = function() {
-            document.getElementById('commentModal').style.display = "block";
         };
         
         document.getElementById("cancel_comment").onclick = function() {

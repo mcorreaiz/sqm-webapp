@@ -7,17 +7,6 @@ ACCESS_TOKEN_HEADER = 'x-ms-token-aad-access-token'
 def valid_extension(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
-
-def download_file(file):
-    from flask import make_response
-    r = make_response(file.read())
-    r.headers.set('Content-Disposition', 'attachment', filename=file.filename)
-    r.headers['Content-Type'] = 'application/octet-stream'
-    if valid_extension(file.filename):
-        return r
-    else:
-        return None
-
 def parse_auth_claims(claims):
     identifiers = {
         'nombre':'name',

@@ -190,7 +190,16 @@
     function downloadVersion(num) {
         document.getElementById('download-' + num).click();
     }
-   
+
+    // When the user clicks the button, open the modal 
+    document.getElementById("boton_comentar").onclick = function() {
+        document.getElementById('commentModal').style.display = "block";
+    };
+
+    // When the user clicks on the button, open the modal 
+    document.getElementById("uploadButton").onclick = function() {
+        document.getElementById('uploadModal').style.display = "block";
+    };
 </script>
 
 {% endblock %}

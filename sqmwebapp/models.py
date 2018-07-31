@@ -14,13 +14,13 @@ class Usuario(db.Document):
 class Version(db.Document):
     fsid     = db.FileField()                                      # id de GridFS
     redactor = db.ReferenceField(Usuario)
-    fecha    = db.DateTimeField(default=datetime.datetime.utcnow)
+    fecha    = db.DateTimeField(default=datetime.datetime.now)
     nombre   = db.StringField(max_length=50)                       # Ej. R_2
 
 class Comentario(db.Document):
     contenido = db.StringField()
     redactor  = db.ReferenceField(Usuario)
-    fecha     = db.DateTimeField(default=datetime.datetime.utcnow)
+    fecha     = db.DateTimeField(default=datetime.datetime.now)
     nombre    = db.StringField(max_length=50)                      # Ej. C_2
 
 class Nota(db.Document):

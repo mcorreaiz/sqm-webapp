@@ -3,11 +3,14 @@ Routes and views for the flask application.
 """
 
 import uuid
+import zipfile
 from datetime import datetime
+from docx import Document
+from io import BytesIO
 
 import requests
 from flask import (flash, jsonify, make_response, redirect, render_template,
-                   request, session, url_for, g)
+                   request, session, url_for, g, send_file)
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote
 
@@ -47,7 +50,6 @@ def home():
 @app.route('/notas')
 def notas():
     """Renders the overview of the Notas state."""
-    print(session['user_id'])
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     return render_template(
         'notas.html',
@@ -99,46 +101,6 @@ def nota_panel(num):
         nota = nota,
         user = mdl.Usuario.objects.get(user_id=session['user_id'])
     )
-
-@app.route('/testgridfs/<filename>')
-@app.route('/testgridfs', methods=['GET', 'POST'])
-def testgridfs(filename=None):
-    """For testing purposes"""
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part', category='error')
-            return redirect(request.url)
-
-        file = request.files['file']
-
-        # If user submits an empty form. TODO: Acivate submit iif selected file
-        if file.filename == '':
-            flash('No selected file', category='error')
-            return redirect(request.url)
-
-        if file and utl.valid_extension(file.filename):
-            filename = secure_filename(file.filename) # Never trust user input
-            version = mdl.Version(redactor=mdl.Usuario.objects.first())
-            version.fsid.put(file, content_type='application/octet-stream', 
-                            filename=filename)
-            version.save()
-            flash('Version subida con exito.', 'info')
-            return redirect(request.url)
-		
-
-    if filename is not None:
-        version = mdl.Nota.objects.get(num="1").versiones[-1] # Query the newest
-        doc = version.fsid
-        down = utl.download_file(doc)
-        return down if down else render_template(
-            'test.html',
-            message="Nada que hacer por hoy."
-        )
-    else:
-        return render_template(
-            'test.html',
-            message="Nada que hacer por hoy."
-        )
 
 @app.route('/seed')
 def seed():
@@ -259,7 +221,7 @@ def seed():
         year=datetime.now().year
     )
 
-@app.route('/headers')
+@app.route('/headers') # TODO: Erase
 def headers():
     print(request.cookies)
     """For testing purposes"""
@@ -326,9 +288,50 @@ def comment():
 def download():
     version_id = request.args['version_id']
     version = mdl.Version.objects.get(id=version_id)
-    doc = version.fsid
-    down = utl.download_file(doc)
-    return down
+    out = BytesIO(version.fsid.read())
+    out.seek(0)
+    return send_file(out, attachment_filename=version.fsid.filename, as_attachment=True)
 
+@app.route('/report')
+def report():
+    modo = request.args.get('modo') # compile or compress
+    notas = mdl.Nota.objects
+    files = [nota.versiones[-1].fsid for nota in notas]
 
-# TODO sprint: Viste notas completa con cargar/descargar veriones. Poder leer y escribir comentarios.
+    if modo == 'compile': # TODO: Receive file name
+        # Return all Notas compiled into one
+        for filnr, _file in enumerate(files):
+            stream = BytesIO(_file.read())
+            if filnr == 0:
+                merged_document = Document(stream)
+                merged_document.add_page_break()
+            else:
+                sub_doc = Document(stream)
+
+                # Don't add a page break if you've reached the last file.
+                if filnr < len(files)-1:
+                    sub_doc.add_page_break()
+
+                merged_document.element.body.extend(sub_doc.element.body)
+            stream.close()
+            
+        out = BytesIO()
+        merged_document.save(out)
+        out.seek(0)
+        return send_file(out, attachment_filename="Compilado trimestral.docx", as_attachment=True)
+
+    elif modo == 'compress': # TODO: Receive file name
+        # Return all Notas in a .zip file
+        out = BytesIO()
+        with zipfile.ZipFile(out, 'w') as zf:
+            for _file in files:
+                info = zipfile.ZipInfo(_file.filename)
+                info.date_time = _file.upload_date.timetuple() # Should be download date or upload date??
+                # info.date_time = datetime.now().timetuple()
+                info.compress_type = zipfile.ZIP_DEFLATED
+                zf.writestr(info, _file.read())
+                
+        out.seek(0)
+        return send_file(out, attachment_filename='Notas.zip', as_attachment=True)
+
+    return make_response() # Empty response in any other case
