@@ -37,7 +37,6 @@ def logout():
     session.pop('user_id', None)
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
 
-@app.route('/')
 @app.route('/home')
 def home():
     """Renders the home page."""
@@ -47,7 +46,7 @@ def home():
         year=datetime.now().year,
     )
 
-@app.route('/notas')
+@app.route('/')
 def notas():
     """Renders the overview of the Notas state."""
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
