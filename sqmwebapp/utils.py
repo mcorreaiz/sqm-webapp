@@ -1,4 +1,4 @@
-from sqmwebapp import app, oauth
+from sqmwebapp import app
 import sqmwebapp.models as mdl
 
 AZURE_COOKIE_NAME = 'AppServiceAuthSession' # Name of azure session cookie

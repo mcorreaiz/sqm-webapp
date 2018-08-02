@@ -12,16 +12,18 @@ class Usuario(db.Document):
         return ('{}'*len(splitted)).format(*(i[0].upper() for i in splitted))
 
 class Version(db.Document):
-    fsid     = db.FileField()                                      # id de GridFS
-    redactor = db.ReferenceField(Usuario)
-    fecha    = db.DateTimeField(default=datetime.datetime.now)
-    nombre   = db.StringField(max_length=50)                       # Ej. R_2
+    fsid            = db.FileField()                            # id de GridFS
+    redactor        = db.ReferenceField(Usuario)
+    fecha           = db.DateTimeField(default=datetime.datetime.now)
+    nombre          = db.StringField(max_length=50)             # Ej. R_2
+    nombre_creacion = db.StringField(max_length=10)             # Ej. XX_99_99
 
 class Comentario(db.Document):
-    contenido = db.StringField()
-    redactor  = db.ReferenceField(Usuario)
-    fecha     = db.DateTimeField(default=datetime.datetime.now)
-    nombre    = db.StringField(max_length=50)                      # Ej. C_2
+    contenido       = db.StringField()
+    redactor        = db.ReferenceField(Usuario)
+    fecha           = db.DateTimeField(default=datetime.datetime.now)
+    nombre          = db.StringField(max_length=50)             # Ej. C_2
+    nombre_creacion = db.StringField(max_length=10)             # Ej. XX_99_99
 
 class Nota(db.Document):
     num                = db.StringField(max_length=5, unique=True) # Ej. 25.11

@@ -40,7 +40,7 @@
                         <tbody>
                             {% for version in nota.versiones %}
                                 <tr id="{{ version.id }}" ondblclick="document.getElementById('download-' + this.id).click();">
-                                    <td>{{ version.redactor.iniciales }}_{{ version.fecha.strftime('%m_%d') }}</td>
+                                    <td>{{ version.nombre_creacion }}</td>
                                     <td>{{ version.nombre }}</td>
                                     <a id="download-{{ version.id }}" href="{{ url_for('download', version_id=version.id) }}"></a>
                                 </tr>
@@ -57,7 +57,7 @@
                             {% for comentario in nota.comentarios %}
                                 <tr onclick="verComentario('{{ loop.index }}')">
                                     <td>
-                                        <div class="popup">{{ comentario.redactor.iniciales }}_{{ comentario.fecha.strftime('%m_%d') }}
+                                        <div class="popup">{{ comentario.nombre_creacion }}
                                             <span class="popuptext" id="popup-comentario-{{ loop.index }}">{{ comentario.contenido  }}</span>
                                         </div>
                                     </td>

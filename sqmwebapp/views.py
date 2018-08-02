@@ -78,13 +78,17 @@ def nota_panel(num):
 
         if file and utl.valid_extension(file.filename):
             filename = secure_filename(file.filename) # Never trust user input
-            version = mdl.Version(redactor=mdl.Usuario.objects.get(user_id=session['user_id']))
+            redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
+            nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now.strftime('%m_%d'))
+
+            version = mdl.Version(redactor=redactor)
             version.fsid.put(file, content_type='application/octet-stream', 
                             filename=filename)
             if len(nota.versiones) == 0:
                 version.nombre = "R_b"
             else:
                 version.nombre = "R_{}{}".format(len(nota.versiones), 'b' if request.form.get('borrador') else '')
+            version.nombre_creacion = nombre_creacion
             version.save()
             nota.versiones.append(version)
             for user in nota.estados_aprobacion.keys():
@@ -271,17 +275,19 @@ def comment():
     contenido = request.form['comment']
     redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
     nombre = 'C_' + str(len(nota.comentarios) + 1)
+    nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now.strftime('%m_%d'))
 
     comentario = mdl.Comentario()
     comentario.contenido = contenido
     comentario.redactor = redactor
     comentario.nombre = nombre
+    comentario.nombre_creacion = nombre_creacion
     comentario.save()
     nota.comentarios.append(comentario)
     nota.save()
     return jsonify(msg='Se ha guardado el comentario', tipo='success', 
     nombre=nombre, 
-    info="{0}_{1}".format(redactor.iniciales, comentario.fecha.strftime('%m_%d')), 
+    info=nombre_creacion, 
     contenido=contenido)
 
 @app.route('/download')
