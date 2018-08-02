@@ -145,47 +145,6 @@ def seed():
     user7.user_id = "f0a69c76-d294-4a9a-b43f-8a23dba60b45"
     user7.save()
 
-    version1 = mdl.Version()
-    version1.redactor = user1
-    version1.nombre = "R_b"
-    version1.save()
-    version2 = mdl.Version()
-    version2.redactor = user2
-    version2.nombre = "R_b"
-    version2.save()
-    version3 = mdl.Version()
-    version3.redactor = user3
-    version3.nombre = "R_1"
-    version3.save()
-    version4 = mdl.Version()
-    version4.redactor = user4
-    version4.nombre = "R_b"
-    version4.save()
-    version5 = mdl.Version()
-    version5.redactor = user5
-    version5.nombre = "R_1"
-    version5.save()
-    version6 = mdl.Version()
-    version6.redactor = user6
-    version6.nombre = "R_2"
-    version6.save()
-
-    comentario1 = mdl.Comentario()
-    comentario1.redactor = user1
-    comentario1.contenido = "Se subio versión base equivocada"
-    comentario1.nombre = "C_1"
-    comentario1.save()
-    comentario2 = mdl.Comentario()
-    comentario2.redactor = user3
-    comentario2.contenido = "Figura 3 esta girada"
-    comentario2.nombre = "C_1"
-    comentario2.save()
-    comentario3 = mdl.Comentario()
-    comentario3.redactor = user5
-    comentario3.contenido = "Cambiar linea 5, la redacción es erronea"
-    comentario3.nombre = "C_1"
-    comentario3.save()
-
     nota = mdl.Nota()
     nota.num = "1"
     nota.nombre = "Analisis de Compras"
@@ -193,8 +152,8 @@ def seed():
     nota.aprobadores = [user3, user4]
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = [version1]
-    nota.comentarios = [comentario1]
+    nota.versiones = []
+    nota.comentarios = []
     nota.save()
 
     nota = mdl.Nota()
@@ -204,8 +163,8 @@ def seed():
     nota.aprobadores = [user5, user6, user7]
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = [version2, version3]
-    nota.comentarios = [comentario2]
+    nota.versiones = []
+    nota.comentarios = []
     nota.save()
 
     nota = mdl.Nota()
@@ -215,8 +174,173 @@ def seed():
     nota.aprobadores = [user1, user2]
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = [version4, version5, version6]
-    nota.comentarios = [comentario3]
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "3"
+    nota.nombre = "Produccion Nacional"
+    nota.redactores = [user1, user2, user7]
+    nota.aprobadores = [user3, user4]
+    nota.comentadores = [user5, user6]
+    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "4"
+    nota.nombre = "Obras Hidraulicas"
+    nota.redactores = [user3, user4]
+    nota.aprobadores = [user5, user6, user7]
+    nota.comentadores = [user1, user2]
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "5"
+    nota.nombre = "Gestion operacional"
+    nota.redactores = [user5, user6]
+    nota.aprobadores = [user1, user2]
+    nota.comentadores = [user3, user4, user7]
+    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "6"
+    nota.nombre = "Proyeccion anual"
+    nota.redactores = [user1, user2, user7]
+    nota.aprobadores = [user3, user4]
+    nota.comentadores = [user5, user6]
+    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "6.1"
+    nota.nombre = "Contabilidad del trimestre"
+    nota.redactores = [user3, user4]
+    nota.aprobadores = [user5, user6, user7]
+    nota.comentadores = [user1, user2]
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "6.2"
+    nota.nombre = "Casos legales"
+    nota.redactores = [user5, user6]
+    nota.aprobadores = [user1, user2]
+    nota.comentadores = [user3, user4, user7]
+    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "7"
+    nota.nombre = "Gestiones"
+    nota.redactores = [user1, user2, user7]
+    nota.aprobadores = [user3, user4]
+    nota.comentadores = [user5, user6]
+    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "8"
+    nota.nombre = "Excavaciones"
+    nota.redactores = [user3, user4]
+    nota.aprobadores = [user5, user6, user7]
+    nota.comentadores = [user1, user2]
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "9"
+    nota.nombre = "Relaciones internacionales"
+    nota.redactores = [user5, user6]
+    nota.aprobadores = [user1, user2]
+    nota.comentadores = [user3, user4, user7]
+    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "10"
+    nota.nombre = "Cambios"
+    nota.redactores = [user1, user2, user7]
+    nota.aprobadores = [user3, user4]
+    nota.comentadores = [user5, user6]
+    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "11"
+    nota.nombre = "Riesgo de operaciones"
+    nota.redactores = [user3, user4]
+    nota.aprobadores = [user5, user6, user7]
+    nota.comentadores = [user1, user2]
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "11.1"
+    nota.nombre = "Alcance"
+    nota.redactores = [user5, user6]
+    nota.aprobadores = [user1, user2]
+    nota.comentadores = [user3, user4, user7]
+    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "12"
+    nota.nombre = "Objetos"
+    nota.redactores = [user1, user2, user7]
+    nota.aprobadores = [user3, user4]
+    nota.comentadores = [user5, user6]
+    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "13"
+    nota.nombre = "Finanzas"
+    nota.redactores = [user3, user4]
+    nota.aprobadores = [user5, user6, user7]
+    nota.comentadores = [user1, user2]
+    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    nota.versiones = []
+    nota.comentarios = []
+    nota.save()
+
+    nota = mdl.Nota()
+    nota.num = "14"
+    nota.nombre = "Metas"
+    nota.redactores = [user5, user6]
+    nota.aprobadores = [user1, user2]
+    nota.comentadores = [user3, user4, user7]
+    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    nota.versiones = []
+    nota.comentarios = []
     nota.save()
 
     return render_template(
