@@ -399,7 +399,7 @@ def comment():
     contenido = request.form['comment']
     redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
     nombre = 'C_' + str(len(nota.comentarios) + 1)
-    nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now.strftime('%m_%d'))
+    nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
 
     comentario = mdl.Comentario()
     comentario.contenido = contenido
@@ -408,6 +408,8 @@ def comment():
     comentario.nombre_creacion = nombre_creacion
     comentario.save()
     nota.comentarios.append(comentario)
+    for aprobador in nota.estados_aprobacion.keys():
+        nota.estados_aprobacion[aprobador] = False
     nota.save()
     return jsonify(msg='Se ha guardado el comentario', tipo='success', 
     nombre=nombre, 
