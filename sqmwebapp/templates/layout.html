@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     
     <style>
+        html, body {
+            height: 100vh;
+        }
+        
         /* Popup container - can be anything you want */
         .popup {
             position: relative;
@@ -140,6 +144,87 @@
         input:disabled+label {
             color: #ccc;
         }
+
+        /* Tabs */
+        .tab-container *, *:before, *:after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .tab-section p {
+            margin: 0 0 20px;
+            line-height: 1.5;
+        }
+        
+        .tab-container {
+            min-width: 320px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+        }
+        
+        .tab-section {
+            display: none;
+            padding: 20px 0 0;
+            border-top: 1px solid #ddd;
+        }
+        
+        .tab-container input {
+            display: none;
+        }
+        
+        .tab-container label {
+            display: inline-block;
+            margin: 0 0 -1px;
+            padding: 15px 25px;
+            font-weight: 600;
+            text-align: center;
+            color: #bbb;
+            border: 1px solid transparent;
+        }
+        
+        .tab-container label:before {
+            font-family: fontawesome;
+            font-weight: normal;
+            margin-right: 10px;
+        }
+        
+        label[for='tab-compile']:before { content: '\f1c2'; }
+        label[for='tab-compress']:before { content: '\f1c6'; }
+        
+        .tab-container label:hover {
+            color: #888;
+            cursor: pointer;
+        }
+        
+        .tab-container input:checked + label {
+            color: #555;
+            border: 1px solid #ddd;
+            border-top: 2px solid #555;
+            border-bottom: 1px solid #fff;
+        }
+        
+        #tab-compile:checked ~ #content-compile,
+        #tab-compress:checked ~ #content-compress {
+            display: block;
+        }
+        
+        @media screen and (max-width: 650px) {
+            .tab-container label {
+                font-size: 0;
+            }
+            .tab-container label:before {
+                margin: 0;
+                font-size: 18px;
+            }
+        }
+        
+        @media screen and (max-width: 400px) {
+            .tab-container label {
+                padding: 15px;
+            }
+        }
     </style>
 
 
@@ -203,7 +288,7 @@
     <div id="commentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeCommentModal" class="close">&times;</span>
+                <span id="closeCommentModal" class="close" style="padding-top:10px;">&times;</span>
                 <h2>Nuevo Comentario</h2>
             </div>
             <div class="modal-body">
@@ -221,7 +306,7 @@
     <div id="uploadModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeUploadModal" class="close">&times;</span>
+                <span id="closeUploadModal" class="close" style="padding-top:10px;">&times;</span>
                 <h2>Cargar Nueva Versi&oacute;n</h2>
             </div>
             <div class="modal-body">
@@ -257,6 +342,52 @@
                         </label>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeReportModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>
+                    Descarga el reporte
+                </h2>
+            </div>
+            <div class="modal-body">
+                <!-- Tab links -->
+                <div class="tab-container">
+                    <center>
+                        <input id="tab-compile" type="radio" name="tabs" checked>
+                        <label for="tab-compile">Descargar reporte compilado</label>
+
+                        <input id="tab-compress" type="radio" name="tabs">
+                        <label for="tab-compress">Descargar todas las notas</label>
+
+                        <div id="content-compile" class="tab-section">
+                            <p>
+                                Descarga todas las notas compiladas en un archivo.
+                            </p>
+                        </div>
+                            
+                        <div id="content-compress" class="tab-section">
+                            <p>
+                                Descarga todas las notas por separado, en un archivo comprimido.                        </p>
+                            </p>
+                        </div>
+                    </div>
+                </center>
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-2">
+                        <button id="reportModalDownload" class="btn btn-success btn-block">
+                            <i></i>
+                            <span>Descargar</span>
+                        </button>
+                        <a id="report-link-compile" modo="" href="{{ url_for('report', modo='compile') }}"></a>
+                        <a id="report-link-compress" modo="" href="{{ url_for('report', modo='compress') }}"></a>
+                    </div>
+                </div>   
             </div>
         </div>
     </div>
@@ -318,6 +449,11 @@
             document.getElementById('commentModal').style.display = "none"; 
             document.getElementById("comment").value = '';
         }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = "none"; 
+            document.getElementById('tab-compile').checked = true;
+        }
         
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
@@ -338,6 +474,11 @@
             closeCommentModal();
         };
 
+        // When the user clicks on <span> (x), close the modal
+        document.getElementById('closeReportModal').onclick = function() {
+            closeReportModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -345,6 +486,9 @@
             };
             if (event.target == document.getElementById('uploadModal')) {
                 closeUploadModal();
+            };
+            if (event.target == document.getElementById('reportModal')) {
+                closeReportModal();
             };
         }
     </script>

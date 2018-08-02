@@ -39,7 +39,7 @@
                     <table class="table table-bordered table-hover">
                         <tbody>
                             {% for version in nota.versiones %}
-                                <tr id="{{ version.id }}" ondblclick="downloadVersion(this.id)">
+                                <tr id="{{ version.id }}" ondblclick="document.getElementById('download-' + this.id).click();">
                                     <td>{{ version.redactor.iniciales }}_{{ version.fecha.strftime('%m_%d') }}</td>
                                     <td>{{ version.nombre }}</td>
                                     <a id="download-{{ version.id }}" href="{{ url_for('download', version_id=version.id) }}"></a>
@@ -185,10 +185,6 @@
     function verComentario(i) {
         var popup = document.getElementById("popup-comentario-" + i);
         popup.classList.toggle("show");
-    }
-    
-    function downloadVersion(num) {
-        document.getElementById('download-' + num).click();
     }
 
     // When the user clicks the button, open the modal 
