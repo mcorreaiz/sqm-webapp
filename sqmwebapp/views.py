@@ -79,7 +79,7 @@ def nota_panel(num):
         if file and utl.valid_extension(file.filename):
             filename = secure_filename(file.filename) # Never trust user input
             redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
-            nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now.strftime('%m_%d'))
+            nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
 
             version = mdl.Version(redactor=redactor)
             version.fsid.put(file, content_type='application/octet-stream', 
