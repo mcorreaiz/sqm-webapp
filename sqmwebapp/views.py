@@ -81,7 +81,7 @@ def nota_panel(num):
             nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
 
             version = mdl.Version(redactor=redactor)
-            version.fsid.put(file, content_type='application/octet-stream', 
+            version.archivo.put(file, content_type='application/octet-stream', 
                             filename=filename)
             if len(nota.versiones) == 0:
                 version.nombre = "R_b"
@@ -419,15 +419,15 @@ def comment():
 def download():
     version_id = request.args['version_id']
     version = mdl.Version.objects.get(id=version_id)
-    out = BytesIO(version.fsid.read())
+    out = BytesIO(version.archivo.read())
     out.seek(0)
-    return send_file(out, attachment_filename=version.fsid.filename, as_attachment=True)
+    return send_file(out, attachment_filename=version.archivo.filename, as_attachment=True)
 
 @app.route('/report')
 def report():
     modo = request.args.get('modo') # compile or compress
     notas = mdl.Nota.objects
-    files = [nota.versiones[-1].fsid for nota in notas]
+    files = [nota.versiones[-1].archivo for nota in notas]
 
     if modo == 'compile': # TODO: Receive file name
         # Return all Notas compiled into one

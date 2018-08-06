@@ -12,9 +12,11 @@ class Usuario(db.Document):
         return ('{}'*len(splitted)).format(*(i[0].upper() for i in splitted))
 
 class Version(db.Document):
-    fsid            = db.FileField()                            # id de GridFS
+    meta = {'strict': False}
+    archivo         = db.FileField()                            # id de GridFS
     redactor        = db.ReferenceField(Usuario)
     fecha           = db.DateTimeField(default=datetime.datetime.now)
+    comentario      = db.StringField(max_length=240)
     nombre          = db.StringField(max_length=50)             # Ej. R_2
     nombre_creacion = db.StringField(max_length=10)             # Ej. XX_99_99
 

@@ -12,6 +12,13 @@
         html, body {
             height: 100vh;
         }
+
+        textarea {
+            max-width: 100%;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 5px;
+        }
         
         /* Popup container - can be anything you want */
         .popup {
@@ -288,7 +295,11 @@
                 <h2>Nuevo Comentario</h2>
             </div>
             <div class="modal-body">
-                <input type="text" class="form-control" id="comment" placeholder="Ingrese el comentario"><br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <textarea id="comment" rows="2" maxlength="240" placeholder="Ingrese el comentario" wrap="hard"></textarea>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-3"><button class="btn btn-success btn-block" id="confirm_comment"> Confirmar</button></div>
