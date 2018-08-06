@@ -82,7 +82,7 @@
             display: none; /* Hidden by default */
             position: fixed; /* Stay in place */
             z-index: 1; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
+            padding-top: 150px; /* Location of the box */
             left: 0;
             top: 0;
             width: 100%; /* Full width */
@@ -445,6 +445,10 @@
 
         $("#confirm_comment").click(function(a) {
             var comentario = document.getElementById("comment").value;
+            if (!$.trim(comentario)) {
+                flash("El comentario no puede estar vac&iacute;o", "error");
+                return;
+            }
             $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
                 flash(data['msg'], data['tipo']);
                 closeCommentModal();
@@ -504,7 +508,12 @@
             closeUploadModal();
         };
 
-        document.getElementById('fileSubmitLabel').onclick = function() {
+        document.getElementById('fileSubmitLabel').onclick = function(e) {
+            if (!$.trim($("#version-comment").val())) {
+                flash("El comentario no puede estar vac&iacute;o", "error");
+                e.preventDefault();
+                return;
+            }
             $(this).find('i')[0].className = "fas fa-spinner fa-spin";
             $(this).find('span')[0].innerHTML = 'Cargando...'
         };
