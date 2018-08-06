@@ -79,6 +79,7 @@ def nota_panel(num):
             filename = secure_filename(file.filename) # Never trust user input
             redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
             nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
+            comentario = request.form.get('comentario')
 
             version = mdl.Version(redactor=redactor)
             version.archivo.put(file, content_type='application/octet-stream', 
@@ -88,6 +89,7 @@ def nota_panel(num):
             else:
                 version.nombre = "R_{}{}".format(len(nota.versiones), 'b' if request.form.get('borrador') else '')
             version.nombre_creacion = nombre_creacion
+            version.comentario = comentario
             version.save()
             nota.versiones.append(version)
             for user in nota.estados_aprobacion.keys():

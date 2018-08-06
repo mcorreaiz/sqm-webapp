@@ -18,6 +18,7 @@
             width: 100%;
             margin-bottom: 20px;
             padding: 5px;
+            resize: vertical;
         }
         
         /* Popup container - can be anything you want */
@@ -328,6 +329,15 @@
                             Borrador
                         </label>
                     </div>
+                    <label id="version-comment-label" for="version-comment" style='display: none'>
+                        Ingresa un comentario para esta versi&oacute;n
+                    </label>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea id="version-comment" rows="2" maxlength="240" name="comentario"
+                            placeholder="Ingrese el comentario" wrap="hard" style='display: none'></textarea>
+                        </div>
+                    </div>
                     <div style='display: none'>
                         <input id="fileInput" type="file" name ="file" onchange="fileLoaded(this)">
                     </div>
@@ -433,9 +443,34 @@
             displayFlash();             
         };
 
+        $("#confirm_comment").click(function(a) {
+            var comentario = document.getElementById("comment").value;
+            $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
+                flash(data['msg'], data['tipo']);
+                closeCommentModal();
+                
+                // Update view
+                var num_row = $('#comments_table tr').length + 1;
+                var comment_info = `
+                <div class="popup">${data['info']}
+                    <span class="popuptext" id="popup-comentario-${num_row}">${data['contenido']}</span>
+                </div>
+                `;
+                var comment_name = data['nombre'];
+                var row = document.getElementById("comments_table").insertRow(-1);
+                row.insertCell(0).innerHTML = comment_info;
+                row.insertCell(1).innerHTML = comment_name;
+                row.onclick = function() {
+                    verComentario(num_row);
+                };
+            });
+        });
+
         function fileLoaded(obj){
             $('#fileSubmitLabel').attr('disabled', false);
             $('#checkbox-borrador').attr('disabled', false);
+            document.getElementById('version-comment-label').style.display = "block";
+            document.getElementById('version-comment').style.display = "block";
 
             var file = obj.files[0];
             document.getElementById("filename").innerHTML = file.name;
@@ -450,6 +485,8 @@
             document.getElementById("filesize").innerHTML = ''
             $('#fileSubmitLabel').attr('disabled', true);
             $('#checkbox-borrador').attr('disabled', true);
+            document.getElementById('version-comment-label').style.display = "none";
+            document.getElementById('version-comment').style.display = "none";
         }
     
         function closeCommentModal() {

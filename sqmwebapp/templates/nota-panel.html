@@ -159,29 +159,6 @@
             aprobacion.classList.toggle('fas');
         });
     });
-
-    $("#confirm_comment").click(function(a) {
-        var comentario = document.getElementById("comment").value;
-        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
-            flash(data['msg'], data['tipo']);
-            closeCommentModal();
-            
-            // Update view
-            var num_row = $('#comments_table tr').length + 1;
-            var comment_info = `
-            <div class="popup">${data['info']}
-                <span class="popuptext" id="popup-comentario-${num_row}">${data['contenido']}</span>
-            </div>
-            `;
-            var comment_name = data['nombre'];
-            var row = document.getElementById("comments_table").insertRow(-1);
-            row.insertCell(0).innerHTML = comment_info;
-            row.insertCell(1).innerHTML = comment_name;
-            row.onclick = function() {
-                verComentario(num_row);
-            };
-        });
-    });
     
     function verComentario(i) {
         var popup = document.getElementById("popup-comentario-" + i);
