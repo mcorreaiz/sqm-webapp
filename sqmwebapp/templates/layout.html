@@ -280,6 +280,20 @@
         {% endif %}
     {% endwith %}
     </div>
+
+
+
+    {% macro truncate_popover(string, maxLength=30, ellipsis = '...') -%}
+        {% if string|length > maxLength: %}
+        <div class="popup"> {{ string|truncate(length=maxLength, end=ellipsis) }}
+            <span class="popuptext" id="popup-comentario-{{ loop.index }}">{{ string  }}</span>
+        </div>
+        {% else: %}
+            {{ string }}
+        {% endif %}
+    {%- endmacro %}
+
+
     <div class="container body-content">
         {% block content %}{% endblock %}
         <hr />
