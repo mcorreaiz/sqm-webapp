@@ -283,10 +283,11 @@
 
 
 
-    {% macro truncate_popover(string, maxLength=30, ellipsis = '...') -%}
+    {% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
         {% if string|length > maxLength: %}
-        <div class="popup"> {{ string|truncate(length=maxLength, end=ellipsis) }}
-            <span class="popuptext" id="popup-comentario-{{ loop.index }}">{{ string  }}</span>
+        <div class="popup"> 
+            {{ string|truncate(length=maxLength, end=ellipsis) }}
+            <span class="popuptext" id="{{ id }}">{{ string  }}</span>
         </div>
         {% else: %}
             {{ string }}
@@ -456,33 +457,6 @@
             $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>  '+ msg +'</strong></div>').prependTo($(".flashes")).hide().slideDown();
             displayFlash();             
         };
-
-        $("#confirm_comment").click(function(a) {
-            var comentario = document.getElementById("comment").value;
-            if (!$.trim(comentario)) {
-                flash("El comentario no puede estar vac&iacute;o", "error");
-                return;
-            }
-            $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
-                flash(data['msg'], data['tipo']);
-                closeCommentModal();
-                
-                // Update view
-                var num_row = $('#comments_table tr').length + 1;
-                var comment_info = `
-                <div class="popup">${data['info']}
-                    <span class="popuptext" id="popup-comentario-${num_row}">${data['contenido']}</span>
-                </div>
-                `;
-                var comment_name = data['nombre'];
-                var row = document.getElementById("comments_table").insertRow(-1);
-                row.insertCell(0).innerHTML = comment_info;
-                row.insertCell(1).innerHTML = comment_name;
-                row.onclick = function() {
-                    verComentario(num_row);
-                };
-            });
-        });
 
         function fileLoaded(obj){
             $('#fileSubmitLabel').attr('disabled', false);
