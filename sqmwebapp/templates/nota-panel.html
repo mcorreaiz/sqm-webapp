@@ -23,14 +23,18 @@
                     {% if _version == version %}
                         class="active"
                     {% endif %}
-                    ><a href="#">{{ _version.nombre_creacion }} &#8739; {{ _version.nombre }}</a></li>
+                    >
+                        <a href="#">{{ _version.nombre_creacion }} &#8739; {{ _version.nombre }}</a>
+                    </li>
+                    <a href="{{ url_for('download_version', version_id=_version.id) }}"></a>
                     {% if loop.index == 1 %}
                         <li role="separator" class="divider"></li>
                     {% endif %}
                 {% endfor %}
             </ul>
         </div>
-        <button class="btn btn-default btn-block" style="margin-top: 5%;">
+        <button class="btn btn-default btn-block" style="margin-top: 5%;"
+        onclick="$('#dropdown-versiones .active ~ a')[0].click();">
             <i class="fas fa-download"></i>
             Descargar Versi&oacute;n
         </button>
@@ -240,7 +244,7 @@
             var version = dropdown.getElementsByTagName("li")[i];
         }
         version.classList.add("active");
-        document.getElementById("current-version").innerHTML = version.childNodes[0].innerHTML;
+        document.getElementById("current-version").innerHTML = version.children[0].innerHTML;
 
         // Update table
         var num_table = $(".comments_table_div:visible")[0].id.split("_").slice(-1)[0];
