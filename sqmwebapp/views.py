@@ -30,6 +30,7 @@ def register():
             user = utl.get_or_create_user_via_api(data.get_json())
         session['user'] = user.nombre
         session['user_id'] = user.user_id
+        session['admin'] = user.admin
 
 @app.route('/logout')
 def logout():
@@ -432,6 +433,22 @@ def download_version():
     out = BytesIO(version.archivo.read())
     out.seek(0)
     return send_file(out, attachment_filename=version.archivo.filename, as_attachment=True)
+
+@app.route('/set_admins')
+def set_admins():
+    user = mdl.Usuario.objects.get(user_id=session['user_id'])
+    user.admin = True
+    user.save()
+    user = mdl.Usuario.objects.get(user_id="f0a69c76-d294-4a9a-b43f-8a23dba60b45")
+    user.admin = True
+    user.save()
+    return redirect(url_for('notas'))
+
+@app.route('/admin')
+def admin():
+    return render_template(
+        'admin.html'
+    )
 
 @app.route('/report')
 def report():

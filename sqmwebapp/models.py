@@ -5,6 +5,7 @@ class Usuario(db.Document):
     user_id = db.StringField(max_length=50, required=True, unique=True)
     nombre  = db.StringField(max_length=50, required=True)
     email   = db.EmailField(required=True, unique=True)
+    admin   = db.BooleanField(default=False)
 
     @property
     def iniciales(self):
