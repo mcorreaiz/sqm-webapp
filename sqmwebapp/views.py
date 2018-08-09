@@ -53,6 +53,7 @@ def notas():
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     return render_template(
         'notas.html',
+        year = datetime.now().year,
         user = usuario,
         redacciones = mdl.Nota.objects(redactores__in=[usuario]),
         aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
@@ -109,6 +110,7 @@ def nota_panel(num):
 
     return render_template(
         'nota-panel.html',
+        year = datetime.now().year,
         nota = nota,
         user = mdl.Usuario.objects.get(user_id=session['user_id']),
         version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones", nombre="")
