@@ -8,25 +8,39 @@
         <h3>{{ nota.nombre }}</h3>
     </div>
     <div class="col-md-5"></div>
-    <div class="col-md-3">
-        <div class="dropdown" style="padding-top: 10%;">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                {{ nota.versiones[-1].nombre_creacion }} &#8739; {{ nota.versiones[-1].nombre }}
+    <div class="col-md-2">
+        <div id="dropdown-versiones" class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" 
+            style="margin-top: 10%; width: 100%;">
+                <span id="current-version">
+                    {{ version.nombre_creacion }} &#8739; {{ version.nombre }}
+                </span>
                 <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-right">
-                {% for version in nota.versiones %}
-                    <li><a href="#">{{ version.nombre_creacion }} &#8739; {{ version.nombre }}</a></li>
+            <ul class="dropdown-menu">
+                {% for _version in nota.versiones %}
+                    <li onclick="selectVersion(parseInt('{{ loop.index0 }}'))"
+                    {% if _version == version %}
+                        class="active"
+                    {% endif %}
+                    ><a href="#">{{ _version.nombre_creacion }} &#8739; {{ _version.nombre }}</a></li>
+                    {% if loop.index == 1 %}
+                        <li role="separator" class="divider"></li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         </div>
+        <button class="btn btn-default btn-block" style="margin-top: 5%;">
+            <i class="fas fa-download"></i>
+            Descargar Versi&oacute;n
+        </button>
     </div>
 </div>
 
 
 <div class="row">
     <div class="col-md-4">
-        <h4>Redactores:</h4>
+        <h4>Redactores</h4>
         <ul class="list-group">
             {% for redactor in nota.redactores %}
                 <li class="list-group-item"><i id="estado-aprobacion-{{ redactor.user_id }}" class="fa-square 
@@ -35,7 +49,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <h4>Aprobadores:</h4>
+        <h4>Aprobadores</h4>
         <ul class="list-group">
             {% for aprobador in nota.aprobadores %}
                 <li class="list-group-item"><i id="estado-aprobacion-{{ aprobador.user_id }}" class="fa-square 
@@ -43,7 +57,7 @@
                     " style="vertical-align:sub;font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
             {% endfor %}
         </ul>
-        <h4>Comentadores:</h4>
+        <h4>Comentadores</h4>
         <ul class="list-group">
             {% for comentador in nota.comentadores %}
                 <li class="list-group-item">{{ comentador.iniciales }} {{ comentador.nombre }}</li>
@@ -52,37 +66,24 @@
     </div>
     <div class="col-md-8">
         <div class="row">
-            <div class="col-md-6">
-                <h4>Redacciones</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
+            <h4>Comentarios</h4>
+            {% for _version in nota.versiones %}
+                {% set outer_loop = loop %} 
+                <div class="table-responsive comments_table_div" id="comments_table_div_{{ outer_loop.index0 }}"
+                {% if not outer_loop.last %}
+                    style="display:none;"
+                {% endif %}
+                >
+                    <table class="table table-bordered table-hover" id="comments_table_{{ outer_loop.index0 }}">
                         <tbody>
-                            {% for version in nota.versiones %}
-                                <tr id="{{ version.id }}" class="row" ondblclick="document.getElementById('download-' + this.id).click();" style="cursor: pointer">
-                                    <td class="col-md-3">{{ version.nombre_creacion }}</td>
-                                    <td class="col-md-7">
-                                        {{ truncate_popover(version.comentario, "") }}
-                                    </td>
-                                    <td class="col-md-2">{{ version.nombre }}</td>
-                                    <a id="download-{{ version.id }}" href="{{ url_for('download', version_id=version.id) }}"></a>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <h4>Comentarios</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="comments_table">
-                        <tbody>
-                            {% for comentario in nota.comentarios %}
-                                <tr onclick="verComentario('{{ loop.index }}')">
+                            {% for comentario in _version.comentarios %}
+                                {% set identifier = '%s-%s'|format(outer_loop.index0,loop.index0) %}
+                                <tr onclick="verComentario('{{ identifier }}')">
                                     <td>
                                         {{ comentario.nombre_creacion }}
                                     </td>
                                     <td>
-                                        {{ truncate_popover(comentario.contenido, "popup-comentario-" + loop.index|string ) }}
+                                        {{ truncate_popover(comentario.contenido, "popup-comentario-" + identifier, 90) }}
                                     </td>
                                     <td>{{ comentario.nombre }}</td>
                                 </tr>
@@ -90,7 +91,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            {% endfor %}
         </div>
         <div class="row">
             {% if user in nota.redactores %}
@@ -184,7 +185,6 @@
 
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
-        console.log(a);
         if (!$.trim(comentario)) {
             flash("El comentario no puede estar vac&iacute;o", "error");
             return;
@@ -194,25 +194,59 @@
             closeCommentModal();
             
             // Update view
-            var num_row = $('#comments_table tr').length + 1;
-            var comment_info = `
-            <div class="popup">${data['info']}
-                <span class="popuptext" id="popup-comentario-${num_row}">${data['contenido']}</span>
-            </div>
-            `;
+            var num_table = $(".comments_table_div").length - 1; // Can only comment the last one
+            var num_row = $("#comments_table_" + num_table + "tr").length;
+            var comment_info = data['info'];
             var comment_name = data['nombre'];
-            var row = document.getElementById("comments_table").insertRow(-1);
+            if (data['contenido'].length > 90) {
+                var comment_content = `
+                <div class="popup">
+                    ${data['contenido'].substring(0, 87) + '...'}
+                    <span class="popuptext" id="popup-comentario-${num_table}-${num_row}">${comentario}</span>
+                </div>
+            `;
+            }
+            else {
+                var comment_content = data['contenido'];
+            }
+            
+            var row = document.getElementById("comments_table_" + num_table).insertRow(-1);
             row.insertCell(0).innerHTML = comment_info;
-            row.insertCell(1).innerHTML = comment_name;
+            row.insertCell(1).innerHTML = comment_content;
+            row.insertCell(2).innerHTML = comment_name;
             row.onclick = function() {
-                verComentario(num_row);
+                verComentario(num_table + "-" + num_row);
             };
         });
     });
     
     function verComentario(i) {
         var popup = document.getElementById("popup-comentario-" + i);
-        popup.classList.toggle("show");
+        if (popup) {
+            popup.classList.toggle("show");
+        }
+    }
+
+    function selectVersion(i) {
+        // Update dropdown
+        var dropdown = document.getElementById("dropdown-versiones");
+        dropdown.getElementsByClassName("active")[0].classList.remove("active");
+        if (i >= 1) {
+            var version = dropdown.getElementsByTagName("li")[i+1];
+        } // Avoid the separator, which is also a <li>
+        else {
+            var version = dropdown.getElementsByTagName("li")[i];
+        }
+        version.classList.add("active");
+        document.getElementById("current-version").innerHTML = version.childNodes[0].innerHTML;
+
+        // Update table
+        var num_table = $(".comments_table_div:visible")[0].id.split("_").slice(-1)[0];
+        console.log(i, num_table);
+        $("#comments_table_div_" + num_table).slideToggle("slow", function() {
+            $("#comments_table_div_" + i).slideToggle("slow");
+        });
+        if ()
     }
 
     // When the user clicks the button, open the modal 

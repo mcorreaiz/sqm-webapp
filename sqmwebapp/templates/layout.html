@@ -281,8 +281,6 @@
     {% endwith %}
     </div>
 
-
-
     {% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
         {% if string|length > maxLength: %}
         <div class="popup"> 
@@ -293,7 +291,6 @@
             {{ string }}
         {% endif %}
     {%- endmacro %}
-
 
     <div class="container body-content">
         {% block content %}{% endblock %}
@@ -313,7 +310,8 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <textarea id="comment" rows="2" maxlength="240" placeholder="Ingrese el comentario" wrap="hard"></textarea>
+                        <textarea id="comment" class="form-control" rows="2" maxlength="240" 
+                        placeholder="Ingrese el comentario" wrap="hard"></textarea>
                     </div>
                 </div>
                 <div class="row">
@@ -349,8 +347,8 @@
                     </label>
                     <div class="row">
                         <div class="col-md-12">
-                            <textarea id="version-comment" rows="2" maxlength="240" name="comentario"
-                            placeholder="Ingrese el comentario" wrap="hard" style='display: none'></textarea>
+                            <textarea id="version-comment" class="form-control" rows="2" maxlength="240" 
+                            name="comentario" placeholder="Ingrese el comentario" wrap="hard" style='display: none'></textarea>
                         </div>
                     </div>
                     <div style='display: none'>

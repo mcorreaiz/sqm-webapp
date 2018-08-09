@@ -104,7 +104,8 @@ def nota_panel(num):
     return render_template(
         'nota-panel.html',
         nota = nota,
-        user = mdl.Usuario.objects.get(user_id=session['user_id'])
+        user = mdl.Usuario.objects.get(user_id=session['user_id']),
+        version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones.")
     )
 
 @app.route('/seed')
@@ -397,9 +398,10 @@ def approval():
 @app.route('/comment', methods=['POST'])
 def comment():
     nota = mdl.Nota.objects.get(num=request.form['nota'])
+    version = nota.versiones[-1]
     contenido = request.form['comment']
     redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
-    nombre = 'C_' + str(len(nota.comentarios) + 1)
+    nombre = 'C_' + str(len(version.comentarios) + 1)
     nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
 
     comentario = mdl.Comentario()
@@ -408,17 +410,18 @@ def comment():
     comentario.nombre = nombre
     comentario.nombre_creacion = nombre_creacion
     comentario.save()
-    nota.comentarios.append(comentario)
+    version.comentarios.append(comentario)
     for aprobador in nota.estados_aprobacion.keys():
         nota.estados_aprobacion[aprobador] = False
     nota.save()
+    version.save()
     return jsonify(msg='Se ha guardado el comentario', tipo='success', 
     nombre=nombre, 
     info=nombre_creacion, 
     contenido=contenido)
 
-@app.route('/download')
-def download():
+@app.route('/download_version')
+def download_version():
     version_id = request.args['version_id']
     version = mdl.Version.objects.get(id=version_id)
     out = BytesIO(version.archivo.read())
@@ -468,3 +471,4 @@ def report():
         return send_file(out, attachment_filename='Notas.zip', as_attachment=True)
 
     return make_response() # Empty response in any other case
+    
