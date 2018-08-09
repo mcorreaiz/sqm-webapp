@@ -28,6 +28,7 @@ class Version(db.Document):
     nombre_creacion = db.StringField(max_length=10)             # Ej. XX_99_99
 
 class Nota(db.Document):
+    meta = {'strict': False}
     num                = db.StringField(max_length=5, unique=True) # Ej. 25.11
     nombre             = db.StringField(max_length=50)             # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))

@@ -78,14 +78,16 @@
                         <tbody>
                             {% for comentario in _version.comentarios %}
                                 {% set identifier = '%s-%s'|format(outer_loop.index0,loop.index0) %}
-                                <tr onclick="verComentario('{{ identifier }}')">
-                                    <td>
+                                <tr class="row" onclick="verComentario('{{ identifier }}')">
+                                    <td class="col-md-2 text-center">
                                         {{ comentario.nombre_creacion }}
                                     </td>
-                                    <td>
-                                        {{ truncate_popover(comentario.contenido, "popup-comentario-" + identifier, 90) }}
+                                    <td class="col-md-9">
+                                        {{ truncate_popover(comentario.contenido, "popup-comentario-" + identifier, 80) }}
                                     </td>
-                                    <td>{{ comentario.nombre }}</td>
+                                    <td class="col-md-1 text-center">
+                                        {{ comentario.nombre }}
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -198,10 +200,10 @@
             var num_row = $("#comments_table_" + num_table + "tr").length;
             var comment_info = data['info'];
             var comment_name = data['nombre'];
-            if (data['contenido'].length > 90) {
+            if (data['contenido'].length > 80) {
                 var comment_content = `
                 <div class="popup">
-                    ${data['contenido'].substring(0, 87) + '...'}
+                    ${data['contenido'].substring(0, 77) + '...'}
                     <span class="popuptext" id="popup-comentario-${num_table}-${num_row}">${comentario}</span>
                 </div>
             `;
@@ -245,6 +247,8 @@
         $("#comments_table_div_" + num_table).slideToggle("slow", function() {
             $("#comments_table_div_" + i).slideToggle("slow");
         });
+
+        // Update buttons
         if (i != $(".comments_table_div").length - 1) {
             $.each($("#botones button"), function(i, el) {
                 $(el).attr('disabled', true);

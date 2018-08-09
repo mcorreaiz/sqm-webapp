@@ -79,7 +79,12 @@ def nota_panel(num):
             filename = secure_filename(file.filename) # Never trust user input
             redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
             nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
-            comentario = request.form.get('comentario')
+            contenido = request.form.get('comentario')
+            comentario = mdl.Comentario(contenido=contenido,
+                                        redactor=redactor,
+                                        nombre="C_0",
+                                        nombre_creacion=nombre_creacion)
+            comentario.save()
 
             version = mdl.Version(redactor=redactor)
             version.archivo.put(file, content_type='application/octet-stream', 
@@ -89,7 +94,7 @@ def nota_panel(num):
             else:
                 version.nombre = "R_{}{}".format(len(nota.versiones), 'b' if request.form.get('borrador') else '')
             version.nombre_creacion = nombre_creacion
-            version.comentario = comentario
+            version.comentarios = [comentario]
             version.save()
             nota.versiones.append(version)
             for user in nota.estados_aprobacion.keys():
@@ -105,7 +110,7 @@ def nota_panel(num):
         'nota-panel.html',
         nota = nota,
         user = mdl.Usuario.objects.get(user_id=session['user_id']),
-        version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones.")
+        version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones", nombre="")
     )
 
 @app.route('/seed')
