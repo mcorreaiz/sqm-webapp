@@ -4,9 +4,29 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-<h2>Notas</h2>
-<h3>{{ user.nombre }}</h3>
-
+<div class="row">
+    <div class="col-md-4">
+        <h2>Notas</h2>
+        <h3>{{ user.nombre }}</h3>
+    </div>
+    <div class="col-md-5"></div>
+    <div class="col-md-2">
+        <div id="dropdown-versiones" class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" 
+            style="margin-top: 10%; width: 100%;">
+                <span id="current-version">
+                    Q2 - 2018
+                </span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#">Q1 &#8739; 2018</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-4">
         <h4>Redacciones</h4>

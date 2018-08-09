@@ -476,4 +476,3 @@ def report():
         return send_file(out, attachment_filename='Notas.zip', as_attachment=True)
 
     return make_response() # Empty response in any other case
-    

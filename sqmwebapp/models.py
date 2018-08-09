@@ -32,6 +32,7 @@ class Nota(db.Document):
     num                = db.StringField(max_length=5, unique=True) # Ej. 25.11
     nombre             = db.StringField(max_length=50)             # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
+    fecha              = db.DateTimeField(default=datetime.datetime.now)
     aprobadores        = db.ListField(db.ReferenceField(Usuario))
     comentadores       = db.ListField(db.ReferenceField(Usuario))
     estados_aprobacion = db.DictField()                            # {user_id: bool}
@@ -43,3 +44,19 @@ class Nota(db.Document):
             if not estado:
                 return False
         return True
+
+class Trimestre(db.Document):
+    activo = db.BooleanField(default=True)
+    notas  = db.ListField(db.ReferenceField(Nota))
+    fecha  = db.DateTimeField(default=datetime.datetime.now)
+    numero = db.IntField() # Numero de Trimestre que es
+
+    @classmethod
+    def get_numero(trimestres): # Recibe toda la lista de trimestres
+        last_trimestre = trimestres.order_by("-fecha").first()
+        numero = last_trimestre.numero % 4 + 1
+        return numero
+
+    @property
+    def nombre(self):
+        return "Q{} - {}".format(self.numero, self.fecha.year)
