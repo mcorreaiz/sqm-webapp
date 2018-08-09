@@ -51,7 +51,6 @@ class Trimestre(db.Document):
     fecha  = db.DateTimeField(default=datetime.datetime.now)
     numero = db.IntField() # Numero de Trimestre que es
 
-    @classmethod
     def get_numero(trimestres): # Recibe toda la lista de trimestres
         last_trimestre = trimestres.order_by("-fecha").first()
         numero = last_trimestre.numero % 4 + 1
