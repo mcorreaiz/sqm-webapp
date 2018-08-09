@@ -250,6 +250,9 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    {% if session['admin'] %}
+                        <li><a href="{{ url_for('admin') }}">Administrador</a></li>
+                    {% endif %}
                     <li><a href="{{ url_for('logout') }}">Salir</a></li>
                 </ul>
             </div>
