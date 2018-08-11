@@ -446,9 +446,30 @@ def set_admins():
 
 @app.route('/admin')
 def admin():
+    trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
+    notas_aprobadas = 0
+    notas_cerradas = 0
+    for nota in trimestre.notas:
+        if nota.full_aprobado:
+            notas_aprobadas += 1
+        if not nota.cerrada:
+            notas_cerradas += 1
     return render_template(
-        'admin.html'
+        'admin.html',
+        trimestre = trimestre,
+        notas_aprobadas = notas_aprobadas,
+        notas_cerradas = notas_cerradas,
+        total = len(trimestre.notas),
+        admins = mdl.Usuario.objects(admin=True)
     )
+
+@app.route('/add_trimestre')
+def add_trimestre():
+    trimestre = mdl.Trimestre()
+    trimestre.notas = []
+    trimestre.numero = 3
+    trimestre.save()
+    return redirect(url_for('notas'))
 
 @app.route('/report')
 def report():

@@ -38,6 +38,7 @@ class Nota(db.Document):
     comentadores       = db.ListField(db.ReferenceField(Usuario))
     estados_aprobacion = db.DictField()                            # {user_id: bool}
     versiones          = db.ListField(db.ReferenceField(Version))
+    cerrada = db.BooleanField(default=False)
 
     @property
     def full_aprobado(self):

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - My Flask Application</title>
+    <title>Notas-SQM</title>
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -19,6 +19,85 @@
             margin-bottom: 20px;
             padding: 5px;
             resize: vertical;
+        }
+
+        /* Navbar style definition */
+        .navbar-inverse {
+            background-color: #69899f;
+            border-color: #425766;
+        }
+
+        .navbar-inverse .navbar-brand {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+            color: #e5dbdb;
+        }
+
+        .navbar-inverse .navbar-text {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-nav > li > a {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+            color: #e5dbdb;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu {
+            background-color: #69899f;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > a {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > a:hover,
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > a:focus {
+            color: #e5dbdb;
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > .divider {
+            background-color: #69899f;
+        }
+
+        .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+            color: #e5dbdb;
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+            color: #e5dbdb;
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-toggle {
+            border-color: #425766;
+        }
+
+        .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-toggle .icon-bar {
+            background-color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-collapse,
+        .navbar-inverse .navbar-form {
+            border-color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-link {
+            color: #d7e2e9;
+        }
+
+        .navbar-default .navbar-link:hover {
+            color: #e5dbdb;
         }
         
         /* Popup container - can be anything you want */
@@ -246,7 +325,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/" class="navbar-brand">{{ session['user'] }}</a>
+                <a href="/" class="navbar-brand">Notas</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -299,7 +378,7 @@
         {% block content %}{% endblock %}
         <hr />
         <footer>
-            <p>&copy; {{ year }} - My Flask Application</p>
+            <p>&copy; 2018 - SQM S.A.</p>
         </footer>
     </div>
 
