@@ -4,12 +4,12 @@
 
 <div class="row">
     <div class="col-md-4">
-        <h1>{{ trimestre.nombre }}</h1>
+        <h1 id="nombreTrimestre">{{ trimestre.nombre }}</h1>
     </div>
 </div>
 <div class="row">
     <div class="col-md-3">
-        <h3>Estado: {{ 'Activo' if trimestre.activo else 'Cerrado'  }}</h3>
+        <h3 id="estadoTrimestre">Estado: {{ 'Abierto' if trimestre.activo else 'Cerrado'  }}</h3>
     </div>
 </div>
 <div class="row">
@@ -22,7 +22,7 @@
                 </tr>
                 <tr>
                     <td>Notas cerradas</td>
-                    <td>{{ notas_cerradas }} / {{ total }}</td>
+                    <td id="notasCerradas">{{ notas_cerradas }} / {{ total }}</td>
                 </tr>
             </tbody>
         </table>
@@ -56,4 +56,31 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // When the user clicks the button, open the modal 
+    document.getElementById("boton_comenzar").onclick = function() {
+        document.getElementById('confirmModalText').innerHTML = document.getElementById('boton_comenzar').innerHTML;
+        document.getElementById('confirmModal').style.display = "block";
+    };
+
+    $("#confirmar_cierre").click(function() { // TODO: change button name at first, then validate
+        $.post("{{ url_for('cierres') }}", function(data) {
+            flash(data['msg'], data['tipo']);
+            if (data['cerrado']) {
+                document.getElementById('boton_comenzar').innerHTML = 'Comenzar Perido';
+                document.getElementById('estadoTrimestre').innerHTML = 'Estado: Cerrado';
+                document.getElementById('notasCerradas').innerHTML = data['notas_cerradas'];
+            } else {
+                document.getElementById('boton_comenzar').innerHTML = 'Cerrar Periodo';
+                document.getElementById('estadoTrimestre').innerHTML = 'Estado: Abierto';
+                document.getElementById('notasCerradas').innerHTML = data['notas_cerradas'];
+                document.getElementById('nombreTrimestre').innerHTML = data['nombre_trimestre'];
+            }
+            closeConfirmModal();
+        });
+    });
+</script>
 {% endblock %}

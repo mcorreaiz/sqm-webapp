@@ -30,7 +30,7 @@ class Version(db.Document):
 
 class Nota(db.Document):
     meta = {'strict': False}
-    num                = db.StringField(max_length=5, unique=True) # Ej. 25.11
+    num                = db.StringField(max_length=5) # Ej. 25.11
     nombre             = db.StringField(max_length=50)             # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     fecha              = db.DateTimeField(default=datetime.datetime.now)
@@ -38,7 +38,7 @@ class Nota(db.Document):
     comentadores       = db.ListField(db.ReferenceField(Usuario))
     estados_aprobacion = db.DictField()                            # {user_id: bool}
     versiones          = db.ListField(db.ReferenceField(Version))
-    cerrada = db.BooleanField(default=False)
+    cerrada            = db.BooleanField(default=False)
 
     @property
     def full_aprobado(self):
