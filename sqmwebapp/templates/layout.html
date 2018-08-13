@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - My Flask Application</title>
+    <title>Notas-SQM</title>
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -19,6 +19,85 @@
             margin-bottom: 20px;
             padding: 5px;
             resize: vertical;
+        }
+
+        /* Navbar style definition */
+        .navbar-inverse {
+            background-color: #69899f;
+            border-color: #425766;
+        }
+
+        .navbar-inverse .navbar-brand {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+            color: #e5dbdb;
+        }
+
+        .navbar-inverse .navbar-text {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-nav > li > a {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+            color: #e5dbdb;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu {
+            background-color: #69899f;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > a {
+            color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > a:hover,
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > a:focus {
+            color: #e5dbdb;
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-nav > li > .dropdown-menu > li > .divider {
+            background-color: #69899f;
+        }
+
+        .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+            color: #e5dbdb;
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+            color: #e5dbdb;
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-toggle {
+            border-color: #425766;
+        }
+
+        .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+            background-color: #425766;
+        }
+
+        .navbar-inverse .navbar-toggle .icon-bar {
+            background-color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-collapse,
+        .navbar-inverse .navbar-form {
+            border-color: #d7e2e9;
+        }
+
+        .navbar-inverse .navbar-link {
+            color: #d7e2e9;
+        }
+
+        .navbar-default .navbar-link:hover {
+            color: #e5dbdb;
         }
         
         /* Popup container - can be anything you want */
@@ -135,7 +214,7 @@
 
         .modal-header {
             padding: 2px 16px;
-            background-color: #555;
+            background-color: #69899f;
             color: white;
         }
 
@@ -246,7 +325,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/" class="navbar-brand">{{ session['user'] }}</a>
+                <a href="/" class="navbar-brand">Notas</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -299,7 +378,7 @@
         {% block content %}{% endblock %}
         <hr />
         <footer>
-            <p>&copy; {{ year }} - SQM</p>
+            <p>&copy; {{ year|default("2018") }} - SQM</p>
         </footer>
     </div>
 
@@ -425,6 +504,23 @@
         </div>
     </div>
 
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeConfirmModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2 id="confirmModalText"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmar_cierre"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelar_cierre"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/scripts/jquery-1.10.2.js"></script>
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
@@ -491,6 +587,10 @@
             document.getElementById('reportModal').style.display = "none"; 
             document.getElementById('tab-compile').checked = true;
         }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = "none"; 
+        }
         
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
@@ -521,6 +621,15 @@
             closeReportModal();
         };
 
+        document.getElementById("cancelar_cierre").onclick = function() {
+            closeConfirmModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+        document.getElementById('closeConfirmModal').onclick = function() {
+            closeConfirmModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -531,6 +640,9 @@
             };
             if (event.target == document.getElementById('reportModal')) {
                 closeReportModal();
+            };
+            if (event.target == document.getElementById('confirmModal')) {
+                closeConfirmModal();
             };
         }
     </script>

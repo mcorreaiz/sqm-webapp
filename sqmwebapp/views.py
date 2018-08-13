@@ -488,9 +488,85 @@ def set_admins():
 
 @app.route('/admin')
 def admin():
+    trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
+    notas_aprobadas = 0
+    notas_cerradas = 0
+    for nota in trimestre.notas:
+        if nota.full_aprobado:
+            notas_aprobadas += 1
+        if nota.cerrada:
+            notas_cerradas += 1
     return render_template(
-        'admin.html'
+        'admin.html',
+        trimestre = trimestre,
+        notas_aprobadas = notas_aprobadas,
+        notas_cerradas = notas_cerradas,
+        total = len(trimestre.notas),
+        admins = mdl.Usuario.objects(admin=True)
     )
+
+@app.route('/cierres', methods=['POST'])
+def cierres():
+    trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
+    user = mdl.Usuario.objects.get(user_id=session['user_id'])
+
+    # Acciones para cerrar el trimestre
+    if trimestre.activo:
+        trimestre.activo = False
+        trimestre.save()
+        for nota in trimestre.notas:
+            nota.cerrada = True
+            nota.save()
+        notas_cerradas = '{} / {}'.format(len(trimestre.notas), len(trimestre.notas)) 
+        return jsonify(cerrado=True, msg='Se ha cerrado el trimestre', tipo='success', notas_cerradas=notas_cerradas)
+
+    else:
+        # Creamos el nuevo trimestre
+        new_trimestre = mdl.Trimestre()
+        new_trimestre.numero = (trimestre.numero % 4) + 1
+        new_trimestre.notas = []
+        # Cargamos el trimestre con las notas del trimestre pasado, usando la última versión como base
+        for nota in trimestre.notas:
+            new_nota = mdl.Nota()
+            new_nota.num = nota.num
+            new_nota.nombre = nota.nombre
+            new_nota.redactores = nota.redactores
+            new_nota.aprobadores = nota.aprobadores
+            new_nota.comentadores = nota.comentadores
+            new_nota.estados_aprobacion = nota.estados_aprobacion
+            # Nadie ha aprobado la nueva nota
+            for aprobacion in new_nota.estados_aprobacion.keys():
+                new_nota.estados_aprobacion[aprobacion] = False
+            # Creamos una nueva versión que será la base de new_nota
+            version_base = mdl.Version()
+            if len(nota.versiones):
+                ultima_version = nota.versiones[-1]
+                version_base.archivo = ultima_version.archivo
+            version_base.redactor = user
+            # Versión base viene con comentario: Carga inicial
+            comentario_base = mdl.Comentario()
+            comentario_base.contenido = "Carga inicial"
+            comentario_base.redactor = user
+            comentario_base.nombre = "C_0"
+            comentario_base.nombre_creacion = "{}_{}".format(user.iniciales, comentario_base.fecha.strftime('%m_%d'))
+            comentario_base.save()
+            version_base.comentarios = [comentario_base]
+            # Guardamos los objetos nuevos
+            version_base.save()
+            new_nota.versiones = [version_base]
+            new_nota.save()
+            new_trimestre.notas.append(new_nota)
+        new_trimestre.save()
+        notas_cerradas = '0 / {}'.format(len(new_trimestre.notas))
+        return jsonify(cerrado=False, msg='Se ha creado un nuevo trimestre', tipo='success', notas_cerradas=notas_cerradas, nombre_trimestre=new_trimestre.nombre)
+
+@app.route('/add_trimestre')
+def add_trimestre():
+    trimestre = mdl.Trimestre()
+    trimestre.notas = mdl.Nota.objects()
+    trimestre.numero = 3
+    trimestre.save()
+    return redirect(url_for('notas'))
 
 @app.route('/report')
 def report():
