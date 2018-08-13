@@ -11,7 +11,7 @@ def parse_auth_claims(claims):
     identifiers = {
         'nombre':'name',
         'user_id':'http://schemas.microsoft.com/identity/claims/objectidentifier',
-        'email':'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
+        'email':'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'
     }
 
     claims = {claim['typ']:claim['val'] for claim in claims}

@@ -20,6 +20,8 @@ from sqmwebapp import app
 
 @app.before_request
 def register():
+    if request.url == 'https://{}/.auth/logout'.format(app.config['APP_URL']):
+        return
     if 'user' not in session: # Not registered with DB
         # Lazy auth
         user = utl.get_user_via_headers(request.headers)
@@ -36,16 +38,8 @@ def register():
 def logout():
     session.pop('user', None)
     session.pop('user_id', None)
+    session.pop('admin', None)
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
-
-@app.route('/home')
-def home():
-    """Renders the home page."""
-    return render_template(
-        'index.html',
-        title='Homee Page',
-        year=datetime.now().year,
-    )
 
 @app.route('/')
 def notas():
@@ -379,11 +373,11 @@ def me():
         else:
             return make_response()
     
-    access_token = request.headers.get(utl.ACCESS_TOKEN_HEADER)
-    if not access_token: # Logout required
+    auth_cookie = request.cookies.get(utl.AZURE_COOKIE_NAME)
+    if not auth_cookie: # Logout required
         return make_response() #Empty response
 
-    r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), headers={'Authorization':'Bearer '+access_token})
+    r = requests.get('https://{}/.auth/me'.format(app.config['APP_URL']), cookies={utl.AZURE_COOKIE_NAME:auth_cookie})
     body = r.json()
 
     if r.status_code == 401 or not body: # Access token expired or error
