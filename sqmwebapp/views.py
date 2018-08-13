@@ -42,16 +42,27 @@ def logout():
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
 
 @app.route('/')
-def notas():
+@app.route('/<trimestre_id>')
+def notas(trimestre_id=None):
     """Renders the overview of the Notas state."""
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
+    trimestres = mdl.Trimestre.objects
+    print(trimestre_id)
+    if trimestre_id:
+        trimestre = trimestres.get(id=trimestre_id)
+    else:
+        trimestre = trimestres.order_by("-fecha").first()
+
+    notas_trim = set(trimestre.notas)
     return render_template(
         'notas.html',
         year = datetime.now().year,
         user = usuario,
-        redacciones = mdl.Nota.objects(redactores__in=[usuario]),
-        aprobaciones = mdl.Nota.objects(aprobadores__in=[usuario]),
-        comentarios = mdl.Nota.objects(comentadores__in=[usuario])
+        trimestre= trimestre,
+        trimestres = trimestres,
+        redacciones = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(redactores__in=[usuario])))],
+        aprobaciones = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(aprobadores__in=[usuario])))],
+        comentarios = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(comentadores__in=[usuario])))]
     )
 
 @app.route('/notas/<num>', methods=['GET', 'POST'])
@@ -170,7 +181,7 @@ def seed():
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -183,7 +194,7 @@ def seed():
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -196,7 +207,7 @@ def seed():
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -209,7 +220,7 @@ def seed():
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -222,7 +233,7 @@ def seed():
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -235,7 +246,7 @@ def seed():
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -248,7 +259,7 @@ def seed():
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
 
@@ -260,7 +271,7 @@ def seed():
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
 
@@ -272,7 +283,7 @@ def seed():
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -285,7 +296,7 @@ def seed():
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
 
@@ -297,7 +308,7 @@ def seed():
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -310,7 +321,7 @@ def seed():
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -323,7 +334,7 @@ def seed():
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -336,7 +347,7 @@ def seed():
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -349,7 +360,7 @@ def seed():
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -362,7 +373,7 @@ def seed():
     nota.comentadores = [user5, user6]
     nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -375,7 +386,7 @@ def seed():
     nota.comentadores = [user1, user2]
     nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
@@ -388,14 +399,18 @@ def seed():
     nota.comentadores = [user3, user4, user7]
     nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
     nota.versiones = []
-    nota.comentarios = []
+    
     nota.save()
     trimestre1.notas.append(nota)
     trimestre2.notas.append(nota)
 
+    trimestre1.save()
+    trimestre2.save()
+
+
     return render_template(
         'test.html',
-        message='Todo Ok',
+        message='Base de datos seedeada.',
         year=datetime.now().year
     )
 

@@ -11,18 +11,22 @@
     </div>
     <div class="col-md-5"></div>
     <div class="col-md-2">
-        <div id="dropdown-versiones" class="dropdown">
+        <div id="dropdown-trimestres" class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" 
             style="margin-top: 10%; width: 100%;">
-                <span id="current-version">
-                    Q2 - 2018
-                </span>
+                <span id="current-trimestre"> {{ trimestre.nombre }} </span>
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li>
-                    <a href="#">Q1 &#8739; 2018</a>
+                {% for _trimestre in trimestres %}
+                <li
+                {% if _trimestre == trimestre %}
+                    class="active"
+                {% endif %}
+                >
+                    <a href="{{ url_for('notas', trimestre_id=_trimestre.id) }}"> {{ _trimestre.nombre }} </a>
                 </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
