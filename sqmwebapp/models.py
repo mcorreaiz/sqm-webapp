@@ -52,10 +52,13 @@ class Trimestre(db.Document):
     fecha  = db.DateTimeField(default=datetime.datetime.now)
     numero = db.IntField() # Numero de Trimestre que es
 
-    def get_numero(trimestres): # Recibe toda la lista de trimestres
+    def get_numero(trimestres, default=3): # Recibe toda la lista de trimestres
         last_trimestre = trimestres.order_by("-fecha").first()
-        numero = last_trimestre.numero % 4 + 1
-        return numero
+        if last_trimestre:
+            numero = last_trimestre.numero % 4 + 1
+            return numero
+        else:
+            return default
 
     @property
     def nombre(self):

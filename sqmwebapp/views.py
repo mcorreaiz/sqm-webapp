@@ -22,7 +22,7 @@ from sqmwebapp import app
 def register():
     if request.url == 'https://{}/.auth/logout'.format(app.config['APP_URL']):
         return
-    if 'user' not in session: # Not registered with DB
+    if 'user' not in session: # Not registered with DB or session expired
         # Lazy auth
         user = utl.get_user_via_headers(request.headers)
         if user is None: # New user, or header failed somehow
@@ -145,9 +145,22 @@ def seed():
     user6.save()
     user7 = mdl.Usuario()
     user7.nombre = "Matias Correa"
-    user7.email = "mcorrea@sqm.cl"
-    user7.user_id = "f0a69c76-d294-4a9a-b43f-8a23dba60b45"
+    user7.email = "Matias.Correa@sqmcloud.onmicrosoft.com"
+    user7.user_id = "682504d3-3240-4bea-8d3b-bde79bc4bfb1"
     user7.save()
+
+    trimestre2 = mdl.Trimestre()
+    trimestre2.notas = []
+    trimestres = mdl.Trimestre.objects
+    trimestre2.numero = mdl.Trimestre.get_numero(trimestres)
+    trimestre2.activo = False
+    trimestre2.save()
+
+    trimestre1 = mdl.Trimestre()
+    trimestre1.notas = []
+    trimestres = mdl.Trimestre.objects
+    trimestre1.numero = mdl.Trimestre.get_numero(trimestres)
+    trimestre1.save()
 
     nota = mdl.Nota()
     nota.num = "1"
@@ -159,6 +172,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "1.1"
@@ -170,6 +185,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "2"
@@ -181,6 +198,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "3"
@@ -192,6 +211,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "4"
@@ -203,6 +224,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "5"
@@ -214,6 +237,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "6"
@@ -225,6 +250,7 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "6.1"
@@ -236,6 +262,7 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "6.2"
@@ -247,6 +274,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "7"
@@ -258,6 +287,7 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "8"
@@ -269,6 +299,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "9"
@@ -280,6 +312,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "10"
@@ -291,6 +325,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "11"
@@ -302,6 +338,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "11.1"
@@ -313,6 +351,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "12"
@@ -324,6 +364,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "13"
@@ -335,6 +377,8 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     nota = mdl.Nota()
     nota.num = "14"
@@ -346,10 +390,12 @@ def seed():
     nota.versiones = []
     nota.comentarios = []
     nota.save()
+    trimestre1.notas.append(nota)
+    trimestre2.notas.append(nota)
 
     return render_template(
-        'main.html',
-        title='Todo Ok',
+        'test.html',
+        message='Todo Ok',
         year=datetime.now().year
     )
 
