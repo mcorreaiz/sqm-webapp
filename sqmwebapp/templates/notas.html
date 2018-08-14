@@ -38,30 +38,39 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>yo - full</th>
-                        <th>Nota</th>
-                        <th></th>
+                        <th class="text-center">
+                            <i class="fas fa-user" style="font-size:20px;"></i>
+                        </th>
+                        <th class="text-center">
+                            <i class="fas fa-users" style="font-size:20px;"></i>
+                        </th>
+                        <th class="text-center">Nota</th>
+                        <th>T&iacute;tulo</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for version in redacciones %}
                     <!-- TODO: usar template inclusion para esta tabla! -->
-                        <tr> 
+                        <tr class="text-center"> 
                             {% if version.estados_aprobacion[user.user_id] %}
                                 {% if version.full_aprobado %}
-                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
-                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% else %}
                                 {% if version.full_aprobado %}
-                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
-                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.num }} </a></td>
-                            <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.nombre }} </a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.nombre }} </a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -74,29 +83,38 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>yo - full</th>
-                        <th>Nota</th>
-                        <th></th>
+                        <th class="text-center">
+                            <i class="fas fa-user" style="font-size:20px;"></i>
+                        </th>
+                        <th class="text-center">
+                            <i class="fas fa-users" style="font-size:20px;"></i>
+                        </th>
+                        <th class="text-center">Nota</th>
+                        <th>T&iacute;tulo</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for aprobacion in aprobaciones %}
-                        <tr>
+                        <tr class="text-center">
                             {% if aprobacion.estados_aprobacion[user.user_id] %}
                                 {% if aprobacion.full_aprobado %}
-                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
-                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% else %}
                                 {% if aprobacion.full_aprobado %}
-                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                                 {% else %}
-                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i> <i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                                    <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.num }}</a></td>
-                            <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -109,21 +127,23 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>full</th>
-                        <th>Nota</th>
-                        <th></th>
+                        <th class="text-center">
+                            <i class="fas fa-users" style="font-size:20px;"></i>
+                        </th>
+                        <th class="text-center">Nota</th>
+                        <th>T&iacute;tulo</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for comentario in comentarios %}
-                        <tr>
+                        <tr class="text-center">
                             {% if comentario.full_aprobado %}
                                 <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                             {% else %}
                                 <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.num }}</a></td>
-                            <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -135,10 +155,16 @@
 <div class="row">
     <div class="col-md-4"></div>
     <div class="col-md-2">
-        <p><a id="downloadReportButton" class="btn btn-default btn-block">Descargar reporte</a></p>
+        <p><a id="downloadReportButton" class="btn btn-default btn-block">
+            <i class="fas fa-download"></i>
+            Descargar reporte
+        </a></p>
     </div>
     <div class="col-md-2">
-        <p><a class="btn btn-default btn-block" href="{{ url_for('logout') }}">Salir</a></p>
+        <p><a class="btn btn-default btn-block" href="{{ url_for('logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            Salir
+        </a></p>
     </div>
     <div class="col-md-4"></div>
 </div>
