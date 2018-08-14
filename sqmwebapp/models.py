@@ -30,8 +30,8 @@ class Version(db.Document):
 
 class Nota(db.Document):
     meta = {'strict': False}
-    num                = db.StringField(max_length=5) # Ej. 25.11
-    nombre             = db.StringField(max_length=100)             # Ej. Contingencias tributarias
+    num                = db.StringField(max_length=15) # Ej. 25.11
+    nombre             = db.StringField(max_length=100)      # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     fecha              = db.DateTimeField(default=datetime.datetime.now)
     aprobadores        = db.ListField(db.ReferenceField(Usuario))

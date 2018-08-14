@@ -201,7 +201,16 @@ def seed():
                         redactores=[BG, MC, JN],
                         aprobadores=[MB, GI, GA, RR],
                         comentadores=[DL],
-                        versiones=[])
+                        versiones=[],
+                        estados_aprobacion={
+                            BG.user_id:False,
+                            MC.user_id:False,
+                            JN.user_id:False,
+                            MB.user_id:False,
+                            GI.user_id:False,
+                            GA.user_id:False,
+                            RR.user_id:False
+                        })
         notas[k] = nota
         nota.save()
         trimestre.notas.append(nota)
