@@ -168,6 +168,11 @@
 <script>
     $(document).ready(function() {
         console.log("ready");
+        if ("{{ trimestre.activo }}" == "False") {
+            $.each($("#botones button"), function(i, el) {
+                $(el).attr('disabled', true);
+            });
+        }
     });
 
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate

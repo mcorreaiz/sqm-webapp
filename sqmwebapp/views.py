@@ -20,6 +20,7 @@ from sqmwebapp import app
 
 @app.before_request
 def register():
+    print(session.items())
     if request.url == 'https://{}/.auth/logout'.format(app.config['APP_URL']):
         return
     if 'user' not in session: # Not registered with DB or session expired
@@ -33,32 +34,36 @@ def register():
         session['user'] = user.nombre
         session['user_id'] = user.user_id
         session['admin'] = user.admin
+        session['trimestre_id'] = str(mdl.Trimestre.objects.order_by("-fecha").first().id)
+        session['is_last_trimestre'] = True
 
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     session.pop('user_id', None)
-    session.pop('admin', None)
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
 
 @app.route('/')
-@app.route('/<trimestre_id>')
+@app.route('/old/<trimestre_id>')
 def notas(trimestre_id=None):
     """Renders the overview of the Notas state."""
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     trimestres = mdl.Trimestre.objects
-    print(trimestre_id)
     if trimestre_id:
-        trimestre = trimestres.get(id=trimestre_id)
-    else:
-        trimestre = trimestres.order_by("-fecha").first()
+        session['trimestre_id'] = trimestre_id
+        if trimestre_id == mdl.Trimestre.objects.order_by("-fecha").first().id:
+            session['is_last_trimestre'] = True
+        else:
+            session['is_last_trimestre'] = False
+        return redirect(url_for('notas'))
 
+    trimestre = trimestres.get(id=session.get('trimestre_id'))
     notas_trim = set(trimestre.notas)
     return render_template(
         'notas.html',
         year = datetime.now().year,
         user = usuario,
-        trimestre= trimestre,
+        trimestre = trimestre,
         trimestres = trimestres,
         redacciones = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(redactores__in=[usuario])))],
         aprobaciones = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(aprobadores__in=[usuario])))],
@@ -66,7 +71,7 @@ def notas(trimestre_id=None):
     )
 
 @app.route('/notas/<num>', methods=['GET', 'POST'])
-def nota_panel(num):
+def nota_panel(num, trimestre_id=None):
     """Renders the description of a Nota object."""
     num = unquote(num)
     nota = mdl.Nota.objects.get(num=num)
@@ -78,7 +83,7 @@ def nota_panel(num):
 
         file = request.files['file']
 
-        # If user submits an empty form. TODO: Acivate submit iif selected file
+        # If user submits an empty form
         if file.filename == '':
             flash('Ningun archivo seleccionado', 'error')
 
@@ -117,6 +122,7 @@ def nota_panel(num):
         'nota-panel.html',
         year = datetime.now().year,
         nota = nota,
+        trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id')),
         user = mdl.Usuario.objects.get(user_id=session['user_id']),
         version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones", nombre="")
     )
@@ -626,3 +632,10 @@ def report():
         return send_file(out, attachment_filename='Notas.zip', as_attachment=True)
 
     return make_response() # Empty response in any other case
+
+@app.route('/last_trimestre')
+def last_trimestre():
+    session['trimestre_id'] = str(mdl.Trimestre.objects.order_by("-fecha").first().id)
+    session['is_last_trimestre'] = True
+
+    return redirect(url_for('notas'))

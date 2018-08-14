@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notas-SQM</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -317,6 +318,7 @@
 
 
 </head>
+
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -333,11 +335,15 @@
                         <li><a href="{{ url_for('admin') }}">Administrador</a></li>
                     {% endif %}
                     <li><a href="{{ url_for('logout') }}">Salir</a></li>
+                    {% if not session['is_last_trimestre'] %}
+                        <li><a href="{{ url_for('last_trimestre') }}"><strong>Est&aacute;s viendo un trimestre antiguo, haz click ac&aacute; para ir al m&aacute;s reciente.</strong></a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </div>
 
+    <!-- Flash Messages -->
     <div style="display:none; position:absolute; padding-top: 5px" class="col-md-2 col-md-offset-5 flashes">
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
@@ -363,6 +369,7 @@
     {% endwith %}
     </div>
 
+    <!-- Macros -->
     {% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
         {% if string|length > maxLength: %}
         <div class="popup"> 
