@@ -13,6 +13,7 @@ from flask import (flash, jsonify, make_response, redirect, render_template,
                    request, session, url_for, g, send_file)
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote
+from mongoengine.queryset.visitor import Q
 
 import sqmwebapp.models as mdl
 import sqmwebapp.utils as utl
@@ -490,16 +491,6 @@ def download_version():
     out.seek(0)
     return send_file(out, attachment_filename=version.archivo.filename, as_attachment=True)
 
-@app.route('/set_admins')
-def set_admins():
-    user = mdl.Usuario.objects.get(user_id=session['user_id'])
-    user.admin = True
-    user.save()
-    user = mdl.Usuario.objects.get(user_id="f0a69c76-d294-4a9a-b43f-8a23dba60b45")
-    user.admin = True
-    user.save()
-    return redirect(url_for('notas'))
-
 @app.route('/admin')
 def admin():
     trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
@@ -510,13 +501,19 @@ def admin():
             notas_aprobadas += 1
         if nota.cerrada:
             notas_cerradas += 1
+    
+    admins = mdl.Usuario.objects(admin=True)
+    admins2 = mdl.Usuario.objects(Q(admin=True) & Q(user_id__ne=session['user_id']))
+    
     return render_template(
         'admin.html',
         trimestre = trimestre,
         notas_aprobadas = notas_aprobadas,
         notas_cerradas = notas_cerradas,
         total = len(trimestre.notas),
-        admins = mdl.Usuario.objects(admin=True)
+        admins = admins,
+        admins2 = admins2,
+        not_admins = mdl.Usuario.objects(admin=False)
     )
 
 @app.route('/cierres', methods=['POST'])
@@ -573,6 +570,25 @@ def cierres():
         new_trimestre.save()
         notas_cerradas = '0 / {}'.format(len(new_trimestre.notas))
         return jsonify(cerrado=False, msg='Se ha creado un nuevo trimestre', tipo='success', notas_cerradas=notas_cerradas, nombre_trimestre=new_trimestre.nombre)
+
+
+@app.route('/add_admin', methods=['POST'])
+def add_admin():
+    if request.form['user'] == 'Ninguno':
+        return jsonify(msg='Debe seleccionar a un Usuario', tipo='error')
+    usuario = mdl.Usuario.objects.get(nombre=request.form['user'])
+    usuario.admin = True
+    usuario.save() 
+    return jsonify(msg='{} es Administrador'.format(request.form['user']), tipo='success')
+
+@app.route('/del_admin', methods=['POST'])
+def del_admin():
+    if request.form['user'] == 'Ninguno':
+        return jsonify(msg='Debe seleccionar a un Usuario', tipo='error')
+    usuario = mdl.Usuario.objects.get(nombre=request.form['user'])
+    usuario.admin = False
+    usuario.save() 
+    return jsonify(msg='{} ya no es Administrador'.format(request.form['user']), tipo='success')
 
 @app.route('/add_trimestre')
 def add_trimestre():

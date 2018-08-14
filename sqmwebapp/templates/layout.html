@@ -8,6 +8,12 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+    <script src="/static/scripts/jquery-1.10.2.js"></script>
+    <script src="/static/scripts/bootstrap.js"></script>
+    <script src="/static/scripts/respond.js"></script>
+    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     
     <style>
         html, body {
@@ -528,11 +534,55 @@
         </div>
     </div>
 
-    <script src="/static/scripts/jquery-1.10.2.js"></script>
-    <script src="/static/scripts/bootstrap.js"></script>
-    <script src="/static/scripts/respond.js"></script>
-    <script src="/static/scripts/modernizr-2.6.2.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <div id="addAdminModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeAddAdminModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Seleccione un usuario:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <div class="col-md-12">
+                        <select class="form-control" id="sel1">
+                            <option>Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row"><p></p></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmAddAdmin"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelAddAdmin"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="delAdminModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span id="closeDelAdminModal" class="close" style="padding-top:10px;">&times;</span>
+                    <h2>Seleccione un usuario:</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row" align="center">
+                        <div class="col-md-12">
+                            <select class="form-control" id="sel2">
+                                <option>Ninguno</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row"><p></p></div>
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelAdmin"> Confirmar</button></div>
+                        <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelAdmin"> Cancelar</button></div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <script>
         $(document).ready(function() {
@@ -598,6 +648,14 @@
         function closeConfirmModal() {
             document.getElementById('confirmModal').style.display = "none"; 
         }
+
+        function closeAddAdminModal() {
+            document.getElementById('addAdminModal').style.display = "none"; 
+        }
+
+        function closeDelAdminModal() {
+            document.getElementById('delAdminModal').style.display = "none"; 
+        }
         
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
@@ -637,6 +695,24 @@
             closeConfirmModal();
         };
 
+        document.getElementById("cancelAddAdmin").onclick = function() {
+            closeAddAdminModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeAddAdminModal').onclick = function() {
+            closeAddAdminModal();
+        };
+
+        document.getElementById("cancelDelAdmin").onclick = function() {
+            closeDelAdminModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeDelAdminModal').onclick = function() {
+            closeDelAdminModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -650,6 +726,12 @@
             };
             if (event.target == document.getElementById('confirmModal')) {
                 closeConfirmModal();
+            };
+            if (event.target == document.getElementById('addAdminModal')) {
+                closeAddAdminModal();
+            };
+            if (event.target == document.getElementById('delAdminModal')) {
+                closeDelAdminModal();
             };
         }
     </script>

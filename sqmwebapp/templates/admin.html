@@ -18,7 +18,7 @@
             <tbody>
                 <tr>
                     <td>Notas aprobadas</td>
-                    <td>{{ notas_aprobadas }} / {{ total }}</td>
+                    <td id="notasAprobadas">{{ notas_aprobadas }} / {{ total }}</td>
                 </tr>
                 <tr>
                     <td>Notas cerradas</td>
@@ -40,9 +40,9 @@
 </div>
 <div class="row">
     <div class="col-md-4">
-        <ul class="list-group">
+        <ul class="list-group" id="system_admins">
             {% for user in admins %}
-                <li class="list-group-item">{{ user.nombre }}</li>
+                <li class="list-group-item" id="{{ user.nombre }}">{{ user.nombre }}</li>
             {% endfor %}
         </ul>
     </div>
@@ -50,7 +50,7 @@
         <button id="boton_add" class="btn btn-default btn-block">
                 Agregar
         </button>
-        <button id="boton_delete" class="btn btn-default btn-block">
+        <button id="boton_del" class="btn btn-default btn-block">
                 Eliminar
         </button>
     </div>
@@ -66,7 +66,7 @@
         document.getElementById('confirmModal').style.display = "block";
     };
 
-    $("#confirmar_cierre").click(function() { // TODO: change button name at first, then validate
+    $("#confirmar_cierre").click(function() {
         $.post("{{ url_for('cierres') }}", function(data) {
             flash(data['msg'], data['tipo']);
             if (data['cerrado']) {
@@ -77,10 +77,57 @@
                 document.getElementById('boton_comenzar').innerHTML = 'Cerrar Periodo';
                 document.getElementById('estadoTrimestre').innerHTML = 'Estado: Abierto';
                 document.getElementById('notasCerradas').innerHTML = data['notas_cerradas'];
+                document.getElementById('notasAprobadas').innerHTML = data['notas_cerradas'];
                 document.getElementById('nombreTrimestre').innerHTML = data['nombre_trimestre'];
             }
             closeConfirmModal();
         });
     });
+
+    // When the user clicks the button, open the modal 
+    document.getElementById("boton_add").onclick = function() {
+        add_list_to_table('{{ not_admins|tojson }}', 'sel1');
+        document.getElementById('addAdminModal').style.display = "block";
+    };
+
+    $("#confirmAddAdmin").click(function() {
+        $.post("{{ url_for('add_admin') }}", data={'user': document.getElementById("sel1").value}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeAddAdminModal();
+            var ul = document.getElementById("system_admins");
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(document.getElementById("sel1").value));
+            li.setAttribute("class", "list-group-item", "id", document.getElementById("sel1").value)
+            ul.appendChild(li);
+        });
+    });
+
+    // When the user clicks the button, open the modal 
+    document.getElementById("boton_del").onclick = function() {
+        add_list_to_table('{{ admins2|tojson }}', 'sel2');
+        document.getElementById('delAdminModal').style.display = "block";
+    };
+
+    $("#confirmDelAdmin").click(function() {
+        $.post("{{ url_for('del_admin') }}", data={'user': document.getElementById("sel2").value}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeDelAdminModal();
+            var item = document.getElementById(document.getElementById("sel2").value);
+            item.parentNode.removeChild(item);
+        });
+    });
+
+    function add_list_to_table (lista, table) {
+        var values = JSON.parse(lista);
+        var tabla = document.getElementById(table);
+        tabla.value = "Ninguno";
+        if (tabla.length == 1) {
+            for (var i = 0; i < values.length; i++) {
+                var option = document.createElement("option");
+                option.text = values[i]['nombre'];
+                tabla.add(option); 
+            }
+        }
+    }
 </script>
 {% endblock %}
