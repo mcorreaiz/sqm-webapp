@@ -122,289 +122,308 @@ def nota_panel(num, trimestre_id=None):
 @app.route('/seed')
 def seed():
     """Seeds the DB."""
-    user1 = mdl.Usuario()
-    user1.nombre = "Ricardo Ramos"
-    user1.email = "ricardoramos@sqm.cl"
-    user1.user_id = "1"
-    user1.save()
-    user2 = mdl.Usuario()
-    user2.nombre = "Juan Nestler"
-    user2.email = "jjnestler@sqm.cl"
-    user2.user_id = "7e5b5d5e-e151-4e78-a6b8-ea0dcbc0d3fd"
-    user2.save()
-    user3 = mdl.Usuario()
-    user3.nombre = "Beatriz Garcia"
-    user3.email = "bgarcia@sqm.cl"
-    user3.user_id = "2"
-    user3.save()
-    user4 = mdl.Usuario()
-    user4.nombre = "Gonzalo Aguirre"
-    user4.email = "gaguirre@sqm.cl"
-    user4.user_id = "3"
-    user4.save()
-    user5 = mdl.Usuario()
-    user5.nombre = "Gerardo Illanes"
-    user5.email = "gillanes@sqm.cl"
-    user5.user_id = "4"
-    user5.save()
-    user6 = mdl.Usuario()
-    user6.nombre = "Patricio de Solminihac"
-    user6.email = "psolminihac@sqm.cl"
-    user6.user_id = "5"
-    user6.save()
-    user7 = mdl.Usuario()
-    user7.nombre = "Matias Correa"
-    user7.email = "Matias.Correa@sqmcloud.onmicrosoft.com"
-    user7.user_id = "682504d3-3240-4bea-8d3b-bde79bc4bfb1"
-    user7.save()
+    RR = mdl.Usuario()
+    RR.nombre = "Ricardo Ramos"
+    RR.email = "ricardo.ramos@sqm.com"
+    RR.user_id = "1"
+    RR.save()
+    JN = mdl.Usuario()
+    JN.nombre = "Juan Nestler"
+    JN.email = "juan.nestler@sqmcloud.onmicrosoft.com"
+    JN.user_id = "7e5b5d5e-e151-4e78-a6b8-ea0dcbc0d3fd"
+    JN.admin = True
+    JN.save()
+    BG = mdl.Usuario()
+    BG.nombre = "Beatriz Garcia"
+    BG.email = "beatriz.garcia@sqm.com"
+    BG.user_id = "2"
+    BG.admin = True
+    BG.save()
+    GA = mdl.Usuario()
+    GA.nombre = "Gonzalo Aguirre"
+    GA.email = "gonzalo.aguirre@sqm.com"
+    GA.user_id = "3"
+    GA.save()
+    GI = mdl.Usuario()
+    GI.nombre = "Gerardo Illanes"
+    GI.email = "gerardo.illanes@sqm.com"
+    GI.user_id = "4"
+    GI.save()
+    DL = mdl.Usuario()
+    DL.nombre = "Daniela Leal"
+    DL.email = "daniela.leal@sqm.com"
+    DL.user_id = "5"
+    DL.admin = True
+    DL.save()
+    MC = mdl.Usuario()
+    MC.nombre = "Matias Correa"
+    MC.email = "Matias.Correa@sqmcloud.onmicrosoft.com"
+    MC.user_id = "682504d3-3240-4bea-8d3b-bde79bc4bfb1"
+    MC.admin = True
+    MC.save()
+    MB = mdl.Usuario()
+    MB.nombre = "Macarena Briseno"
+    MB.email = "macaera.briseno@sqm.com"
+    MB.user_id = "6"
+    MB.admin = True
+    MB.save()
 
-    trimestre2 = mdl.Trimestre()
-    trimestre2.notas = []
+    trimestre = mdl.Trimestre()
+    trimestre.notas = []
     trimestres = mdl.Trimestre.objects
-    trimestre2.numero = mdl.Trimestre.get_numero(trimestres)
-    trimestre2.activo = False
-    trimestre2.save()
+    trimestre.numero = mdl.Trimestre.get_numero(trimestres)
+    trimestre.save()
 
-    trimestre1 = mdl.Trimestre()
-    trimestre1.notas = []
-    trimestres = mdl.Trimestre.objects
-    trimestre1.numero = mdl.Trimestre.get_numero(trimestres)
-    trimestre1.save()
+    notas_nombres = {"0":"Estados consolidados",
+            "1":"Identificación y actividades de Sociedad Química y Minera de Chile S.A. y Filiales",
+            "2":"Bases de presentación de los estados financieros consolidados",
+            "3":"Políticas contables significativas",
+            "4":"Gestión del riesgo financiero",
+            "5":"Cambios en estimaciones y políticas contables (uniformidad)",
+            "6-6.1":"Antecedentes empresas consolidadas",
+            "6.2-6.3":"Antecedentes empresas consolidadas",
+            "6.4-6.6":"Información general sobre subsidiarias consolidadas",
+            "6.7":"Detalle de operaciones efectuadas entre sociedades consolidadas",
+            "7":"Efectivo y equivalentes al efectivo",
+            "8":"Inventarios",
+            "9-9.6":"Informaciones a revelar sobre partes relacionadas",
+            "9.7-9.8":"Directorio y alta administración",
+            "10":"Instrumentos financieros",
+            "11":"Inversiones contabilizadas utilizando el método de la participación",
+            "12":"Negocios conjuntos",
+            "13":"Activos intangibles y plusvalía"}
 
-    nota = mdl.Nota()
-    nota.num = "1"
-    nota.nombre = "Analisis de Compras"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
+    notas = {}
+
+    for k,v in notas_nombres.items():
+        nota = mdl.Nota(num=k,
+                        nombre=v,
+                        redactores=[BG, MC, JN],
+                        aprobadores=[MB, GI, GA, RR],
+                        comentadores=[DL],
+                        versiones=[])
+        notas[k] = nota
+        nota.save()
+        trimestre.notas.append(nota)
+    trimestre.save()
+
+    # nota = mdl.Nota()
+    # nota.num = "1"
+    # nota.nombre = "Analisis de Compras"
+    # nota.redactores = [user1, user2, user7]
+    # nota.aprobadores = [user3, user4]
+    # nota.comentadores = [user5, user6]
+    # nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "1.1"
-    nota.nombre = "Analisis de Ventas"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "1.1"
+    # nota.nombre = "Analisis de Ventas"
+    # nota.redactores = [user3, user4]
+    # nota.aprobadores = [user5, user6, user7]
+    # nota.comentadores = [user1, user2]
+    # nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "2"
-    nota.nombre = "Proyecciones"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "2"
+    # nota.nombre = "Proyecciones"
+    # nota.redactores = [user5, user6]
+    # nota.aprobadores = [user1, user2]
+    # nota.comentadores = [user3, user4, user7]
+    # nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "3"
-    nota.nombre = "Produccion Nacional"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "3"
+    # nota.nombre = "Produccion Nacional"
+    # nota.redactores = [user1, user2, user7]
+    # nota.aprobadores = [user3, user4]
+    # nota.comentadores = [user5, user6]
+    # nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "4"
-    nota.nombre = "Obras Hidraulicas"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "4"
+    # nota.nombre = "Obras Hidraulicas"
+    # nota.redactores = [user3, user4]
+    # nota.aprobadores = [user5, user6, user7]
+    # nota.comentadores = [user1, user2]
+    # nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "5"
-    nota.nombre = "Gestion operacional"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "5"
+    # nota.nombre = "Gestion operacional"
+    # nota.redactores = [user5, user6]
+    # nota.aprobadores = [user1, user2]
+    # nota.comentadores = [user3, user4, user7]
+    # nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "6"
-    nota.nombre = "Proyeccion anual"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "6"
+    # nota.nombre = "Proyeccion anual"
+    # nota.redactores = [user1, user2, user7]
+    # nota.aprobadores = [user3, user4]
+    # nota.comentadores = [user5, user6]
+    # nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "6.1"
-    nota.nombre = "Contabilidad del trimestre"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "6.1"
+    # nota.nombre = "Contabilidad del trimestre"
+    # nota.redactores = [user3, user4]
+    # nota.aprobadores = [user5, user6, user7]
+    # nota.comentadores = [user1, user2]
+    # nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "6.2"
-    nota.nombre = "Casos legales"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "6.2"
+    # nota.nombre = "Casos legales"
+    # nota.redactores = [user5, user6]
+    # nota.aprobadores = [user1, user2]
+    # nota.comentadores = [user3, user4, user7]
+    # nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "7"
-    nota.nombre = "Gestiones"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "7"
+    # nota.nombre = "Gestiones"
+    # nota.redactores = [user1, user2, user7]
+    # nota.aprobadores = [user3, user4]
+    # nota.comentadores = [user5, user6]
+    # nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "8"
-    nota.nombre = "Excavaciones"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "8"
+    # nota.nombre = "Excavaciones"
+    # nota.redactores = [user3, user4]
+    # nota.aprobadores = [user5, user6, user7]
+    # nota.comentadores = [user1, user2]
+    # nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "9"
-    nota.nombre = "Relaciones internacionales"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "9"
+    # nota.nombre = "Relaciones internacionales"
+    # nota.redactores = [user5, user6]
+    # nota.aprobadores = [user1, user2]
+    # nota.comentadores = [user3, user4, user7]
+    # nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "10"
-    nota.nombre = "Cambios"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "10"
+    # nota.nombre = "Cambios"
+    # nota.redactores = [user1, user2, user7]
+    # nota.aprobadores = [user3, user4]
+    # nota.comentadores = [user5, user6]
+    # nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "11"
-    nota.nombre = "Riesgo de operaciones"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "11"
+    # nota.nombre = "Riesgo de operaciones"
+    # nota.redactores = [user3, user4]
+    # nota.aprobadores = [user5, user6, user7]
+    # nota.comentadores = [user1, user2]
+    # nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "11.1"
-    nota.nombre = "Alcance"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "11.1"
+    # nota.nombre = "Alcance"
+    # nota.redactores = [user5, user6]
+    # nota.aprobadores = [user1, user2]
+    # nota.comentadores = [user3, user4, user7]
+    # nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "12"
-    nota.nombre = "Objetos"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "12"
+    # nota.nombre = "Objetos"
+    # nota.redactores = [user1, user2, user7]
+    # nota.aprobadores = [user3, user4]
+    # nota.comentadores = [user5, user6]
+    # nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "13"
-    nota.nombre = "Finanzas"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "13"
+    # nota.nombre = "Finanzas"
+    # nota.redactores = [user3, user4]
+    # nota.aprobadores = [user5, user6, user7]
+    # nota.comentadores = [user1, user2]
+    # nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    nota = mdl.Nota()
-    nota.num = "14"
-    nota.nombre = "Metas"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
+    # nota = mdl.Nota()
+    # nota.num = "14"
+    # nota.nombre = "Metas"
+    # nota.redactores = [user5, user6]
+    # nota.aprobadores = [user1, user2]
+    # nota.comentadores = [user3, user4, user7]
+    # nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
+    # nota.versiones = []
     
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
+    # nota.save()
+    # trimestre1.notas.append(nota)
 
-    trimestre1.save()
-    trimestre2.save()
-
+    # trimestre1.save()
 
     return render_template(
         'test.html',
