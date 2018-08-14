@@ -336,7 +336,7 @@
                     {% endif %}
                     <li><a href="{{ url_for('logout') }}">Salir</a></li>
                     {% if not session['is_last_trimestre'] %}
-                        <li><a href="{{ url_for('last_trimestre') }}"><strong>Est&aacute;s viendo un trimestre antiguo, haz click ac&aacute; para ir al m&aacute;s reciente.</strong></a></li>
+                        <li><a href="{{ url_for('change_trimestre') }}"><strong>Est&aacute;s viendo un trimestre antiguo, haz click ac&aacute; para ir al m&aacute;s reciente.</strong></a></li>
                     {% endif %}
                 </ul>
             </div>

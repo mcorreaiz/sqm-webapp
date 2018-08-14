@@ -222,9 +222,14 @@
             }
             
             var row = document.getElementById("comments_table_" + num_table).insertRow(-1);
-            row.insertCell(0).innerHTML = comment_info;
-            row.insertCell(1).innerHTML = comment_content;
-            row.insertCell(2).innerHTML = comment_name;
+            row.className = "row";
+            cell = row.insertCell(-1);
+            cell.innerHTML = comment_info;
+            cell.className = "text-center";
+            row.insertCell(-1).innerHTML = comment_content;
+            cell = row.insertCell(-1);
+            cell.innerHTML = comment_name;
+            cell.className = "text-center";
             row.onclick = function() {
                 verComentario(num_table + "-" + num_row);
             };

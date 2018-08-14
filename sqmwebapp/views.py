@@ -20,7 +20,6 @@ from sqmwebapp import app
 
 @app.before_request
 def register():
-    print(session.items())
     if request.url == 'https://{}/.auth/logout'.format(app.config['APP_URL']):
         return
     if 'user' not in session: # Not registered with DB or session expired
@@ -44,19 +43,10 @@ def logout():
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
 
 @app.route('/')
-@app.route('/old/<trimestre_id>')
-def notas(trimestre_id=None):
+def notas():
     """Renders the overview of the Notas state."""
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     trimestres = mdl.Trimestre.objects
-    if trimestre_id:
-        session['trimestre_id'] = trimestre_id
-        if trimestre_id == mdl.Trimestre.objects.order_by("-fecha").first().id:
-            session['is_last_trimestre'] = True
-        else:
-            session['is_last_trimestre'] = False
-        return redirect(url_for('notas'))
-
     trimestre = trimestres.get(id=session.get('trimestre_id'))
     notas_trim = set(trimestre.notas)
     return render_template(
@@ -74,7 +64,8 @@ def notas(trimestre_id=None):
 def nota_panel(num, trimestre_id=None):
     """Renders the description of a Nota object."""
     num = unquote(num)
-    nota = mdl.Nota.objects.get(num=num)
+    trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
+    nota = next((x for x in trimestre.notas if x.num == num), None)
 
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -122,7 +113,7 @@ def nota_panel(num, trimestre_id=None):
         'nota-panel.html',
         year = datetime.now().year,
         nota = nota,
-        trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id')),
+        trimestre = trimestre,
         user = mdl.Usuario.objects.get(user_id=session['user_id']),
         version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones", nombre="")
     )
@@ -454,7 +445,8 @@ def me():
 
 @app.route('/approval', methods=['POST'])
 def approval():
-    nota = mdl.Nota.objects.get(num=request.form['nota'])
+    trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
+    nota = next((x for x in trimestre.notas if x.num == request.form['nota']), None)
     if nota.estados_aprobacion[session['user_id']]:
         nota.estados_aprobacion[session['user_id']] = False
         nota.save()
@@ -466,7 +458,8 @@ def approval():
 
 @app.route('/comment', methods=['POST'])
 def comment():
-    nota = mdl.Nota.objects.get(num=request.form['nota'])
+    trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
+    nota = next((x for x in trimestre.notas if x.num == request.form['nota']), None)
     version = nota.versiones[-1]
     contenido = request.form['comment']
     redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
@@ -592,7 +585,8 @@ def add_trimestre():
 @app.route('/report')
 def report():
     modo = request.args.get('modo') # compile or compress
-    notas = mdl.Nota.objects
+    trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
+    nota = trimestre.notas
     files = [nota.versiones[-1].archivo for nota in notas]
 
     if modo == 'compile': # TODO: Receive file name
@@ -633,9 +627,17 @@ def report():
 
     return make_response() # Empty response in any other case
 
-@app.route('/last_trimestre')
-def last_trimestre():
-    session['trimestre_id'] = str(mdl.Trimestre.objects.order_by("-fecha").first().id)
-    session['is_last_trimestre'] = True
+@app.route('/change_trimestre')
+@app.route('/change_trimestre/<trimestre_id>')
+def change_trimestre(trimestre_id=None):
+    if trimestre_id:
+        session['trimestre_id'] = trimestre_id
+        if trimestre_id == mdl.Trimestre.objects.order_by("-fecha").first().id:
+            session['is_last_trimestre'] = True
+        else:
+            session['is_last_trimestre'] = False
+    else: # Go to last Trimestre
+        session['trimestre_id'] = str(mdl.Trimestre.objects.order_by("-fecha").first().id)
+        session['is_last_trimestre'] = True
 
     return redirect(url_for('notas'))

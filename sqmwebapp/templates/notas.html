@@ -24,7 +24,7 @@
                     class="active"
                 {% endif %}
                 >
-                    <a href="{{ url_for('notas', trimestre_id=_trimestre.id) }}"> {{ _trimestre.nombre }} </a>
+                    <a href="{{ url_for('change_trimestre', trimestre_id=_trimestre.id) }}"> {{ _trimestre.nombre }} </a>
                 </li>
                 {% endfor %}
             </ul>
