@@ -49,16 +49,20 @@ def notas():
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     trimestres = mdl.Trimestre.objects
     trimestre = trimestres.get(id=session.get('trimestre_id'))
-    notas_trim = set(trimestre.notas)
+    notas_trim = trimestre.notas
+    redacciones = set(mdl.Nota.objects(redactores__in=[usuario]))
+    aprobaciones = set(mdl.Nota.objects(aprobadores__in=[usuario]))
+    comentarios = set(mdl.Nota.objects(comentadores__in=[usuario]))
     return render_template(
         'notas.html',
         year = datetime.now().year,
         user = usuario,
+        users = mdl.Usuario.objects,
         trimestre = trimestre,
         trimestres = trimestres,
-        redacciones = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(redactores__in=[usuario])))],
-        aprobaciones = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(aprobadores__in=[usuario])))],
-        comentarios = [nota for nota in notas_trim.intersection(set(mdl.Nota.objects(comentadores__in=[usuario])))]
+        redacciones = [nota for nota in notas_trim if nota in redacciones],
+        aprobaciones = [nota for nota in notas_trim if nota in aprobaciones],
+        comentarios = [nota for nota in notas_trim if nota in comentarios]
     )
 
 @app.route('/notas/<num>', methods=['GET', 'POST'])
@@ -119,299 +123,6 @@ def nota_panel(num, trimestre_id=None):
         version = nota.versiones[-1] if nota.versiones else mdl.Version(nombre_creacion="No hay versiones", nombre="")
     )
 
-@app.route('/seed')
-def seed():
-    """Seeds the DB."""
-    user1 = mdl.Usuario()
-    user1.nombre = "Ricardo Ramos"
-    user1.email = "ricardoramos@sqm.cl"
-    user1.user_id = "1"
-    user1.save()
-    user2 = mdl.Usuario()
-    user2.nombre = "Juan Nestler"
-    user2.email = "jjnestler@sqm.cl"
-    user2.user_id = "7e5b5d5e-e151-4e78-a6b8-ea0dcbc0d3fd"
-    user2.save()
-    user3 = mdl.Usuario()
-    user3.nombre = "Beatriz Garcia"
-    user3.email = "bgarcia@sqm.cl"
-    user3.user_id = "2"
-    user3.save()
-    user4 = mdl.Usuario()
-    user4.nombre = "Gonzalo Aguirre"
-    user4.email = "gaguirre@sqm.cl"
-    user4.user_id = "3"
-    user4.save()
-    user5 = mdl.Usuario()
-    user5.nombre = "Gerardo Illanes"
-    user5.email = "gillanes@sqm.cl"
-    user5.user_id = "4"
-    user5.save()
-    user6 = mdl.Usuario()
-    user6.nombre = "Patricio de Solminihac"
-    user6.email = "psolminihac@sqm.cl"
-    user6.user_id = "5"
-    user6.save()
-    user7 = mdl.Usuario()
-    user7.nombre = "Matias Correa"
-    user7.email = "Matias.Correa@sqmcloud.onmicrosoft.com"
-    user7.user_id = "682504d3-3240-4bea-8d3b-bde79bc4bfb1"
-    user7.save()
-
-    trimestre2 = mdl.Trimestre()
-    trimestre2.notas = []
-    trimestres = mdl.Trimestre.objects
-    trimestre2.numero = mdl.Trimestre.get_numero(trimestres)
-    trimestre2.activo = False
-    trimestre2.save()
-
-    trimestre1 = mdl.Trimestre()
-    trimestre1.notas = []
-    trimestres = mdl.Trimestre.objects
-    trimestre1.numero = mdl.Trimestre.get_numero(trimestres)
-    trimestre1.save()
-
-    nota = mdl.Nota()
-    nota.num = "1"
-    nota.nombre = "Analisis de Compras"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "1.1"
-    nota.nombre = "Analisis de Ventas"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "2"
-    nota.nombre = "Proyecciones"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "3"
-    nota.nombre = "Produccion Nacional"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "4"
-    nota.nombre = "Obras Hidraulicas"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "5"
-    nota.nombre = "Gestion operacional"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "6"
-    nota.nombre = "Proyeccion anual"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "6.1"
-    nota.nombre = "Contabilidad del trimestre"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "6.2"
-    nota.nombre = "Casos legales"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "7"
-    nota.nombre = "Gestiones"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "8"
-    nota.nombre = "Excavaciones"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "9"
-    nota.nombre = "Relaciones internacionales"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "10"
-    nota.nombre = "Cambios"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "11"
-    nota.nombre = "Riesgo de operaciones"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "11.1"
-    nota.nombre = "Alcance"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "12"
-    nota.nombre = "Objetos"
-    nota.redactores = [user1, user2, user7]
-    nota.aprobadores = [user3, user4]
-    nota.comentadores = [user5, user6]
-    nota.estados_aprobacion = {user1.user_id: True, user2.user_id: True, user7.user_id: True, user3.user_id: True, user4.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "13"
-    nota.nombre = "Finanzas"
-    nota.redactores = [user3, user4]
-    nota.aprobadores = [user5, user6, user7]
-    nota.comentadores = [user1, user2]
-    nota.estados_aprobacion = {user3.user_id: True, user4.user_id: False, user5.user_id: True, user6.user_id: False, user7.user_id: False}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    nota = mdl.Nota()
-    nota.num = "14"
-    nota.nombre = "Metas"
-    nota.redactores = [user5, user6]
-    nota.aprobadores = [user1, user2]
-    nota.comentadores = [user3, user4, user7]
-    nota.estados_aprobacion = {user5.user_id: False, user6.user_id: False, user1.user_id: False, user2.user_id: True}
-    nota.versiones = []
-    
-    nota.save()
-    trimestre1.notas.append(nota)
-    trimestre2.notas.append(nota)
-
-    trimestre1.save()
-    trimestre2.save()
-
-
-    return render_template(
-        'test.html',
-        message='Base de datos seedeada.',
-        year=datetime.now().year
-    )
-
 @app.route('/headers') # TODO: Erase
 def headers():
     print(request.cookies)
@@ -464,7 +175,7 @@ def comment():
     version = nota.versiones[-1]
     contenido = request.form['comment']
     redactor = mdl.Usuario.objects.get(user_id=session['user_id'])
-    nombre = 'C_' + str(len(version.comentarios) + 1)
+    nombre = 'C_' + str(len(version.comentarios))
     nombre_creacion = "{0}_{1}".format(redactor.iniciales, datetime.now().strftime('%m_%d'))
 
     comentario = mdl.Comentario()
@@ -554,6 +265,8 @@ def cierres():
                 ultima_version = nota.versiones[-1]
                 version_base.archivo = ultima_version.archivo
             version_base.redactor = user
+            version_base.nombre = "R_b"
+            version_base.nombre_creacion = "{}_{}".format(user.iniciales, version_base.fecha.strftime('%m_%d'))
             # Versión base viene con comentario: Carga inicial
             comentario_base = mdl.Comentario()
             comentario_base.contenido = "Carga inicial"
@@ -568,6 +281,7 @@ def cierres():
             new_nota.save()
             new_trimestre.notas.append(new_nota)
         new_trimestre.save()
+        session['trimestre_id'] = str(new_trimestre.id)
         notas_cerradas = '0 / {}'.format(len(new_trimestre.notas))
         return jsonify(cerrado=False, msg='Se ha creado un nuevo trimestre', tipo='success', notas_cerradas=notas_cerradas, nombre_trimestre=new_trimestre.nombre)
 
@@ -589,6 +303,46 @@ def del_admin():
     usuario.admin = False
     usuario.save() 
     return jsonify(msg='{} ya no es Administrador'.format(request.form['user']), tipo='success')
+
+@app.route('/add_nota', methods=['POST'])
+def add_nota():
+    if request.form['numero'] == '' or request.form['descripcion'] == '':
+        return jsonify(msg='Debe ingresar el numero y la descripción de la nota', tipo='error')
+
+    trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
+
+    redactores = request.form.getlist('redactores[]')
+    aprobadores = request.form.getlist('aprobadores[]')
+    comentadores = request.form.getlist('comentadores[]')
+
+    new_nota = mdl.Nota()
+    new_nota.num = request.form['numero']
+    new_nota.nombre = request.form['descripcion']
+    new_nota.redactores = []
+    new_nota.aprobadores = []
+    new_nota.comentadores = []
+    new_nota.estados_aprobacion = {}
+    new_nota.versiones = []
+
+    for user in redactores:
+        usuario = mdl.Usuario.objects.get(nombre=user)
+        new_nota.redactores.append(usuario)
+        new_nota.estados_aprobacion[usuario.user_id] = False
+    
+    for user in aprobadores:
+        usuario = mdl.Usuario.objects.get(nombre=user)
+        new_nota.aprobadores.append(usuario)
+        new_nota.estados_aprobacion[usuario.user_id] = False
+
+    for user in comentadores:
+        usuario = mdl.Usuario.objects.get(nombre=user)
+        new_nota.comentadores.append(usuario)
+
+    new_nota.save()
+    trimestre.notas.append(new_nota)
+    trimestre.save()
+
+    return jsonify(msg='Se ha agregado la nota', tipo='success')
 
 @app.route('/add_trimestre')
 def add_trimestre():
