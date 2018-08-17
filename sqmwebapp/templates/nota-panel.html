@@ -158,6 +158,16 @@
                 </div>
             {% endif %}
         </div>
+        {% if session['admin'] %}
+            <div align="center" class="col-md-12" style="padding-top: 15px;">
+                <button id="boton-cerrar-nota" class="btn btn-default" style="width: 200px;">
+                    <i class="fa {{ 'fa-check-circle-o' if nota.cerrada else 'fa-ban' }}"></i>
+                    <span>
+                        {{ 'Abrir Nota' if nota.cerrada else 'Cerrar Nota' }}
+                    </span>
+                </button>
+            </div>
+        {% endif %}
     </div>
 </div>
 
@@ -284,6 +294,17 @@
     document.getElementById("uploadButton").onclick = function() {
         document.getElementById('uploadModal').style.display = "block";
     };
+
+    $("#boton-cerrar-nota").click(function() { // TODO: change button name at first, then validate
+        var text = $(this).find('span')[0];
+        var icon = $(this).find('i')[0];
+        icon.className = "fas fa-spinner fa-spin";
+        $.post("{{ url_for('cerrar_nota') }}", {'id_nota': '{{ nota.id }}'}, function(data) {
+            flash(data['msg'], data['tipo']);
+            location.reload(); // TODO cambiar texto de botones con jquery (quitar reload)
+        });
+    });
+
 </script>
 
 {% endblock %}

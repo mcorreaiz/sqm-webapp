@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="/static/scripts/jquery-1.10.2.js"></script>
     <script src="/static/scripts/jquery-3.3.1.js"></script>
@@ -664,9 +665,18 @@
             document.getElementById('createNotaModal').style.display = "none";
             document.getElementById('inputNumero').value = '';
             document.getElementById("inputDescripcion").value = '';
-            $('#inputRedactores').val(null);
-            $('#inputAprobadores').val(null);
-            $('#inputComentadores').val(null);
+            //$('#inputRedactores').val(null);
+            //$('#inputAprobadores').val(null);
+            //$('#inputComentadores').val(null);
+        }
+
+        function closeEditNotaModal() {
+            document.getElementById('editNotaModal').style.display = "none";
+            document.getElementById('inputNumero2').value = '';
+            document.getElementById("inputDescripcion2").value = '';
+            //$('#inputRedactores2').val(null);
+            //$('#inputAprobadores2').val(null);
+            //$('#inputComentadores2').val(null);
         }
         
         // When the user clicks on <span> (x), close the modal
@@ -734,6 +744,15 @@
             closeCreateNotaModal();
         };
 
+        document.getElementById("cancelEditNota").onclick = function() {
+            closeEditNotaModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeEditNotaModal').onclick = function() {
+            closeEditNotaModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -756,6 +775,9 @@
             };
             if (event.target == document.getElementById('createNotaModal')) {
                 closeCreateNotaModal();
+            };
+            if (event.target == document.getElementById('editNotaModal')) {
+                closeEditNotaModal();
             };
         }
     </script>
