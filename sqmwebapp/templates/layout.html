@@ -8,12 +8,14 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 
     <script src="/static/scripts/jquery-1.10.2.js"></script>
+    <script src="/static/scripts/jquery-3.3.1.js"></script>
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
     <script src="/static/scripts/modernizr-2.6.2.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="/static/scripts/bootstrap-select.js"></script>
     
     <style>
         html, body {
@@ -560,30 +562,31 @@
     </div>
 
     <div id="delAdminModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span id="closeDelAdminModal" class="close" style="padding-top:10px;">&times;</span>
-                    <h2>Seleccione un usuario:</h2>
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeDelAdminModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Seleccione un usuario:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <div class="col-md-12">
+                        <select class="form-control" id="sel2">
+                            <option>Ninguno</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div class="row" align="center">
-                        <div class="col-md-12">
-                            <select class="form-control" id="sel2">
-                                <option>Ninguno</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row"><p></p></div>
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelAdmin"> Confirmar</button></div>
-                        <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelAdmin"> Cancelar</button></div>
-                        <div class="col-md-3"></div>
-                    </div>
+                <div class="row"><p></p></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelAdmin"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelAdmin"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
                 </div>
             </div>
         </div>
+    </div>
 
+    
     <script>
         $(document).ready(function() {
             displayFlash();
@@ -656,6 +659,15 @@
         function closeDelAdminModal() {
             document.getElementById('delAdminModal').style.display = "none"; 
         }
+
+        function closeCreateNotaModal() {
+            document.getElementById('createNotaModal').style.display = "none";
+            document.getElementById('inputNumero').value = '';
+            document.getElementById("inputDescripcion").value = '';
+            $('#inputRedactores').val(null);
+            $('#inputAprobadores').val(null);
+            $('#inputComentadores').val(null);
+        }
         
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
@@ -713,6 +725,15 @@
             closeDelAdminModal();
         };
 
+        document.getElementById("cancelCreateNota").onclick = function() {
+            closeCreateNotaModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeCreateNotaModal').onclick = function() {
+            closeCreateNotaModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -732,6 +753,9 @@
             };
             if (event.target == document.getElementById('delAdminModal')) {
                 closeDelAdminModal();
+            };
+            if (event.target == document.getElementById('createNotaModal')) {
+                closeCreateNotaModal();
             };
         }
     </script>

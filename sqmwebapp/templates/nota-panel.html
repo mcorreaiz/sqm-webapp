@@ -168,7 +168,7 @@
 <script>
     $(document).ready(function() {
         console.log("ready");
-        if ("{{ trimestre.activo }}" == "False") {
+        if ("{{ trimestre.activo }}" == "False" || "{{ nota.cerrada }}" == "True") {
             $.each($("#botones button"), function(i, el) {
                 $(el).attr('disabled', true);
             });
