@@ -344,6 +344,59 @@ def add_nota():
 
     return jsonify(msg='Se ha agregado la nota', tipo='success')
 
+@app.route('/get_nota_info', methods=['POST'])
+def get_nota_info(): # TODO agregar redactores, aprobadores y comentadores
+    nota = mdl.Nota.objects.get(id=request.form['id_nota'])
+    return jsonify(num=nota.num, nombre=nota.nombre)
+
+@app.route('/edit_nota', methods=['POST'])
+def edit_nota():
+    if request.form['numero'] == '' or request.form['descripcion'] == '':
+        return jsonify(msg='Debe ingresar el numero y la descripción de la nota', tipo='error')
+
+    redactores = request.form.getlist('redactores[]')
+    aprobadores = request.form.getlist('aprobadores[]')
+    comentadores = request.form.getlist('comentadores[]')
+
+    new_nota = mdl.Nota.objects.get(id=request.form['id_nota'])
+    new_nota.num = request.form['numero']
+    new_nota.nombre = request.form['descripcion']
+    new_nota.redactores = []
+    new_nota.aprobadores = []
+    new_nota.comentadores = []
+    new_nota.estados_aprobacion = {}
+    # new_nota.versiones queda igual
+
+    for user in redactores:
+        usuario = mdl.Usuario.objects.get(nombre=user)
+        new_nota.redactores.append(usuario)
+        new_nota.estados_aprobacion[usuario.user_id] = False
+    
+    for user in aprobadores:
+        usuario = mdl.Usuario.objects.get(nombre=user)
+        new_nota.aprobadores.append(usuario)
+        new_nota.estados_aprobacion[usuario.user_id] = False
+
+    for user in comentadores:
+        usuario = mdl.Usuario.objects.get(nombre=user)
+        new_nota.comentadores.append(usuario)
+
+    new_nota.save()
+
+    return jsonify(msg='Se ha editado la nota', tipo='success')
+
+@app.route('/cerrar_nota', methods=['POST'])
+def cerrar_nota():
+    nota = mdl.Nota.objects.get(id=request.form['id_nota'])
+    if nota.cerrada:
+        nota.cerrada = False
+        nota.save()
+        return jsonify(aprobado=False, msg='Se ha abierto la Nota', tipo='success')
+    else:
+        nota.cerrada = True
+        nota.save()
+        return jsonify(aprobado=True, msg='Se ha cerrado la Nota', tipo='success')
+
 @app.route('/add_trimestre')
 def add_trimestre():
     trimestre = mdl.Trimestre()
@@ -356,7 +409,7 @@ def add_trimestre():
 def report():
     modo = request.args.get('modo') # compile or compress
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
-    nota = trimestre.notas
+    notas = trimestre.notas
     files = [nota.versiones[-1].archivo for nota in notas]
 
     if modo == 'compile': # TODO: Receive file name

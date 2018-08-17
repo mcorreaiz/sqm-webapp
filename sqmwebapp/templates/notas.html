@@ -3,73 +3,136 @@
 {% block content %}
 
 <div id="createNotaModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="closeCreateNotaModal" class="close" style="padding-top:10px;">&times;</span>
-                <h2>Nota:</h2>
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeCreateNotaModal" class="close" style="padding-top:10px;">&times;</span>
+            <h2>Nota:</h2>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form>
+                        <div class="form-group row">
+                            <label for="inputNumero" class="col-md-2 col-form-label">N&uacute;mero</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="inputNumero" placeholder="Número o rango">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputDescripcion" class="col-md-2 col-form-label">Descripci&oacute;n</label>
+                            <div class="col-md-10">
+                                <textarea type="text" class="form-control" rows="2" id="inputDescripcion" placeholder="Estados consolidados"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputRedactores" class="col-md-2 col-form-label">Redactores</label>
+                            <div class="col-md-10">
+                                <select id="inputRedactores" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>               
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputAprobadores" class="col-md-2 col-form-label">Aprobadores</label>
+                            <div class="col-md-10">
+                                <select id="inputAprobadores" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>               
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputComentadores" class="col-md-2 col-form-label">Comentadores</label>
+                            <div class="col-md-10">
+                                <select id="inputComentadores" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>               
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <form>
-                            <div class="form-group row">
-                                <label for="inputNumero" class="col-md-2 col-form-label">N&uacute;mero</label>
-                                <div class="col-md-10">
-                                    <input type="text" class="form-control" id="inputNumero" placeholder="Número o rango">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputDescripcion" class="col-md-2 col-form-label">Descripci&oacute;n</label>
-                                <div class="col-md-10">
-                                    <textarea type="text" class="form-control" rows="2" id="inputDescripcion" placeholder="Estados consolidados"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputRedactores" class="col-md-2 col-form-label">Redactores</label>
-                                <div class="col-md-10">
-                                    <select id="inputRedactores" class="selectpicker" multiple>
-                                        {% for user in users %}
-                                            <option>{{ user.nombre }}</option>
-                                        {% endfor %}
-                                    </select>               
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputAprobadores" class="col-md-2 col-form-label">Aprobadores</label>
-                                <div class="col-md-10">
-                                    <select id="inputAprobadores" class="selectpicker" multiple>
-                                        {% for user in users %}
-                                            <option>{{ user.nombre }}</option>
-                                        {% endfor %}
-                                    </select>               
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputComentadores" class="col-md-2 col-form-label">Comentadores</label>
-                                <div class="col-md-10">
-                                    <select id="inputComentadores" class="selectpicker" multiple>
-                                        {% for user in users %}
-                                            <option>{{ user.nombre }}</option>
-                                        {% endfor %}
-                                    </select>               
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="row"><p></p></div>
-                <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmCreateNota"> Confirmar</button></div>
-                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelCreateNota"> Cancelar</button></div>
-                    <div class="col-md-3"></div>
-                </div>
+            <div class="row"><p></p></div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmCreateNota"> Confirmar</button></div>
+                <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelCreateNota"> Cancelar</button></div>
+                <div class="col-md-3"></div>
             </div>
         </div>
     </div>
+</div>
 
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div id="editNotaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeEditNotaModal" class="close" style="padding-top:10px;">&times;</span>
+            <h2>Nota:</h2>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form>
+                        <div class="form-group row">
+                            <label for="inputNumero2" class="col-md-2 col-form-label">N&uacute;mero</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="inputNumero2" placeholder="Número o rango">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputDescripcion2" class="col-md-2 col-form-label">Descripci&oacute;n</label>
+                            <div class="col-md-10">
+                                <textarea type="text" class="form-control" rows="2" id="inputDescripcion2" placeholder="Estados consolidados"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputRedactores2" class="col-md-2 col-form-label">Redactores</label>
+                            <div class="col-md-10">
+                                <select id="inputRedactores2" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>               
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputAprobadores2" class="col-md-2 col-form-label">Aprobadores</label>
+                            <div class="col-md-10">
+                                <select id="inputAprobadores2" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>               
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputComentadores2" class="col-md-2 col-form-label">Comentadores</label>
+                            <div class="col-md-10">
+                                <select id="inputComentadores2" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>               
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row"><p></p></div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmEditNota"> Confirmar</button></div>
+                <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelEditNota"> Cancelar</button></div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-4">
@@ -144,7 +207,11 @@
                             <td class="text-left"><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.nombre }} </a></td>
                             <td>Redactor</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
-                                <td><i class="fa fa-edit" style="font-size:24px;"></i></td>
+                                <td>
+                                    <a href="#" onclick="editNota('{{ version.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -173,7 +240,11 @@
                             <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
                             <td>Aprobador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
-                                <td><i class="fa fa-edit" style="font-size:24px;"></i></td>
+                                <td>
+                                    <a href="#" onclick="editNota('{{ aprobacion.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -191,7 +262,11 @@
                             <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
                             <td>Comentador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
-                                <td><i class="fa fa-edit" style="font-size:24px;"></i></td>
+                                <td>
+                                    <a href="#" onclick="editNota('{{ comentario.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -273,6 +348,24 @@
         $.post("{{ url_for('add_nota') }}", data={'numero': document.getElementById('inputNumero').value, 'descripcion': document.getElementById("inputDescripcion").value, 'redactores': $('#inputRedactores').val(), 'aprobadores': $('#inputAprobadores').val(), 'comentadores': $('#inputComentadores').val()}, function(data) {
             flash(data['msg'], data['tipo']);
             closeCreateNotaModal();
+            location.reload(); // TODO: Agregar a la tabla si es que es necesario y con rol correcto
+        });
+    });
+
+    function editNota(id_nota) {
+        $.post("{{ url_for('get_nota_info') }}", data={'id_nota': id_nota}, function(data) {
+            document.getElementById('inputNumero2').value = data['num'];
+            document.getElementById('inputDescripcion2').value = data['nombre'];
+            document.getElementById('confirmEditNota').value = id_nota;
+            document.getElementById('editNotaModal').style.display = "block";
+        });
+    }
+
+    $("#confirmEditNota").click(function() {
+        $.post("{{ url_for('edit_nota') }}", data={'id_nota': document.getElementById('confirmEditNota').value, 'numero': document.getElementById('inputNumero2').value, 'descripcion': document.getElementById("inputDescripcion2").value, 'redactores': $('#inputRedactores2').val(), 'aprobadores': $('#inputAprobadores2').val(), 'comentadores': $('#inputComentadores2').val()}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeEditNotaModal();
+            location.reload(); // TODO: Sacar de la tabla
         });
     });
 
