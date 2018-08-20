@@ -285,7 +285,6 @@ def cierres():
         notas_cerradas = '0 / {}'.format(len(new_trimestre.notas))
         return jsonify(cerrado=False, msg='Se ha creado un nuevo trimestre', tipo='success', notas_cerradas=notas_cerradas, nombre_trimestre=new_trimestre.nombre)
 
-
 @app.route('/add_admin', methods=['POST'])
 def add_admin():
     if request.form['user'] == 'Ninguno':
@@ -414,21 +413,36 @@ def report():
 
     if modo == 'compile': # TODO: Receive file name
         # Return all Notas compiled into one
-        for filnr, _file in enumerate(files):
-            stream = BytesIO(_file.read())
-            if filnr == 0:
-                merged_document = Document(stream)
-                merged_document.add_page_break()
-            else:
-                sub_doc = Document(stream)
+        # for filnr, _file in enumerate(files):
+        #     stream = BytesIO(_file.read())
+        #     if filnr == 0:
+        #         merged_document = Document(stream)
+        #         merged_document.add_page_break()
+        #     else:
+        #         sub_doc = Document(stream)
 
-                # Don't add a page break if you've reached the last file.
-                if filnr < len(files)-1:
-                    sub_doc.add_page_break()
+        #         # Don't add a page break if you've reached the last file.
+        #         if filnr < len(files)-1:
+        #             sub_doc.add_page_break()
 
-                merged_document.element.body.extend(sub_doc.element.body)
-            stream.close()
-            
+        #         merged_document.element.body.extend(sub_doc.element.body)
+        #     stream.close()
+
+        from PyPDF2 import PdfFileMerger, PdfFileReader
+        import subprocess
+
+        subprocess.call(["libreoffice", "--convert-to", "pdf", "nota1.1 (2).docx"])
+        
+        filename1 = 'FORM.SOLICITUD_DE_INASISTENCIA_POR_EVENTO_DEPORTIVO_2016 (10).pdf'
+        filename2 = 'SQM 30 06 2018 (01082018).pdf'
+
+        merger = PdfFileMerger()
+
+        merger.append(PdfFileReader(open(filename1, 'rb')))
+        merger.append(PdfFileReader(open(filename2, 'rb')))
+
+        merger.write("document-output.pdf")
+                    
         out = BytesIO()
         merged_document.save(out)
         out.seek(0)
