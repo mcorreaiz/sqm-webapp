@@ -63,6 +63,11 @@
     // When the user clicks the button, open the modal 
     document.getElementById("boton_comenzar").onclick = function() {
         document.getElementById('confirmModalText').innerHTML = document.getElementById('boton_comenzar').innerHTML;
+        if (document.getElementById('boton_comenzar').innerHTML == "Cerrar Periodo") {
+            document.getElementById('closeExplanation').innerHTML = "Todas las notas del proceso quedarán cerradas y el trimestre quedará inactivo";
+        } else {
+            document.getElementById('closeExplanation').innerHTML = "Se abrirá un nuevo trimestre, usando como base las notas del trimestre pasado y su última versión como carga inicial";
+        }
         document.getElementById('confirmModal').style.display = "block";
     };
 
