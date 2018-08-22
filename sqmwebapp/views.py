@@ -409,7 +409,10 @@ def report():
     modo = request.args.get('modo') # compile or compress
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
     notas = trimestre.notas
-    files = [nota.versiones[-1].archivo for nota in notas]
+    files = []
+    for nota in notas:
+        if nota.versiones:
+            files.append(nota.versiones[-1].archivo)
 
     if modo == 'compile': # TODO: Receive file name
         # Return all Notas compiled into one
@@ -465,7 +468,7 @@ def report():
 def change_trimestre(trimestre_id=None):
     if trimestre_id:
         session['trimestre_id'] = trimestre_id
-        if trimestre_id == mdl.Trimestre.objects.order_by("-fecha").first().id:
+        if trimestre_id == str(mdl.Trimestre.objects.order_by("-fecha").first().id):
             session['is_last_trimestre'] = True
         else:
             session['is_last_trimestre'] = False
