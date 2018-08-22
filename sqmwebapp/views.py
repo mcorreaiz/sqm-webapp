@@ -434,18 +434,21 @@ def report():
         from PyPDF2 import PdfFileMerger, PdfFileReader
         import subprocess
         import tempfile
+        import os
 
-        with tempfile.TemporaryDirectory(dir='/tmp') as tmp:
+        with tempfile.TemporaryDirectory(dir='tmp') as tmp:
             merger = PdfFileMerger()
-            for filnr, _file in enumerate(files):
-                tmpfile = tempfile.TemporaryFile()
+            for _file in files[:15]:
+                tmpfile = tempfile.NamedTemporaryFile(dir=tmp, suffix='.docx')
                 tmpfile.write(_file.read())
-                subprocess.call(["libreoffice", "--convert-to", "pdf", "--outdir", "/pdf", tmpfile.name])
-                merger.append(PdfFileReader(open("/pdf/{}.pdf".format(tmpfile.name[:tmpfile.name.index(".docx")]), 'rb')))
+                subprocess.call(["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", tmp, tmpfile.name])
+                tmpfile.close()
+                pdfname = "{}.pdf".format(tmpfile.name[:tmpfile.name.index(".docx")])
+                merger.append(PdfFileReader(open(pdfname, 'rb')))
+                os.remove(pdfname)
+            merger.write("document-output.pdf")
 
-        merger.write("document-output.pdf")
-
-        return send_file("", attachment_filename="Compilado trimestral.docx", as_attachment=True)
+        # return send_file("", attachment_filename="Compilado trimestral.docx", as_attachment=True)
 
     elif modo == 'compress': # TODO: Receive file name
         # Return all Notas in a .zip file
