@@ -62,7 +62,8 @@ def notas():
         trimestres = trimestres,
         redacciones = [nota for nota in notas_trim if nota in redacciones],
         aprobaciones = [nota for nota in notas_trim if nota in aprobaciones],
-        comentarios = [nota for nota in notas_trim if nota in comentarios]
+        comentarios = [nota for nota in notas_trim if nota in comentarios],
+        resto_notas = [nota for nota in notas_trim if nota not in redacciones and nota not in aprobaciones and nota not in comentarios]
     )
 
 @app.route('/notas/<num>', methods=['GET', 'POST'])

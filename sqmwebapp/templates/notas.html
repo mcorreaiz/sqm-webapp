@@ -270,6 +270,28 @@
                             {% endif %}
                         </tr>
                     {% endfor %}
+
+                    <!-- Notas en las que no soy nada -->
+                    {% for resto in resto_notas %}
+                        <tr class="text-center">
+                            <td>-</td>
+                            {% if resto.full_aprobado %}
+                                <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                            {% else %}
+                                <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                            {% endif %}
+                            <td><a href="{{ url_for('nota_panel', num=resto.num) }}">{{ resto.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.num) }}">{{ resto.nombre }}</a></td>
+                            <td>-</td>
+                            {% if session['admin'] and session['is_last_trimestre'] %}
+                                <td>
+                                    <a href="#" onclick="editNota('{{ resto.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
