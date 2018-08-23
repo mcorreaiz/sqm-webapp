@@ -69,9 +69,8 @@ def notas():
 @app.route('/notas/<num>', methods=['GET', 'POST'])
 def nota_panel(num, trimestre_id=None):
     """Renders the description of a Nota object."""
-    num = unquote(num)
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
-    nota = next((x for x in trimestre.notas if x.num == num), None)
+    nota = mdl.Nota.objects.get(id=num)
 
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -385,6 +384,17 @@ def edit_nota():
     new_nota.save()
 
     return jsonify(msg='Se ha editado la nota', tipo='success')
+
+@app.route('/delete_nota', methods=['POST'])
+def delete_nota():
+    nota = mdl.Nota.objects.get(id=request.form['id_nota'])
+    trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
+    trimestre.notas.remove(nota)
+
+    nota.delete()
+    trimestre.save()
+
+    return jsonify(msg='Se ha eliminado la nota', tipo='success')
 
 @app.route('/cerrar_nota', methods=['POST'])
 def cerrar_nota():

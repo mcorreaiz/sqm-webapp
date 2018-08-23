@@ -178,6 +178,7 @@
                         <th>Permisos</th>
                         {% if session['admin'] and session['is_last_trimestre'] %}
                             <th>Editar</th>
+                            <th>Eliminar</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -203,13 +204,18 @@
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.num }} </a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.nombre }} </a></td>
+                            <td><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ version.num }} </a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ version.nombre }} </a></td>
                             <td>Redactor</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
                                     <a href="#" onclick="editNota('{{ version.id }}')">
                                         <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ version.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
                                     </a>
                                 </td>
                             {% endif %}
@@ -236,13 +242,18 @@
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ aprobacion.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ aprobacion.nombre }}</a></td>
                             <td>Aprobador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
                                     <a href="#" onclick="editNota('{{ aprobacion.id }}')">
                                         <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ aprobacion.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
                                     </a>
                                 </td>
                             {% endif %}
@@ -258,13 +269,18 @@
                             {% else %}
                                 <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ comentario.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ comentario.nombre }}</a></td>
                             <td>Comentador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
                                     <a href="#" onclick="editNota('{{ comentario.id }}')">
                                         <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ comentario.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
                                     </a>
                                 </td>
                             {% endif %}
@@ -280,13 +296,18 @@
                             {% else %}
                                 <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=resto.num) }}">{{ resto.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.num) }}">{{ resto.nombre }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ resto.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ resto.nombre }}</a></td>
                             <td>-</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
                                     <a href="#" onclick="editNota('{{ resto.id }}')">
                                         <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ resto.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
                                     </a>
                                 </td>
                             {% endif %}
@@ -387,6 +408,19 @@
         $.post("{{ url_for('edit_nota') }}", data={'id_nota': document.getElementById('confirmEditNota').value, 'numero': document.getElementById('inputNumero2').value, 'descripcion': document.getElementById("inputDescripcion2").value, 'redactores': $('#inputRedactores2').val(), 'aprobadores': $('#inputAprobadores2').val(), 'comentadores': $('#inputComentadores2').val()}, function(data) {
             flash(data['msg'], data['tipo']);
             closeEditNotaModal();
+            location.reload(); // TODO: Sacar de la tabla
+        });
+    });
+
+    function eliminarNota(id_nota) {
+        document.getElementById('confirmar_eliminar_nota').value = id_nota;
+        document.getElementById('deleteNotaModal').style.display = "block";
+    }
+
+    $("#confirmar_eliminar_nota").click(function() {
+        $.post("{{ url_for('delete_nota') }}", data={'id_nota': document.getElementById('confirmar_eliminar_nota').value}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeDeleteNotaModal();
             location.reload(); // TODO: Sacar de la tabla
         });
     });

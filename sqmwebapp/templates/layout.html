@@ -527,7 +527,7 @@
                 <h2 id="confirmModalText"></h2>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row" align="center">
                     <p id="closeExplanation"></p>
                 </div>
                 <div class="row">
@@ -547,7 +547,7 @@
                 <h2>Seleccione un usuario:</h2>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row" align="center">
                     <p>El usuario que seleccione será un nuevo administrador del sistema</p>
                 </div>
                 <div class="row" align="center">
@@ -575,7 +575,7 @@
                 <h2>Seleccione un usuario:</h2>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row" align="center">
                     <p>El usuario que seleccione será eliminado de la lista de administradores del sistema</p>
                 </div>
                 <div class="row" align="center">
@@ -590,6 +590,26 @@
                     <div class="col-md-3"></div>
                     <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelAdmin"> Confirmar</button></div>
                     <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelAdmin"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteNotaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeDeleteNotaModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Eliminar Nota:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <p>Al confirmar se eliminará del sistema la nota</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmar_eliminar_nota"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelar_eliminar_nota"> Cancelar</button></div>
                     <div class="col-md-3"></div>
                 </div>
             </div>
@@ -687,6 +707,10 @@
             //$('#inputAprobadores2').val(null);
             //$('#inputComentadores2').val(null);
         }
+
+        function closeDeleteNotaModal() {
+            document.getElementById('deleteNotaModal').style.display = "none"; 
+        }
         
         // When the user clicks on <span> (x), close the modal
         document.getElementById('closeUploadModal').onclick = function() {
@@ -762,6 +786,15 @@
             closeEditNotaModal();
         };
 
+        document.getElementById("cancelar_eliminar_nota").onclick = function() {
+            closeDeleteNotaModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeDeleteNotaModal').onclick = function() {
+            closeDeleteNotaModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -787,6 +820,9 @@
             };
             if (event.target == document.getElementById('editNotaModal')) {
                 closeEditNotaModal();
+            };
+            if (event.target == document.getElementById('deleteNotaModal')) {
+                closeDeleteNotaModal();
             };
         }
     </script>
