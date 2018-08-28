@@ -31,7 +31,12 @@
                                     {% for user in users %}
                                         <option>{{ user.nombre }}</option>
                                     {% endfor %}
-                                </select>               
+                                </select> 
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser redactor significa tener los privilegios de Redacci&oacute;n, Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>                
                             </div>
                         </div>
                         <div class="form-group row">
@@ -41,7 +46,12 @@
                                     {% for user in users %}
                                         <option>{{ user.nombre }}</option>
                                     {% endfor %}
-                                </select>               
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser aprobador significa tener los privilegios de Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>               
                             </div>
                         </div>
                         <div class="form-group row">
@@ -51,7 +61,12 @@
                                     {% for user in users %}
                                         <option>{{ user.nombre }}</option>
                                     {% endfor %}
-                                </select>               
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser comentador significa tener s&oacute;lo el privilegio de Comentario sobre esta nota.</span>
+                                </div>                 
                             </div>
                         </div>
                     </form>

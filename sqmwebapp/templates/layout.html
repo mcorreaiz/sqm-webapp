@@ -11,12 +11,18 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <script src="/static/scripts/jquery-1.10.2.js"></script>
-    <script src="/static/scripts/jquery-3.3.1.js"></script>
-    <script src="/static/scripts/bootstrap.js"></script>
-    <script src="/static/scripts/respond.js"></script>
+    <!-- <script
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+      integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+      crossorigin="anonymous"></script> -->
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <script src="/static/scripts/bootstrap.min.js"></script>
+    <script src="/static/scripts/respond.min.js"></script>
     <script src="/static/scripts/modernizr-2.6.2.js"></script>
-    <script src="/static/scripts/bootstrap-select.js"></script>
+    <script src="/static/scripts/bootstrap-select.min.js"></script>
     
     <style>
         html, body {
@@ -323,10 +329,20 @@
             }
         }
     </style>
-
-
-
 </head>
+
+
+<!-- Macros -->
+{% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
+    {% if string|length > maxLength: %}
+    <div class="popup"> 
+        {{ string|truncate(length=maxLength, end=ellipsis) }}
+        <span class="popuptext" id="{{ id }}">{{ string  }}</span>
+    </div>
+    {% else: %}
+        {{ string }}
+    {% endif %}
+{%- endmacro %}
 
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -377,18 +393,6 @@
         {% endif %}
     {% endwith %}
     </div>
-
-    <!-- Macros -->
-    {% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
-        {% if string|length > maxLength: %}
-        <div class="popup"> 
-            {{ string|truncate(length=maxLength, end=ellipsis) }}
-            <span class="popuptext" id="{{ id }}">{{ string  }}</span>
-        </div>
-        {% else: %}
-            {{ string }}
-        {% endif %}
-    {%- endmacro %}
 
     <div class="container body-content">
         {% block content %}{% endblock %}
@@ -503,8 +507,8 @@
                                 Descarga todas las notas por separado, en un archivo comprimido.
                             </p>
                         </div>
-                    </div>
-                </center>
+                    </center>
+                </div>
                 <div class="row">
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
@@ -618,7 +622,8 @@
 
     
     <script>
-        $(document).ready(function() {
+        jQuery(document).ready(function( $ ) {
+            window.$ = $;
             displayFlash();
         });
 
@@ -694,9 +699,7 @@
             document.getElementById('createNotaModal').style.display = "none";
             document.getElementById('inputNumero').value = '';
             document.getElementById("inputDescripcion").value = '';
-            //$('#inputRedactores').val(null);
-            //$('#inputAprobadores').val(null);
-            //$('#inputComentadores').val(null);
+            $('.selectpicker').selectpicker('deselectAll');
         }
 
         function closeEditNotaModal() {
