@@ -50,6 +50,7 @@ def notas():
     trimestres = mdl.Trimestre.objects
     trimestre = trimestres.get(id=session.get('trimestre_id'))
     notas_trim = trimestre.notas
+    notas_trim.sort(key=lambda n: n.numero_editado)
     redacciones = set(mdl.Nota.objects(redactores__in=[usuario]))
     aprobaciones = set(mdl.Nota.objects(aprobadores__in=[usuario]))
     comentarios = set(mdl.Nota.objects(comentadores__in=[usuario]))

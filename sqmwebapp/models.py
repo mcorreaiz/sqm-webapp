@@ -47,6 +47,12 @@ class Nota(db.Document):
                 return False
         return True
 
+    @property
+    def numero_editado(self):
+        if 'a' in self.num:
+            return float(self.num[:self.num.index('a')])
+        return float(self.num)
+
 class Trimestre(db.Document):
     activo = db.BooleanField(default=True)
     notas  = db.ListField(db.ReferenceField(Nota))
