@@ -347,7 +347,10 @@ def add_nota():
 @app.route('/get_nota_info', methods=['POST'])
 def get_nota_info(): # TODO agregar redactores, aprobadores y comentadores
     nota = mdl.Nota.objects.get(id=request.form['id_nota'])
-    return jsonify(num=nota.num, nombre=nota.nombre)
+    redactores = [redactor.nombre for redactor in nota.redactores]
+    aprobadores = [aprobador.nombre for aprobador in nota.aprobadores]
+    comentadores = [comentador.nombre for comentador in nota.comentadores]
+    return jsonify(num=nota.num, nombre=nota.nombre, redactores=redactores, aprobadores=aprobadores, comentadores=comentadores)
 
 @app.route('/edit_nota', methods=['POST'])
 def edit_nota():

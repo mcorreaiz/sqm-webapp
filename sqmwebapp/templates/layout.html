@@ -658,6 +658,29 @@
             })
         });
 
+        $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            if (clickedIndex === undefined){ // Programatically changed
+                $('#editNotaModal .selectpicker option').each(function() {
+                    $(this).show();
+                })
+                $('.selectpicker').selectpicker('refresh');
+                return;
+            };
+
+            var name = e.target[clickedIndex].innerText;
+            $('#editNotaModal .selectpicker option').filter(function() {
+                                                            return this.innerText == name;
+                                                            }).each(function() {
+                if (isSelected && $(this).is(':visible') && !$(this).is(':selected')) {
+                    $(this).hide();
+                }
+                if (!isSelected && $(this).is(':hidden')) {
+                    $(this).show();
+                }
+                $('.selectpicker').selectpicker('refresh')
+            })
+        });
+
         function flash(msg, type) {
             if (type == 'error'){
                 var icon='warning';

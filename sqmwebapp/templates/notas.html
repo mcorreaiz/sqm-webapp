@@ -110,9 +110,14 @@
                             <div class="col-md-10">
                                 <select id="inputRedactores2" class="selectpicker" multiple>
                                     {% for user in users %}
-                                        <option>{{ user.nombre }}</option>
+                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
                                     {% endfor %}
-                                </select>               
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser redactor significa tener los privilegios de Redacci&oacute;n, Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>                  
                             </div>
                         </div>
                         <div class="form-group row">
@@ -120,9 +125,14 @@
                             <div class="col-md-10">
                                 <select id="inputAprobadores2" class="selectpicker" multiple>
                                     {% for user in users %}
-                                        <option>{{ user.nombre }}</option>
+                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
                                     {% endfor %}
-                                </select>               
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser aprobador significa tener los privilegios de Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>                  
                             </div>
                         </div>
                         <div class="form-group row">
@@ -130,9 +140,14 @@
                             <div class="col-md-10">
                                 <select id="inputComentadores2" class="selectpicker" multiple>
                                     {% for user in users %}
-                                        <option>{{ user.nombre }}</option>
+                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
                                     {% endfor %}
-                                </select>               
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser comentador significa tener s&oacute;lo el privilegio de Comentario sobre esta nota.</span>
+                                </div>                     
                             </div>
                         </div>
                     </form>
@@ -416,6 +431,25 @@
             document.getElementById('inputDescripcion2').value = data['nombre'];
             document.getElementById('confirmEditNota').value = id_nota;
             document.getElementById('editNotaModal').style.display = "block";
+            $("#inputRedactores2").val(data['redactores']);
+            $("#inputAprobadores2").val(data['aprobadores']);
+            $("#inputComentadores2").val(data['comentadores']);
+            $('#inputRedactores2 option').each(function() {
+                if (data['aprobadores'].includes((this).value) || data['comentadores'].includes((this).value) ) {
+                    $(this).hide();
+                }
+            })
+            $('#inputAprobadores2 option').each(function() {
+                if (data['redactores'].includes((this).value) || data['comentadores'].includes((this).value) ) {
+                    $(this).hide();
+                }
+            })
+            $('#inputComentadores2 option').each(function() {
+                if (data['redactores'].includes((this).value) || data['aprobadores'].includes((this).value) ) {
+                    $(this).hide();
+                }
+            })
+            $('.selectpicker').selectpicker('refresh')
         });
     }
 
