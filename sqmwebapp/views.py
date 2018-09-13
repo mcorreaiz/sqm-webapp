@@ -74,6 +74,7 @@ def nota_panel(num, trimestre_id=None):
     nota = mdl.Nota.objects.get(id=num)
 
     if request.method == 'POST':
+        # Upload new Version
         if 'file' not in request.files:
             flash('Ningun archivo seleccionado', 'error')
             return redirect(request.url)
@@ -108,6 +109,9 @@ def nota_panel(num, trimestre_id=None):
             nota.versiones.append(version)
             for user in nota.estados_aprobacion.keys():
                 nota.estados_aprobacion[user] = False
+            if not request.form.get('borrador'): # If not a borrador, Nota is automatically approved by uploader
+                nota.estados_aprobacion[session['user_id']] = True
+
             nota.save()
             flash('Version subida con exito', 'success')
         else:
@@ -285,7 +289,6 @@ def cierres():
         session['trimestre_id'] = str(new_trimestre.id)
         notas_cerradas = '0 / {}'.format(len(new_trimestre.notas))
         return jsonify(cerrado=False, msg='Se ha creado un nuevo trimestre', tipo='success', notas_cerradas=notas_cerradas, nombre_trimestre=new_trimestre.nombre)
-
 
 @app.route('/add_admin', methods=['POST'])
 def add_admin():

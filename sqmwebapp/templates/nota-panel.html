@@ -53,7 +53,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <h4>Aprobadores</h4>
+        <h4>{{ 'Aprobadores' if nota.aprobadores }}</h4>
         <ul class="list-group">
             {% for aprobador in nota.aprobadores %}
                 <li class="list-group-item"><i id="estado-aprobacion-{{ aprobador.user_id }}" class="fa-square 
@@ -61,7 +61,7 @@
                     " style="vertical-align:sub;font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
             {% endfor %}
         </ul>
-        <h4>Comentadores</h4>
+        <h4>{{ 'Comentadores' if nota.comentadores }}</h4>
         <ul class="list-group">
             {% for comentador in nota.comentadores %}
                 <li class="list-group-item">{{ comentador.iniciales }} {{ comentador.nombre }}</li>
