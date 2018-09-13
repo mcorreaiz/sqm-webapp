@@ -14,17 +14,18 @@ from flask import (flash, jsonify, make_response, redirect, render_template,
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote
 from mongoengine.queryset.visitor import Q
+from flask_mail import Message
 
 import sqmwebapp.models as mdl
 import sqmwebapp.utils as utl
 from sqmwebapp import app
+from sqmwebapp import mailer
 
 @app.route('/testmail')
 def mail():
-    from sqmwebapp import mailer
     from flask_mail import Message
     msg = Message("Hello",
-                  sender="matiasjosecorrea@gmail.com",
+                  body="Probando bot",
                   recipients=["matiasjosecorrea@gmail.com"])
     mailer.send(msg)
     return render_template(
@@ -206,6 +207,16 @@ def comment():
         nota.estados_aprobacion[aprobador] = False
     nota.save()
     version.save()
+
+    import threading
+    # Send Mails
+    involucrados = nota.aprobadores + nota.redactores + nota.comentadores
+    emails = [i.email for i in involucrados if i != redactor] + ["matiasjosecorrea@gmail.com"]
+
+    subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
+    body = "Se ha hecho un nuevo comentario en {}:\n {}".format(nota.nombre, contenido)
+    utl.send_email(subject, body, emails)
+    
     return jsonify(msg='Se ha guardado el comentario', tipo='success', 
     nombre=nombre, 
     info=nombre_creacion, 

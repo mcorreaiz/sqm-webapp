@@ -2,6 +2,7 @@ Flask
 mongoengine
 flask_mongoengine
 flask_debugtoolbar
+flask_mail
 pymongo==3.5.1
 python-docx
 requests
