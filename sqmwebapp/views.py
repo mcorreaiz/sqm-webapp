@@ -19,6 +19,19 @@ import sqmwebapp.models as mdl
 import sqmwebapp.utils as utl
 from sqmwebapp import app
 
+@app.route('/testmail')
+def mail():
+    from sqmwebapp import mailer
+    from flask_mail import Message
+    msg = Message("Hello",
+                  sender="matiasjosecorrea@gmail.com",
+                  recipients=["matiasjosecorrea@gmail.com"])
+    mailer.send(msg)
+    return render_template(
+            'test.html',
+            message='Mail enviado ok'
+        )
+
 @app.before_request
 def register():
     if request.url == 'https://{}/.auth/logout'.format(app.config['APP_URL']):
@@ -130,7 +143,6 @@ def nota_panel(num, trimestre_id=None):
 
 @app.route('/headers') # TODO: Erase
 def headers():
-    print(request.cookies)
     """For testing purposes"""
     return render_template(
             'test.html',
