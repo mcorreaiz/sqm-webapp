@@ -619,20 +619,35 @@
             </div>
         </div>
     </div>
-
+    
     
     <script>
         jQuery(document).ready(function( $ ) {
             window.$ = $;
             displayFlash();
         });
-
+        
         function displayFlash() {
             $(".flashes").slideDown(function() {
                 setTimeout(function() {
                     $(".flashes").slideUp();
                 }, 5000);
             });
+        };
+
+        function flash(msg, type) {
+            if (type == 'error'){
+                var icon='warning';
+                type='danger';
+                }
+            else if (type == 'success')
+            var icon='check';
+            else
+            var icon='info-circle';      
+        
+            $(".flashes").children().remove();
+            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>  '+ msg +'</strong></div>').prependTo($(".flashes"));
+            displayFlash();             
         };
 
         $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -680,21 +695,6 @@
                 $('.selectpicker').selectpicker('refresh')
             })
         });
-
-        function flash(msg, type) {
-            if (type == 'error'){
-                var icon='warning';
-                type='danger';
-                }
-            else if (type == 'success')
-            var icon='check';
-            else
-            var icon='info-circle';      
-        
-            $(".flashes").children().remove();
-            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>  '+ msg +'</strong></div>').prependTo($(".flashes")).hide().slideDown();
-            displayFlash();             
-        };
 
         function fileLoaded(obj){
             $('#fileSubmitLabel').attr('disabled', false);

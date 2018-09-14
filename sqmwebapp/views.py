@@ -128,6 +128,18 @@ def nota_panel(num, trimestre_id=None):
 
             nota.save()
             flash('Version subida con exito', 'success')
+
+            # Send Mails
+            involucrados = nota.aprobadores + nota.redactores + nota.comentadores
+            emails = [i.email for i in involucrados if i != redactor] + ["matiasjosecorrea@gmail.com"]
+
+            subject = "{} ha subido una nueva versi\xf3n en la nota {}".format(redactor.nombre, nota.num)
+            body = """Se ha subido la versi\xf3n Nº{} en {}.
+Se le adjunt\xf3 el siguiente comentario: {}
+            
+Para ver la nota, haz click en el siguiente link {}""".format(len(nota.versiones), nota.nombre, contenido, request.url)
+            utl.send_email(subject, body, emails)
+
         else:
             flash('Version no subida; extension invalida', 'error')
 
@@ -208,13 +220,15 @@ def comment():
     nota.save()
     version.save()
 
-    import threading
     # Send Mails
     involucrados = nota.aprobadores + nota.redactores + nota.comentadores
     emails = [i.email for i in involucrados if i != redactor] + ["matiasjosecorrea@gmail.com"]
 
     subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
-    body = "Se ha hecho un nuevo comentario en {}:\n {}".format(nota.nombre, contenido)
+    body = """Se ha hecho un nuevo comentario en {}:
+    {}
+
+Para ver la nota, haz click en el siguiente link {}""".format(nota.nombre, contenido, url_for('nota_panel', num=nota.id, _external=True))
     utl.send_email(subject, body, emails)
     
     return jsonify(msg='Se ha guardado el comentario', tipo='success', 
