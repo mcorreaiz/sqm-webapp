@@ -235,7 +235,7 @@
                                 {% endif %}
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ version.num }} </a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ version.nombre }} </a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ '[CERRADA]' if version.cerrada }} {{ version.nombre }} </a></td>
                             <td>Redactor</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
@@ -273,7 +273,7 @@
                                 {% endif %}
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ aprobacion.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ aprobacion.nombre }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ '[CERRADA]' if aprobacion.cerrada }} {{ aprobacion.nombre }}</a></td>
                             <td>Aprobador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
@@ -300,7 +300,7 @@
                                 <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ comentario.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ comentario.nombre }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ '[CERRADA]' if comentario.cerrada }} {{ comentario.nombre }}</a></td>
                             <td>Comentador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
@@ -327,7 +327,7 @@
                                 <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ resto.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ resto.nombre }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ '[CERRADA]' if resto.cerrada }} {{ resto.nombre }}</a></td>
                             <td>-</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
