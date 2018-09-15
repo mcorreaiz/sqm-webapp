@@ -102,7 +102,7 @@
         <div class="row" id="botones">
             {% if user in nota.redactores %}
                 <div class="col-md-3">
-                    <button id="uploadButton" class="btn btn-default btn-block">
+                    <button class="btn btn-default btn-block" onclick="uploadVersion()">
                         <i class="far fa-file-word"></i> Cargar
                     </button>
                 </div>
@@ -291,7 +291,7 @@
     };
 
     // When the user clicks on the button, open the modal 
-    document.getElementById("uploadButton").onclick = function() {
+    function uploadVersion() {
         document.getElementById('uploadModal').style.display = "block";
     };
 

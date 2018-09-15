@@ -21,6 +21,16 @@ import sqmwebapp.utils as utl
 from sqmwebapp import app
 from sqmwebapp import mailer
 
+@app.route('/func')
+def func():
+    nota = mdl.Nota.objects.get(id="5b75e741801bd20c59979916")
+    mutas = nota.redactores[0]
+    nota.redactores = nota.redactores[1:]
+    nota.aprobadores.append(mutas)
+    nota.save()
+
+
+
 @app.route('/testmail')
 def mail():
     from flask_mail import Message
