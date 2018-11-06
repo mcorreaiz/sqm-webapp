@@ -201,16 +201,18 @@
             }
             aprobacion.classList.toggle('far');
             aprobacion.classList.toggle('fas');
+            location.reload();
         });
     });
 
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
+        var mail = document.getElementById("checkbox-mail-comment").checked;
         if (!$.trim(comentario)) {
             flash("El comentario no puede estar vac&iacute;o", "error");
             return;
         }
-        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
+        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario, 'mail': mail}, function(data) {
             flash(data['msg'], data['tipo']);
             closeCommentModal();
             
