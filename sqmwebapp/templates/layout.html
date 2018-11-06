@@ -416,6 +416,12 @@
                         placeholder="Ingrese el comentario" wrap="hard"></textarea>
                     </div>
                 </div>
+                <div class="checkbox">
+                    <input id="checkbox-mail-comment" type="checkbox" value="on" name="checkbox-mail">
+                    <label style="vertical-align: text-top;" for="checkbox-mail-comment">
+                        Enviar Mail
+                    </label>
+                </div>
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-3"><button class="btn btn-success btn-block" id="confirm_comment"> Confirmar</button></div>
@@ -458,6 +464,12 @@
                     </div>
                     <div style='display: none'>
                         <input id="fileSubmit" type="submit">
+                    </div>
+                    <div class="checkbox" style='display: none' id="mail-div">
+                        <input id="checkbox-mail" type="checkbox" value="on" name="checkbox-mail">
+                        <label style="vertical-align: text-top;" for="checkbox-mail">
+                            Enviar Mail
+                        </label>
                     </div>
                 </form>
                 <div class="row">
@@ -699,6 +711,7 @@
         function fileLoaded(obj){
             $('#fileSubmitLabel').attr('disabled', false);
             $('#checkbox-borrador').attr('disabled', false);
+            document.getElementById('mail-div').style.display = "block";
             document.getElementById('version-comment-label').style.display = "block";
             document.getElementById('version-comment').style.display = "block";
 
@@ -715,12 +728,15 @@
             document.getElementById("filesize").innerHTML = ''
             $('#fileSubmitLabel').attr('disabled', true);
             $('#checkbox-borrador').attr('disabled', true);
+            $('#checkbox-mail').attr('checked', false);
+            document.getElementById('mail-div').style.display = "none";
             document.getElementById('version-comment-label').style.display = "none";
             document.getElementById('version-comment').style.display = "none";
         }
     
         function closeCommentModal() {
-            document.getElementById('commentModal').style.display = "none"; 
+            document.getElementById('commentModal').style.display = "none";
+            document.getElementById('checkbox-mail-comment').checked = false; 
             document.getElementById("comment").value = '';
         }
 

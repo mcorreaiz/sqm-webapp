@@ -45,6 +45,7 @@ def mail():
 
 @app.before_request
 def register():
+    """ Login routine and session creation """
     if request.url == 'https://{}/.auth/logout'.format(app.config['APP_URL']):
         return
     if 'user' not in session: # Not registered with DB or session expired
@@ -63,6 +64,7 @@ def register():
 
 @app.route('/logout')
 def logout():
+    """ Logout of current session routine """
     session.pop('user', None)
     session.pop('user_id', None)
     return redirect('https://{}/.auth/logout'.format(app.config['APP_URL']))
@@ -73,8 +75,8 @@ def notas():
     usuario = mdl.Usuario.objects.get(user_id=session['user_id'])
     trimestres = mdl.Trimestre.objects
     trimestre = trimestres.get(id=session.get('trimestre_id'))
-    notas_trim = trimestre.notas
-    notas_trim.sort(key=lambda n: n.numero_editado)
+    notas_trim = trimestre.notas  # Notas de este trimestre
+    notas_trim.sort(key=lambda n: n.numero_editado)  # Las ordenamos según su número
     redacciones = set(mdl.Nota.objects(redactores__in=[usuario]))
     aprobaciones = set(mdl.Nota.objects(aprobadores__in=[usuario]))
     comentarios = set(mdl.Nota.objects(comentadores__in=[usuario]))
@@ -93,7 +95,7 @@ def notas():
 
 @app.route('/notas/<num>', methods=['GET', 'POST'])
 def nota_panel(num, trimestre_id=None):
-    """Renders the description of a Nota object."""
+    """Renders the description of a Nota object and receives new versions."""
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
     nota = mdl.Nota.objects.get(id=num)
 
@@ -139,16 +141,17 @@ def nota_panel(num, trimestre_id=None):
             nota.save()
             flash('Version subida con exito', 'success')
 
-            # Send Mails
-            involucrados = nota.aprobadores + nota.redactores + nota.comentadores
-            emails = [i.email for i in involucrados if i != redactor] + ["matiasjosecorrea@gmail.com"]
+            if request.form.get('checkbox-mail'):
+                # Send Mails
+                involucrados = nota.aprobadores + nota.redactores + nota.comentadores
+                emails = [i.email for i in involucrados if i != redactor] + ["jjnestler@gmail.com"]
 
-            subject = "{} ha subido una nueva versi\xf3n en la nota {}".format(redactor.nombre, nota.num)
-            body = """Se ha subido la versi\xf3n Nº{} en {}.
+                subject = "{} ha subido una nueva versi\xf3n en la nota {}".format(redactor.nombre, nota.num)
+                body = """Se ha subido la versi\xf3n Nº{} en {}.
 Se le adjunt\xf3 el siguiente comentario: {}
-            
+                
 Para ver la nota, haz click en el siguiente link {}""".format(len(nota.versiones), nota.nombre, contenido, request.url)
-            utl.send_email(subject, body, emails)
+                utl.send_email(subject, body, emails)
 
         else:
             flash('Version no subida; extension invalida', 'error')
@@ -197,6 +200,7 @@ def me():
 
 @app.route('/approval', methods=['POST'])
 def approval():
+    """ Changes approval state of Nota by User """
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
     nota = next((x for x in trimestre.notas if x.num == request.form['nota']), None)
     if nota.estados_aprobacion[session['user_id']]:
@@ -205,11 +209,22 @@ def approval():
         return jsonify(aprobado=False, msg='Se ha desaprobado la Nota', tipo='success')
     else:
         nota.estados_aprobacion[session['user_id']] = True
+        if nota.full_aprobado:
+            nota.cerrada = True
+            involucrados = nota.aprobadores + nota.redactores + nota.comentadores
+            emails = [i.email for i in involucrados if i.user_id != session['user_id']] + ["jjnestler@gmail.com"]
+
+            subject = "Se ha cerrado la nota {}".format(nota.num)
+            body = """Se ha cerrado la nota {}
+
+Para ver la nota, haz click en el siguiente link {}""".format(nota.nombre, url_for('nota_panel', num=nota.id, _external=True))
+            utl.send_email(subject, body, emails)
         nota.save()
         return jsonify(aprobado=True, msg='Se ha aprobado la Nota', tipo='success')
 
 @app.route('/comment', methods=['POST'])
 def comment():
+    """ Recieves and creates a comment """
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
     nota = next((x for x in trimestre.notas if x.num == request.form['nota']), None)
     version = nota.versiones[-1]
@@ -231,15 +246,16 @@ def comment():
     version.save()
 
     # Send Mails
-    involucrados = nota.aprobadores + nota.redactores + nota.comentadores
-    emails = [i.email for i in involucrados if i != redactor] + ["matiasjosecorrea@gmail.com"]
+    if request.form.get('mail') == 'true':
+        involucrados = nota.aprobadores + nota.redactores + nota.comentadores
+        emails = [i.email for i in involucrados if i != redactor] + ["jjnestler@gmail.com"]
 
-    subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
-    body = """Se ha hecho un nuevo comentario en {}:
-    {}
+        subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
+        body = """Se ha hecho un nuevo comentario en {}:
+        {}
 
 Para ver la nota, haz click en el siguiente link {}""".format(nota.nombre, contenido, url_for('nota_panel', num=nota.id, _external=True))
-    utl.send_email(subject, body, emails)
+        utl.send_email(subject, body, emails)
     
     return jsonify(msg='Se ha guardado el comentario', tipo='success', 
     nombre=nombre, 
@@ -256,6 +272,7 @@ def download_version():
 
 @app.route('/admin')
 def admin():
+    """ Renders Admin panel """
     trimestre = mdl.Trimestre.objects.order_by("-fecha").first()
     notas_aprobadas = 0
     notas_cerradas = 0
@@ -364,7 +381,7 @@ def add_nota():
 
     redactores = request.form.getlist('redactores[]')
     aprobadores = request.form.getlist('aprobadores[]')
-    comentadores = request.form.getlist('comentadores[]')
+    comentadores = []
 
     new_nota = mdl.Nota()
     new_nota.num = request.form['numero']
@@ -396,7 +413,7 @@ def add_nota():
     return jsonify(msg='Se ha agregado la nota', tipo='success')
 
 @app.route('/get_nota_info', methods=['POST'])
-def get_nota_info(): # TODO agregar redactores, aprobadores y comentadores
+def get_nota_info():
     nota = mdl.Nota.objects.get(id=request.form['id_nota'])
     redactores = [redactor.nombre for redactor in nota.redactores]
     aprobadores = [aprobador.nombre for aprobador in nota.aprobadores]
@@ -410,7 +427,7 @@ def edit_nota():
 
     redactores = request.form.getlist('redactores[]')
     aprobadores = request.form.getlist('aprobadores[]')
-    comentadores = request.form.getlist('comentadores[]')
+    comentadores = []
 
     new_nota = mdl.Nota.objects.get(id=request.form['id_nota'])
     new_nota.num = request.form['numero']
@@ -475,6 +492,7 @@ def report():
     modo = request.args.get('modo') # compile or compress
     trimestre = mdl.Trimestre.objects.get(id=session.get('trimestre_id'))
     notas = trimestre.notas
+    notas.sort(key=lambda n: n.numero_editado)
     files = []
     for nota in notas:
         if nota.versiones:

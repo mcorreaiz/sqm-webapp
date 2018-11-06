@@ -54,21 +54,6 @@
                                 </div>               
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="inputComentadores" class="col-md-2 col-form-label">Comentadores</label>
-                            <div class="col-md-10">
-                                <select id="inputComentadores" class="selectpicker" multiple>
-                                    {% for user in users %}
-                                        <option>{{ user.nombre }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
-                                    &nbsp;
-                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
-                                    <span class="popuptext">Ser comentador significa tener s&oacute;lo el privilegio de Comentario sobre esta nota.</span>
-                                </div>                 
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -133,21 +118,6 @@
                                     <i class="fas fa-info-circle" style="font-size: 120%;"></i>
                                     <span class="popuptext">Ser aprobador significa tener los privilegios de Aprobaci&oacute;n y Comentario sobre esta nota.</span>
                                 </div>                  
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="inputComentadores2" class="col-md-2 col-form-label">Comentadores</label>
-                            <div class="col-md-10">
-                                <select id="inputComentadores2" class="selectpicker" multiple>
-                                    {% for user in users %}
-                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
-                                    &nbsp;
-                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
-                                    <span class="popuptext">Ser comentador significa tener s&oacute;lo el privilegio de Comentario sobre esta nota.</span>
-                                </div>                     
                             </div>
                         </div>
                     </form>
@@ -328,7 +298,7 @@
                             {% endif %}
                             <td><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ resto.num }}</a></td>
                             <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ '[CERRADA]' if resto.cerrada }} {{ resto.nombre }}</a></td>
-                            <td>-</td>
+                            <td>Comentador</td>
                             {% if session['admin'] and session['is_last_trimestre'] %}
                                 <td>
                                     <a href="#" onclick="editNota('{{ resto.id }}')">
@@ -418,7 +388,7 @@
     };
 
     $("#confirmCreateNota").click(function() {
-        $.post("{{ url_for('add_nota') }}", data={'numero': document.getElementById('inputNumero').value, 'descripcion': document.getElementById("inputDescripcion").value, 'redactores': $('#inputRedactores').val(), 'aprobadores': $('#inputAprobadores').val(), 'comentadores': $('#inputComentadores').val()}, function(data) {
+        $.post("{{ url_for('add_nota') }}", data={'numero': document.getElementById('inputNumero').value, 'descripcion': document.getElementById("inputDescripcion").value, 'redactores': $('#inputRedactores').val(), 'aprobadores': $('#inputAprobadores').val()}, function(data) {
             flash(data['msg'], data['tipo']);
             closeCreateNotaModal();
             location.reload(); // TODO: Agregar a la tabla si es que es necesario y con rol correcto
@@ -433,7 +403,6 @@
             document.getElementById('editNotaModal').style.display = "block";
             $("#inputRedactores2").val(data['redactores']);
             $("#inputAprobadores2").val(data['aprobadores']);
-            $("#inputComentadores2").val(data['comentadores']);
             $('#inputRedactores2 option').each(function() {
                 if (data['aprobadores'].includes((this).value) || data['comentadores'].includes((this).value) ) {
                     $(this).hide();
@@ -444,17 +413,12 @@
                     $(this).hide();
                 }
             })
-            $('#inputComentadores2 option').each(function() {
-                if (data['redactores'].includes((this).value) || data['aprobadores'].includes((this).value) ) {
-                    $(this).hide();
-                }
-            })
             $('.selectpicker').selectpicker('refresh')
         });
     }
 
     $("#confirmEditNota").click(function() {
-        $.post("{{ url_for('edit_nota') }}", data={'id_nota': document.getElementById('confirmEditNota').value, 'numero': document.getElementById('inputNumero2').value, 'descripcion': document.getElementById("inputDescripcion2").value, 'redactores': $('#inputRedactores2').val(), 'aprobadores': $('#inputAprobadores2').val(), 'comentadores': $('#inputComentadores2').val()}, function(data) {
+        $.post("{{ url_for('edit_nota') }}", data={'id_nota': document.getElementById('confirmEditNota').value, 'numero': document.getElementById('inputNumero2').value, 'descripcion': document.getElementById("inputDescripcion2").value, 'redactores': $('#inputRedactores2').val(), 'aprobadores': $('#inputAprobadores2').val()}, function(data) {
             flash(data['msg'], data['tipo']);
             closeEditNotaModal();
             location.reload(); // TODO: Sacar de la tabla
