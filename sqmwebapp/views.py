@@ -144,7 +144,7 @@ def nota_panel(num, trimestre_id=None):
             if request.form.get('checkbox-mail'):
                 # Send Mails
                 involucrados = nota.aprobadores + nota.redactores + nota.comentadores
-                emails = [i.email for i in involucrados if i != redactor] + ["jjnestler@gmail.com"]
+                emails = [i.email for i in involucrados if i != redactor]
 
                 subject = "{} ha subido una nueva versi\xf3n en la nota {}".format(redactor.nombre, nota.num)
                 body = """Se ha subido la versi\xf3n Nº{} en {}.
@@ -212,7 +212,7 @@ def approval():
         if nota.full_aprobado:
             nota.cerrada = True
             involucrados = nota.aprobadores + nota.redactores + nota.comentadores
-            emails = [i.email for i in involucrados if i.user_id != session['user_id']] + ["jjnestler@gmail.com"]
+            emails = [i.email for i in involucrados if i.user_id != session['user_id']]
 
             subject = "Se ha cerrado la nota {}".format(nota.num)
             body = """Se ha cerrado la nota {}
@@ -248,7 +248,7 @@ def comment():
     # Send Mails
     if request.form.get('mail') == 'true':
         involucrados = nota.aprobadores + nota.redactores + nota.comentadores
-        emails = [i.email for i in involucrados if i != redactor] + ["jjnestler@gmail.com"]
+        emails = [i.email for i in involucrados if i != redactor]
 
         subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
         body = """Se ha hecho un nuevo comentario en {}:
