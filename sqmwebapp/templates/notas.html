@@ -2,7 +2,137 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div id="createNotaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeCreateNotaModal" class="close" style="padding-top:10px;">&times;</span>
+            <h2>Nota:</h2>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form>
+                        <div class="form-group row">
+                            <label for="inputNumero" class="col-md-2 col-form-label">N&uacute;mero</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="inputNumero" placeholder="Número o rango">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputDescripcion" class="col-md-2 col-form-label">Descripci&oacute;n</label>
+                            <div class="col-md-10">
+                                <textarea type="text" class="form-control" rows="2" id="inputDescripcion" placeholder="Estados consolidados"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputRedactores" class="col-md-2 col-form-label">Redactores</label>
+                            <div class="col-md-10">
+                                <select id="inputRedactores" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select> 
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser redactor significa tener los privilegios de Redacci&oacute;n, Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>                
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputAprobadores" class="col-md-2 col-form-label">Aprobadores</label>
+                            <div class="col-md-10">
+                                <select id="inputAprobadores" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option>{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser aprobador significa tener los privilegios de Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>               
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row"><p></p></div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmCreateNota"> Confirmar</button></div>
+                <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelCreateNota"> Cancelar</button></div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editNotaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="closeEditNotaModal" class="close" style="padding-top:10px;">&times;</span>
+            <h2>Nota:</h2>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form>
+                        <div class="form-group row">
+                            <label for="inputNumero2" class="col-md-2 col-form-label">N&uacute;mero</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="inputNumero2" placeholder="Número o rango">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputDescripcion2" class="col-md-2 col-form-label">Descripci&oacute;n</label>
+                            <div class="col-md-10">
+                                <textarea type="text" class="form-control" rows="2" id="inputDescripcion2" placeholder="Estados consolidados"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputRedactores2" class="col-md-2 col-form-label">Redactores</label>
+                            <div class="col-md-10">
+                                <select id="inputRedactores2" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser redactor significa tener los privilegios de Redacci&oacute;n, Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>                  
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputAprobadores2" class="col-md-2 col-form-label">Aprobadores</label>
+                            <div class="col-md-10">
+                                <select id="inputAprobadores2" class="selectpicker" multiple>
+                                    {% for user in users %}
+                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
+                                    &nbsp;
+                                    <i class="fas fa-info-circle" style="font-size: 120%;"></i>
+                                    <span class="popuptext">Ser aprobador significa tener los privilegios de Aprobaci&oacute;n y Comentario sobre esta nota.</span>
+                                </div>                  
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row"><p></p></div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmEditNota"> Confirmar</button></div>
+                <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelEditNota"> Cancelar</button></div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-4">
@@ -32,9 +162,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-4">
-        <h4>Redacciones</h4>
-        <div class="table-responsive">
+    <div class="col-md-12">
+        <div class="table-responsive" style="height: 65vh; overflow: auto; margin-bottom: 15px">
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -46,9 +175,15 @@
                         </th>
                         <th class="text-center">Nota</th>
                         <th>T&iacute;tulo</th>
+                        <th>Permisos</th>
+                        {% if session['admin'] and session['is_last_trimestre'] %}
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Notas en las que soy Redactor -->
                     {% for version in redacciones %}
                     <!-- TODO: usar template inclusion para esta tabla! -->
                         <tr class="text-center"> 
@@ -69,31 +204,25 @@
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.num }} </a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.num) }}"> {{ version.nombre }} </a></td>
+                            <td><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ version.num }} </a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=version.id) }}"> {{ '[CERRADA]' if version.cerrada }} {{ version.nombre }} </a></td>
+                            <td>Redactor</td>
+                            {% if session['admin'] and session['is_last_trimestre'] %}
+                                <td>
+                                    <a href="#" onclick="editNota('{{ version.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ version.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <h4>Aprobaciones</h4>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th class="text-center">
-                            <i class="fas fa-user" style="font-size:20px;"></i>
-                        </th>
-                        <th class="text-center">
-                            <i class="fas fa-users" style="font-size:20px;"></i>
-                        </th>
-                        <th class="text-center">Nota</th>
-                        <th>T&iacute;tulo</th>
-                    </tr>
-                </thead>
-                <tbody>
+                    
+                    <!-- Notas en las que soy aprobador -->
                     {% for aprobacion in aprobaciones %}
                         <tr class="text-center">
                             {% if aprobacion.estados_aprobacion[user.user_id] %}
@@ -113,37 +242,75 @@
                                     <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                                 {% endif %}
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.num) }}">{{ aprobacion.nombre }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ aprobacion.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=aprobacion.id) }}">{{ '[CERRADA]' if aprobacion.cerrada }} {{ aprobacion.nombre }}</a></td>
+                            <td>Aprobador</td>
+                            {% if session['admin'] and session['is_last_trimestre'] %}
+                                <td>
+                                    <a href="#" onclick="editNota('{{ aprobacion.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ aprobacion.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <h4>Comentarios</h4>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th class="text-center">
-                            <i class="fas fa-users" style="font-size:20px;"></i>
-                        </th>
-                        <th class="text-center">Nota</th>
-                        <th>T&iacute;tulo</th>
-                    </tr>
-                </thead>
-                <tbody>
+
+                    <!-- Notas en las que soy Comentador -->
                     {% for comentario in comentarios %}
                         <tr class="text-center">
+                            <td>-</td>
                             {% if comentario.full_aprobado %}
                                 <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
                             {% else %}
                                 <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
                             {% endif %}
-                            <td><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.num }}</a></td>
-                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.num) }}">{{ comentario.nombre }}</a></td>
+                            <td><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ comentario.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=comentario.id) }}">{{ '[CERRADA]' if comentario.cerrada }} {{ comentario.nombre }}</a></td>
+                            <td>Comentador</td>
+                            {% if session['admin'] and session['is_last_trimestre'] %}
+                                <td>
+                                    <a href="#" onclick="editNota('{{ comentario.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ comentario.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+
+                    <!-- Notas en las que no soy nada -->
+                    {% for resto in resto_notas %}
+                        <tr class="text-center">
+                            <td>-</td>
+                            {% if resto.full_aprobado %}
+                                <td><i class="fa fa-square" style="font-size:24px;color:green"></i></td>
+                            {% else %}
+                                <td><i class="fa fa-square-o" style="font-size:24px;color:green"></i></td>
+                            {% endif %}
+                            <td><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ resto.num }}</a></td>
+                            <td class="text-left"><a href="{{ url_for('nota_panel', num=resto.id) }}">{{ '[CERRADA]' if resto.cerrada }} {{ resto.nombre }}</a></td>
+                            <td>Comentador</td>
+                            {% if session['admin'] and session['is_last_trimestre'] %}
+                                <td>
+                                    <a href="#" onclick="editNota('{{ resto.id }}')">
+                                        <i class="fa fa-edit" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="eliminarNota('{{ resto.id }}')">
+                                        <i class="fa fa-trash" style="font-size:24px;"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -153,26 +320,49 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-2">
-        <p><a id="downloadReportButton" class="btn btn-default btn-block">
-            <i class="fas fa-download"></i>
-            Descargar reporte
-        </a></p>
-    </div>
-    <div class="col-md-2">
-        <p><a class="btn btn-default btn-block" href="{{ url_for('logout') }}">
-            <i class="fas fa-sign-out-alt"></i>
-            Salir
-        </a></p>
-    </div>
-    <div class="col-md-4"></div>
+    {% if session['admin'] and session['is_last_trimestre'] %}
+        <div class="col-md-3"></div>
+        <div class="col-md-2">
+            <p><a id="downloadReportButton" class="btn btn-default btn-block">
+                <i class="fas fa-download"></i>
+                Descargar reporte
+            </a></p>
+        </div>
+        <div class="col-md-2">
+            <button id="createNotaBoton" class="btn btn-default btn-block">
+                    <i class="fas fa-plus"></i>
+                    Crear Nota
+            </button>
+        </div>
+        <div class="col-md-2">
+            <p><a class="btn btn-default btn-block" href="{{ url_for('logout') }}">
+                <i class="fas fa-sign-out-alt"></i>
+                Salir
+            </a></p>
+        </div>
+        <div class="col-md-3"></div>
+    {% else %}
+        <div class="col-md-4"></div>
+        <div class="col-md-2">
+            <p><a id="downloadReportButton" class="btn btn-default btn-block">
+                <i class="fas fa-download"></i>
+                Descargar reporte
+            </a></p>
+        </div>
+        <div class="col-md-2">
+            <p><a class="btn btn-default btn-block" href="{{ url_for('logout') }}">
+                <i class="fas fa-sign-out-alt"></i>
+                Salir
+            </a></p>
+        </div>
+        <div class="col-md-4"></div>
+    {% endif %}
 </div>
 
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script>    
     document.getElementById("downloadReportButton").onclick = function() {
         document.getElementById('reportModal').style.display = "block";
     };
@@ -191,5 +381,80 @@
             setTimeout(function(){ closeReportModal(); }, 2000);
         }
     };
+
+    // When the user clicks the button, open the modal 
+    document.getElementById("createNotaBoton").onclick = function() {
+        document.getElementById('createNotaModal').style.display = "block";
+    };
+
+    $("#confirmCreateNota").click(function() {
+        $.post("{{ url_for('add_nota') }}", data={'numero': document.getElementById('inputNumero').value, 'descripcion': document.getElementById("inputDescripcion").value, 'redactores': $('#inputRedactores').val(), 'aprobadores': $('#inputAprobadores').val()}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeCreateNotaModal();
+            location.reload(); // TODO: Agregar a la tabla si es que es necesario y con rol correcto
+        });
+    });
+
+    function editNota(id_nota) {
+        $.post("{{ url_for('get_nota_info') }}", data={'id_nota': id_nota}, function(data) {
+            document.getElementById('inputNumero2').value = data['num'];
+            document.getElementById('inputDescripcion2').value = data['nombre'];
+            document.getElementById('confirmEditNota').value = id_nota;
+            document.getElementById('editNotaModal').style.display = "block";
+            $("#inputRedactores2").val(data['redactores']);
+            $("#inputAprobadores2").val(data['aprobadores']);
+            $('#inputRedactores2 option').each(function() {
+                if (data['aprobadores'].includes((this).value) || data['comentadores'].includes((this).value) ) {
+                    $(this).hide();
+                }
+            })
+            $('#inputAprobadores2 option').each(function() {
+                if (data['redactores'].includes((this).value) || data['comentadores'].includes((this).value) ) {
+                    $(this).hide();
+                }
+            })
+            $('.selectpicker').selectpicker('refresh')
+        });
+    }
+
+    $("#confirmEditNota").click(function() {
+        $.post("{{ url_for('edit_nota') }}", data={'id_nota': document.getElementById('confirmEditNota').value, 'numero': document.getElementById('inputNumero2').value, 'descripcion': document.getElementById("inputDescripcion2").value, 'redactores': $('#inputRedactores2').val(), 'aprobadores': $('#inputAprobadores2').val()}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeEditNotaModal();
+            location.reload(); // TODO: Sacar de la tabla
+        });
+    });
+
+    function eliminarNota(id_nota) {
+        document.getElementById('confirmar_eliminar_nota').value = id_nota;
+        document.getElementById('deleteNotaModal').style.display = "block";
+    }
+
+    $("#confirmar_eliminar_nota").click(function() {
+        $.post("{{ url_for('delete_nota') }}", data={'id_nota': document.getElementById('confirmar_eliminar_nota').value}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeDeleteNotaModal();
+            location.reload(); // TODO: Sacar de la tabla
+        });
+    });
+
+    document.getElementById("cancelCreateNota").onclick = function() {
+        closeCreateNotaModal();
+    };
+
+    // When the user clicks on <span> (x), close the modal
+    document.getElementById('closeCreateNotaModal').onclick = function() {
+        closeCreateNotaModal();
+    };        
+
+    document.getElementById("cancelEditNota").onclick = function() {
+        closeEditNotaModal();
+    };
+
+    // When the user clicks on <span> (x), close the modal
+    document.getElementById('closeEditNotaModal').onclick = function() {
+        closeEditNotaModal();
+    };
+
 </script>
 {% endblock %}

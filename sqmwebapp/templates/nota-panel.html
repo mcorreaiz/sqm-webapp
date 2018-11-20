@@ -4,8 +4,8 @@
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Nota {{ nota.num }}</h2>
-        <h3>{{ nota.nombre }}</h3>
+        <h2>Nota {{ nota.num }} {{ '- Cerrada' if nota.cerrada else ''}}</h2>
+        <h3>{{ '[Borrador]' if (version.nombre[-1] == 'b' and version.nombre != 'R_b' and not nota.cerrada) }} {{ nota.nombre }}</h3>
     </div>
     <div class="col-md-5"></div>
     <div class="col-md-2">
@@ -53,7 +53,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <h4>Aprobadores</h4>
+        <h4>{{ 'Aprobadores' if nota.aprobadores }}</h4>
         <ul class="list-group">
             {% for aprobador in nota.aprobadores %}
                 <li class="list-group-item"><i id="estado-aprobacion-{{ aprobador.user_id }}" class="fa-square 
@@ -61,7 +61,7 @@
                     " style="vertical-align:sub;font-size:24px;color:green"></i> {{ aprobador.iniciales }} {{ aprobador.nombre }} </li>
             {% endfor %}
         </ul>
-        <h4>Comentadores</h4>
+        <h4>{{ 'Comentadores' if nota.comentadores }}</h4>
         <ul class="list-group">
             {% for comentador in nota.comentadores %}
                 <li class="list-group-item">{{ comentador.iniciales }} {{ comentador.nombre }}</li>
@@ -102,7 +102,7 @@
         <div class="row" id="botones">
             {% if user in nota.redactores %}
                 <div class="col-md-3">
-                    <button id="uploadButton" class="btn btn-default btn-block">
+                    <button class="btn btn-default btn-block" onclick="uploadVersion()">
                         <i class="far fa-file-word"></i> Cargar
                     </button>
                 </div>
@@ -158,6 +158,16 @@
                 </div>
             {% endif %}
         </div>
+        {% if session['admin'] %}
+            <div align="center" class="col-md-12" style="padding-top: 15px;">
+                <button id="boton-cerrar-nota" class="btn btn-default" style="width: 200px;">
+                    <i class="fa {{ 'fa-check-circle-o' if nota.cerrada else 'fa-ban' }}"></i>
+                    <span>
+                        {{ 'Abrir Nota' if nota.cerrada else 'Cerrar Nota' }}
+                    </span>
+                </button>
+            </div>
+        {% endif %}
     </div>
 </div>
 
@@ -166,15 +176,17 @@
 {% block scripts %}
 
 <script>
+    // Check if trimestre is active, if not disable buttons
     $(document).ready(function() {
         console.log("ready");
-        if ("{{ trimestre.activo }}" == "False") {
+        if ("{{ trimestre.activo }}" == "False" || "{{ nota.cerrada }}" == "True") {
             $.each($("#botones button"), function(i, el) {
                 $(el).attr('disabled', true);
             });
         }
     });
 
+    // Send change in Aprobation Status
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
         var text = $(this).find('span')[0];
         var icon = $(this).find('i')[0];
@@ -191,16 +203,19 @@
             }
             aprobacion.classList.toggle('far');
             aprobacion.classList.toggle('fas');
+            location.reload();
         });
     });
 
+    // Send comment and check that it isn't empty
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
+        var mail = document.getElementById("checkbox-mail-comment").checked;
         if (!$.trim(comentario)) {
             flash("El comentario no puede estar vac&iacute;o", "error");
             return;
         }
-        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario}, function(data) {
+        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario, 'mail': mail, 'receivers': $('#inputMailReceivers').val()}, function(data) {
             flash(data['msg'], data['tipo']);
             closeCommentModal();
             
@@ -236,6 +251,7 @@
         });
     });
     
+    // Show comment
     function verComentario(i) {
         var popup = document.getElementById("popup-comentario-" + i);
         if (popup) {
@@ -243,6 +259,7 @@
         }
     }
 
+    // Toggle and select version of Nota
     function selectVersion(i) {
         // Update dropdown
         var dropdown = document.getElementById("dropdown-versiones");
@@ -278,12 +295,74 @@
     // When the user clicks the button, open the modal 
     document.getElementById("boton_comentar").onclick = function() {
         document.getElementById('commentModal').style.display = "block";
+        document.getElementById("checkbox-mail-comment").checked = false;
+        var i;
+        // Delete previus options
+        for(i = document.getElementById("inputMailReceivers").options.length - 1 ; i >= 0 ; i--)
+        {
+            document.getElementById("inputMailReceivers").remove(i);
+        }
+        // Get new options and add them
+        var redactores = JSON.parse('{{ nota.redactores | tojson }}');
+        var aprobadores = JSON.parse('{{ nota.aprobadores | tojson }}');
+        for (i = 0; i < redactores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = redactores[i].nombre;
+            option.value = redactores[i].nombre;
+            document.getElementById("inputMailReceivers").appendChild(option);
+        }
+        for (i = 0; i < aprobadores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = aprobadores[i].nombre;
+            option.value = aprobadores[i].nombre;
+            document.getElementById("inputMailReceivers").appendChild(option);
+        }
+        $('.selectpicker').selectpicker('refresh')
     };
 
     // When the user clicks on the button, open the modal 
-    document.getElementById("uploadButton").onclick = function() {
+    function uploadVersion() {
         document.getElementById('uploadModal').style.display = "block";
+        document.getElementById("checkbox-mail").checked = false;
+        var i;
+        // Delete previus options
+        for(i = document.getElementById("inputMailReceivers2").options.length - 1 ; i >= 0 ; i--)
+        {
+            document.getElementById("inputMailReceivers2").remove(i);
+        }
+        // Get new options and add them
+        var redactores = JSON.parse('{{ nota.redactores | tojson }}');
+        var aprobadores = JSON.parse('{{ nota.aprobadores | tojson }}');
+        for (i = 0; i < redactores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = redactores[i].nombre;
+            option.value = redactores[i].nombre;
+            document.getElementById("inputMailReceivers2").appendChild(option);
+        }
+        for (i = 0; i < aprobadores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = aprobadores[i].nombre;
+            option.value = aprobadores[i].nombre;
+            document.getElementById("inputMailReceivers2").appendChild(option);
+        }
+        $('.selectpicker').selectpicker('refresh')
     };
+
+    // Send change of Estado Nota (Cerrado o Abierto)
+    $("#boton-cerrar-nota").click(function() { // TODO: change button name at first, then validate
+        var text = $(this).find('span')[0];
+        var icon = $(this).find('i')[0];
+        icon.className = "fas fa-spinner fa-spin";
+        $.post("{{ url_for('cerrar_nota') }}", {'id_nota': '{{ nota.id }}'}, function(data) {
+            flash(data['msg'], data['tipo']);
+            location.reload(); // TODO cambiar texto de botones con jquery (quitar reload)
+        });
+    });
+
 </script>
 
 {% endblock %}

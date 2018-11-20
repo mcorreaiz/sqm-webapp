@@ -1,6 +1,11 @@
 from sqmwebapp import app
 import sqmwebapp.models as mdl
 
+from sqmwebapp import mailer
+from flask_mail import Message
+
+import threading
+
 AZURE_COOKIE_NAME = 'AppServiceAuthSession' # Name of azure session cookie
 ACCESS_TOKEN_HEADER = 'x-ms-token-aad-access-token'
 
@@ -55,3 +60,12 @@ def get_or_create_user_via_api(data):
         newuser.save()
         return newuser
     return user
+
+def send_email(subject, body, recipients):
+    def async_email(msg):
+        with app.app_context():
+            mailer.send(msg)
+    msg = Message(subject=subject,
+                body=body,
+                recipients=recipients)
+    threading.Thread(target=async_email, args=(msg,)).start()

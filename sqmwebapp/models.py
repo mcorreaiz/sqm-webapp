@@ -30,8 +30,8 @@ class Version(db.Document):
 
 class Nota(db.Document):
     meta = {'strict': False}
-    num                = db.StringField(max_length=5) # Ej. 25.11
-    nombre             = db.StringField(max_length=100)             # Ej. Contingencias tributarias
+    num                = db.StringField() # Ej. 25.11
+    nombre             = db.StringField()             # Ej. Contingencias tributarias
     redactores         = db.ListField(db.ReferenceField(Usuario))
     fecha              = db.DateTimeField(default=datetime.datetime.now)
     aprobadores        = db.ListField(db.ReferenceField(Usuario))
@@ -46,6 +46,12 @@ class Nota(db.Document):
             if not estado:
                 return False
         return True
+
+    @property
+    def numero_editado(self):
+        if 'a' in self.num:
+            return float(self.num[:self.num.index('a')])
+        return float(self.num)
 
 class Trimestre(db.Document):
     activo = db.BooleanField(default=True)

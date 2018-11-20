@@ -8,12 +8,21 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <script src="/static/scripts/jquery-1.10.2.js"></script>
-    <script src="/static/scripts/bootstrap.js"></script>
-    <script src="/static/scripts/respond.js"></script>
+    <!-- <script
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+      integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+      crossorigin="anonymous"></script> -->
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <script src="/static/scripts/bootstrap.min.js"></script>
+    <script src="/static/scripts/respond.min.js"></script>
     <script src="/static/scripts/modernizr-2.6.2.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="/static/scripts/bootstrap-select.min.js"></script>
     
     <style>
         html, body {
@@ -320,10 +329,20 @@
             }
         }
     </style>
-
-
-
 </head>
+
+
+<!-- Macros -->
+{% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
+    {% if string|length > maxLength: %}
+    <div class="popup"> 
+        {{ string|truncate(length=maxLength, end=ellipsis) }}
+        <span class="popuptext" id="{{ id }}">{{ string  }}</span>
+    </div>
+    {% else: %}
+        {{ string }}
+    {% endif %}
+{%- endmacro %}
 
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -375,18 +394,6 @@
     {% endwith %}
     </div>
 
-    <!-- Macros -->
-    {% macro truncate_popover(string, id, maxLength=30, ellipsis = '...') -%}
-        {% if string|length > maxLength: %}
-        <div class="popup"> 
-            {{ string|truncate(length=maxLength, end=ellipsis) }}
-            <span class="popuptext" id="{{ id }}">{{ string  }}</span>
-        </div>
-        {% else: %}
-            {{ string }}
-        {% endif %}
-    {%- endmacro %}
-
     <div class="container body-content">
         {% block content %}{% endblock %}
         <hr />
@@ -408,6 +415,16 @@
                         <textarea id="comment" class="form-control" rows="2" maxlength="240" 
                         placeholder="Ingrese el comentario" wrap="hard"></textarea>
                     </div>
+                </div>
+                <div class="checkbox">
+                    <input id="checkbox-mail-comment" type="checkbox" value="on" name="checkbox-mail" onclick="show_receivers();">
+                    <label style="vertical-align: text-top;" for="checkbox-mail-comment">
+                        Enviar Mail
+                    </label>
+                </div>
+                <div class="row col-md-10" style="margin-bottom: 10px;display: none;" id="mailReceiversComment">
+                    <select id="inputMailReceivers" class="selectpicker" multiple>
+                    </select>
                 </div>
                 <div class="row">
                     <div class="col-md-3"></div>
@@ -451,6 +468,18 @@
                     </div>
                     <div style='display: none'>
                         <input id="fileSubmit" type="submit">
+                    </div>
+                    <div class="checkbox" style='display: none' id="mail-div">
+                        <input id="checkbox-mail" type="checkbox" value="on" name="checkbox-mail" onclick="show_receivers2();">
+                        <label style="vertical-align: text-top;" for="checkbox-mail">
+                            Enviar Mail
+                        </label>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;display: none;" id="mailReceivers">
+                        <div class="col-md-12">
+                            <select id="inputMailReceivers2" class="selectpicker" name="receivers" multiple>
+                            </select>
+                        </div>
                     </div>
                 </form>
                 <div class="row">
@@ -500,8 +529,8 @@
                                 Descarga todas las notas por separado, en un archivo comprimido.
                             </p>
                         </div>
-                    </div>
-                </center>
+                    </center>
+                </div>
                 <div class="row">
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
@@ -524,6 +553,9 @@
                 <h2 id="confirmModalText"></h2>
             </div>
             <div class="modal-body">
+                <div class="row" align="center">
+                    <p id="closeExplanation"></p>
+                </div>
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmar_cierre"> Confirmar</button></div>
@@ -541,6 +573,9 @@
                 <h2>Seleccione un usuario:</h2>
             </div>
             <div class="modal-body">
+                <div class="row" align="center">
+                    <p>El usuario que seleccione será un nuevo administrador del sistema</p>
+                </div>
                 <div class="row" align="center">
                     <div class="col-md-12">
                         <select class="form-control" id="sel1">
@@ -560,35 +595,60 @@
     </div>
 
     <div id="delAdminModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span id="closeDelAdminModal" class="close" style="padding-top:10px;">&times;</span>
-                    <h2>Seleccione un usuario:</h2>
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeDelAdminModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Seleccione un usuario:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <p>El usuario que seleccione será eliminado de la lista de administradores del sistema</p>
                 </div>
-                <div class="modal-body">
-                    <div class="row" align="center">
-                        <div class="col-md-12">
-                            <select class="form-control" id="sel2">
-                                <option>Ninguno</option>
-                            </select>
-                        </div>
+                <div class="row" align="center">
+                    <div class="col-md-12">
+                        <select class="form-control" id="sel2">
+                            <option>Ninguno</option>
+                        </select>
                     </div>
-                    <div class="row"><p></p></div>
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelAdmin"> Confirmar</button></div>
-                        <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelAdmin"> Cancelar</button></div>
-                        <div class="col-md-3"></div>
-                    </div>
+                </div>
+                <div class="row"><p></p></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelAdmin"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelAdmin"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div id="deleteNotaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeDeleteNotaModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Eliminar Nota:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <p>Al confirmar se eliminará del sistema la nota</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmar_eliminar_nota"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelar_eliminar_nota"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
     <script>
-        $(document).ready(function() {
+        jQuery(document).ready(function( $ ) {
+            window.$ = $;
             displayFlash();
         });
-
+        
         function displayFlash() {
             $(".flashes").slideDown(function() {
                 setTimeout(function() {
@@ -608,13 +668,60 @@
             var icon='info-circle';      
         
             $(".flashes").children().remove();
-            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>  '+ msg +'</strong></div>').prependTo($(".flashes")).hide().slideDown();
+            $('<div class="alert alert-'+type+'"><i class="fa fa-'+icon+'"></i><strong>  '+ msg +'</strong></div>').prependTo($(".flashes"));
             displayFlash();             
         };
+
+        $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            if (clickedIndex === undefined){ // Programatically changed
+                $('#createNotaModal .selectpicker option').each(function() {
+                    $(this).show();
+                })
+                $('.selectpicker').selectpicker('refresh');
+                return;
+            };
+
+            var name = e.target[clickedIndex].innerText;
+            $('#createNotaModal .selectpicker option').filter(function() {
+                                                            return this.innerText == name;
+                                                            }).each(function() {
+                if (isSelected && $(this).is(':visible') && !$(this).is(':selected')) {
+                    $(this).hide();
+                }
+                if (!isSelected && $(this).is(':hidden')) {
+                    $(this).show();
+                }
+                $('.selectpicker').selectpicker('refresh')
+            })
+        });
+
+        $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            if (clickedIndex === undefined){ // Programatically changed
+                $('#editNotaModal .selectpicker option').each(function() {
+                    $(this).show();
+                })
+                $('.selectpicker').selectpicker('refresh');
+                return;
+            };
+
+            var name = e.target[clickedIndex].innerText;
+            $('#editNotaModal .selectpicker option').filter(function() {
+                                                            return this.innerText == name;
+                                                            }).each(function() {
+                if (isSelected && $(this).is(':visible') && !$(this).is(':selected')) {
+                    $(this).hide();
+                }
+                if (!isSelected && $(this).is(':hidden')) {
+                    $(this).show();
+                }
+                $('.selectpicker').selectpicker('refresh')
+            })
+        });
 
         function fileLoaded(obj){
             $('#fileSubmitLabel').attr('disabled', false);
             $('#checkbox-borrador').attr('disabled', false);
+            document.getElementById('mail-div').style.display = "block";
             document.getElementById('version-comment-label').style.display = "block";
             document.getElementById('version-comment').style.display = "block";
 
@@ -629,14 +736,19 @@
             document.getElementById("fileForm").reset();
             document.getElementById("filename").innerHTML = "Ning&uacute;n archivo elegido";
             document.getElementById("filesize").innerHTML = ''
+            document.getElementById('mailReceivers').style.display = "none";
             $('#fileSubmitLabel').attr('disabled', true);
             $('#checkbox-borrador').attr('disabled', true);
+            $('#checkbox-mail').attr('checked', false);
+            document.getElementById('mail-div').style.display = "none";
             document.getElementById('version-comment-label').style.display = "none";
             document.getElementById('version-comment').style.display = "none";
         }
     
         function closeCommentModal() {
-            document.getElementById('commentModal').style.display = "none"; 
+            document.getElementById('commentModal').style.display = "none";
+            document.getElementById('mailReceiversComment').style.display = "none";
+            document.getElementById('checkbox-mail-comment').checked = false; 
             document.getElementById("comment").value = '';
         }
 
@@ -655,6 +767,24 @@
 
         function closeDelAdminModal() {
             document.getElementById('delAdminModal').style.display = "none"; 
+        }
+
+        function closeCreateNotaModal() {
+            document.getElementById('createNotaModal').style.display = "none";
+            document.getElementById('inputNumero').value = '';
+            document.getElementById("inputDescripcion").value = '';
+            $('.selectpicker').selectpicker('deselectAll');
+        }
+
+        function closeEditNotaModal() {
+            document.getElementById('editNotaModal').style.display = "none";
+            document.getElementById('inputNumero2').value = '';
+            document.getElementById("inputDescripcion2").value = '';
+            $('.selectpicker').selectpicker('deselectAll');
+        }
+
+        function closeDeleteNotaModal() {
+            document.getElementById('deleteNotaModal').style.display = "none"; 
         }
         
         // When the user clicks on <span> (x), close the modal
@@ -713,6 +843,15 @@
             closeDelAdminModal();
         };
 
+        document.getElementById("cancelar_eliminar_nota").onclick = function() {
+            closeDeleteNotaModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeDeleteNotaModal').onclick = function() {
+            closeDeleteNotaModal();
+        };
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == document.getElementById('commentModal')) {
@@ -733,6 +872,35 @@
             if (event.target == document.getElementById('delAdminModal')) {
                 closeDelAdminModal();
             };
+            if (event.target == document.getElementById('createNotaModal')) {
+                closeCreateNotaModal();
+            };
+            if (event.target == document.getElementById('editNotaModal')) {
+                closeEditNotaModal();
+            };
+            if (event.target == document.getElementById('deleteNotaModal')) {
+                closeDeleteNotaModal();
+            };
+        }
+        
+        // When pressed "Enviar Mail" checkbox show list of receivers
+        function show_receivers()
+        {
+            if (document.getElementById('checkbox-mail-comment').checked)
+            {
+                document.getElementById('mailReceiversComment').style.display = "block";
+            } else {
+                document.getElementById('mailReceiversComment').style.display = "none";
+            }
+        }
+        function show_receivers2()
+        {
+            if (document.getElementById('checkbox-mail').checked)
+            {
+                document.getElementById('mailReceivers').style.display = "block";
+            } else {
+                document.getElementById('mailReceivers').style.display = "none";
+            }
         }
     </script>
     

@@ -13,3 +13,6 @@ DEBUG_TB_PANELS = ['flask_debugtoolbar.panels.versions.VersionDebugPanel',
                     'flask_debugtoolbar.panels.route_list.RouteListDebugPanel',
                     'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
                     'flask_mongoengine.panels.MongoDebugPanel']
+MAIL_SERVER ='smtp.gmail.com'
+MAIL_PORT = 465
+MAIL_USE_SSL = True
