@@ -417,10 +417,14 @@
                     </div>
                 </div>
                 <div class="checkbox">
-                    <input id="checkbox-mail-comment" type="checkbox" value="on" name="checkbox-mail">
+                    <input id="checkbox-mail-comment" type="checkbox" value="on" name="checkbox-mail" onclick="show_receivers();">
                     <label style="vertical-align: text-top;" for="checkbox-mail-comment">
                         Enviar Mail
                     </label>
+                </div>
+                <div class="row col-md-10" style="margin-bottom: 10px;display: none;" id="mailReceiversComment">
+                    <select id="inputMailReceivers" class="selectpicker" multiple>
+                    </select>
                 </div>
                 <div class="row">
                     <div class="col-md-3"></div>
@@ -466,10 +470,16 @@
                         <input id="fileSubmit" type="submit">
                     </div>
                     <div class="checkbox" style='display: none' id="mail-div">
-                        <input id="checkbox-mail" type="checkbox" value="on" name="checkbox-mail">
+                        <input id="checkbox-mail" type="checkbox" value="on" name="checkbox-mail" onclick="show_receivers2();">
                         <label style="vertical-align: text-top;" for="checkbox-mail">
                             Enviar Mail
                         </label>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;display: none;" id="mailReceivers">
+                        <div class="col-md-12">
+                            <select id="inputMailReceivers2" class="selectpicker" name="receivers" multiple>
+                            </select>
+                        </div>
                     </div>
                 </form>
                 <div class="row">
@@ -726,6 +736,7 @@
             document.getElementById("fileForm").reset();
             document.getElementById("filename").innerHTML = "Ning&uacute;n archivo elegido";
             document.getElementById("filesize").innerHTML = ''
+            document.getElementById('mailReceivers').style.display = "none";
             $('#fileSubmitLabel').attr('disabled', true);
             $('#checkbox-borrador').attr('disabled', true);
             $('#checkbox-mail').attr('checked', false);
@@ -736,6 +747,7 @@
     
         function closeCommentModal() {
             document.getElementById('commentModal').style.display = "none";
+            document.getElementById('mailReceiversComment').style.display = "none";
             document.getElementById('checkbox-mail-comment').checked = false; 
             document.getElementById("comment").value = '';
         }
@@ -869,6 +881,26 @@
             if (event.target == document.getElementById('deleteNotaModal')) {
                 closeDeleteNotaModal();
             };
+        }
+        
+        // When pressed "Enviar Mail" checkbox show list of receivers
+        function show_receivers()
+        {
+            if (document.getElementById('checkbox-mail-comment').checked)
+            {
+                document.getElementById('mailReceiversComment').style.display = "block";
+            } else {
+                document.getElementById('mailReceiversComment').style.display = "none";
+            }
+        }
+        function show_receivers2()
+        {
+            if (document.getElementById('checkbox-mail').checked)
+            {
+                document.getElementById('mailReceivers').style.display = "block";
+            } else {
+                document.getElementById('mailReceivers').style.display = "none";
+            }
         }
     </script>
     

@@ -176,6 +176,7 @@
 {% block scripts %}
 
 <script>
+    // Check if trimestre is active, if not disable buttons
     $(document).ready(function() {
         console.log("ready");
         if ("{{ trimestre.activo }}" == "False" || "{{ nota.cerrada }}" == "True") {
@@ -185,6 +186,7 @@
         }
     });
 
+    // Send change in Aprobation Status
     $("#boton-aprobacion").click(function() { // TODO: change button name at first, then validate
         var text = $(this).find('span')[0];
         var icon = $(this).find('i')[0];
@@ -205,6 +207,7 @@
         });
     });
 
+    // Send comment and check that it isn't empty
     $("#confirm_comment").click(function(a) {
         var comentario = document.getElementById("comment").value;
         var mail = document.getElementById("checkbox-mail-comment").checked;
@@ -212,7 +215,7 @@
             flash("El comentario no puede estar vac&iacute;o", "error");
             return;
         }
-        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario, 'mail': mail}, function(data) {
+        $.post("{{ url_for('comment') }}", data={'nota': '{{ nota.num }}', 'comment': comentario, 'mail': mail, 'receivers': $('#inputMailReceivers').val()}, function(data) {
             flash(data['msg'], data['tipo']);
             closeCommentModal();
             
@@ -248,6 +251,7 @@
         });
     });
     
+    // Show comment
     function verComentario(i) {
         var popup = document.getElementById("popup-comentario-" + i);
         if (popup) {
@@ -255,6 +259,7 @@
         }
     }
 
+    // Toggle and select version of Nota
     function selectVersion(i) {
         // Update dropdown
         var dropdown = document.getElementById("dropdown-versiones");
@@ -290,13 +295,64 @@
     // When the user clicks the button, open the modal 
     document.getElementById("boton_comentar").onclick = function() {
         document.getElementById('commentModal').style.display = "block";
+        document.getElementById("checkbox-mail-comment").checked = false;
+        var i;
+        // Delete previus options
+        for(i = document.getElementById("inputMailReceivers").options.length - 1 ; i >= 0 ; i--)
+        {
+            document.getElementById("inputMailReceivers").remove(i);
+        }
+        // Get new options and add them
+        var redactores = JSON.parse('{{ nota.redactores | tojson }}');
+        var aprobadores = JSON.parse('{{ nota.aprobadores | tojson }}');
+        for (i = 0; i < redactores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = redactores[i].nombre;
+            option.value = redactores[i].nombre;
+            document.getElementById("inputMailReceivers").appendChild(option);
+        }
+        for (i = 0; i < aprobadores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = aprobadores[i].nombre;
+            option.value = aprobadores[i].nombre;
+            document.getElementById("inputMailReceivers").appendChild(option);
+        }
+        $('.selectpicker').selectpicker('refresh')
     };
 
     // When the user clicks on the button, open the modal 
     function uploadVersion() {
         document.getElementById('uploadModal').style.display = "block";
+        document.getElementById("checkbox-mail").checked = false;
+        var i;
+        // Delete previus options
+        for(i = document.getElementById("inputMailReceivers2").options.length - 1 ; i >= 0 ; i--)
+        {
+            document.getElementById("inputMailReceivers2").remove(i);
+        }
+        // Get new options and add them
+        var redactores = JSON.parse('{{ nota.redactores | tojson }}');
+        var aprobadores = JSON.parse('{{ nota.aprobadores | tojson }}');
+        for (i = 0; i < redactores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = redactores[i].nombre;
+            option.value = redactores[i].nombre;
+            document.getElementById("inputMailReceivers2").appendChild(option);
+        }
+        for (i = 0; i < aprobadores.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = aprobadores[i].nombre;
+            option.value = aprobadores[i].nombre;
+            document.getElementById("inputMailReceivers2").appendChild(option);
+        }
+        $('.selectpicker').selectpicker('refresh')
     };
 
+    // Send change of Estado Nota (Cerrado o Abierto)
     $("#boton-cerrar-nota").click(function() { // TODO: change button name at first, then validate
         var text = $(this).find('span')[0];
         var icon = $(this).find('i')[0];

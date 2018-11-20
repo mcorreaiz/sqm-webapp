@@ -141,9 +141,14 @@ def nota_panel(num, trimestre_id=None):
             nota.save()
             flash('Version subida con exito', 'success')
 
+            receivers = request.form.getlist('receivers')
+
             if request.form.get('checkbox-mail'):
                 # Send Mails
-                involucrados = nota.aprobadores + nota.redactores + nota.comentadores
+                involucrados = []
+                for user in nota.aprobadores + nota.redactores + nota.comentadores:
+                    if user.nombre in receivers:
+                        involucrados.append(user)
                 emails = [i.email for i in involucrados if i != redactor]
 
                 subject = "{} ha subido una nueva versi\xf3n en la nota {}".format(redactor.nombre, nota.num)
@@ -247,8 +252,13 @@ def comment():
 
     # Send Mails
     if request.form.get('mail') == 'true':
-        involucrados = nota.aprobadores + nota.redactores + nota.comentadores
-        emails = [i.email for i in involucrados if i != redactor]
+        receivers = request.form.getlist("receivers[]")
+        involucrados = []
+        for user in nota.aprobadores + nota.redactores + nota.comentadores:
+            if user.nombre in receivers:
+                involucrados.append(user)
+        print(receivers)
+        emails = [i.email for i in involucrados if i != redactor] + ['jjnestler@gmail.com']
 
         subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
         body = """Se ha hecho un nuevo comentario en {}:
@@ -435,18 +445,25 @@ def edit_nota():
     new_nota.redactores = []
     new_nota.aprobadores = []
     new_nota.comentadores = []
-    new_nota.estados_aprobacion = {}
+    estados_antiguos = new_nota.estados_aprobacion
+    new_nota.estados_aprobacion = {}  # TODO: Cambiar a que se mantengan las aprobaciones que existían
     # new_nota.versiones queda igual
 
     for user in redactores:
         usuario = mdl.Usuario.objects.get(nombre=user)
         new_nota.redactores.append(usuario)
-        new_nota.estados_aprobacion[usuario.user_id] = False
+        if usuario.user_id in estados_antiguos:
+            new_nota.estados_aprobacion[usuario.user_id] = estados_antiguos[usuario.user_id]
+        else:    
+            new_nota.estados_aprobacion[usuario.user_id] = False
     
     for user in aprobadores:
         usuario = mdl.Usuario.objects.get(nombre=user)
         new_nota.aprobadores.append(usuario)
-        new_nota.estados_aprobacion[usuario.user_id] = False
+        if usuario.user_id in estados_antiguos:
+            new_nota.estados_aprobacion[usuario.user_id] = estados_antiguos[usuario.user_id]
+        else:
+            new_nota.estados_aprobacion[usuario.user_id] = False
 
     for user in comentadores:
         usuario = mdl.Usuario.objects.get(nombre=user)
