@@ -258,7 +258,7 @@ def comment():
             if user.nombre in receivers:
                 involucrados.append(user)
         print(receivers)
-        emails = [i.email for i in involucrados if i != redactor] + ['jjnestler@gmail.com']
+        emails = [i.email for i in involucrados if i != redactor]
 
         subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
         body = """Se ha hecho un nuevo comentario en {}:
