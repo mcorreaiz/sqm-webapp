@@ -100,7 +100,15 @@
             {% endfor %}
         </div>
         <div class="row" id="botones">
-            {% if user in nota.redactores %}
+            {% if session['lector'] %}
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <a class="btn btn-default btn-block" href="{{ url_for('notas') }}">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+            <div class="col-md-3"></div>
+            {% elif user in nota.redactores %}
                 <div class="col-md-3">
                     <button class="btn btn-default btn-block" onclick="uploadVersion()">
                         <i class="far fa-file-word"></i> Cargar

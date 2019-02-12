@@ -29,7 +29,9 @@
                             <div class="col-md-10">
                                 <select id="inputRedactores" class="selectpicker" multiple>
                                     {% for user in users %}
-                                        <option>{{ user.nombre }}</option>
+                                        {% if not user.lector %}
+                                            <option>{{ user.nombre }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select> 
                                 <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
@@ -44,7 +46,9 @@
                             <div class="col-md-10">
                                 <select id="inputAprobadores" class="selectpicker" multiple>
                                     {% for user in users %}
-                                        <option>{{ user.nombre }}</option>
+                                        {% if not user.lector %}
+                                            <option>{{ user.nombre }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                                 <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
@@ -95,7 +99,9 @@
                             <div class="col-md-10">
                                 <select id="inputRedactores2" class="selectpicker" multiple>
                                     {% for user in users %}
-                                        <option value="{{ user.nombre }}">{{ user.nombre }}</option>
+                                        {% if not user.lector %}
+                                            <option value="{{ user.nombre }}">{{ user.nombre }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                                 <div class="popup" onclick="this.getElementsByClassName('popuptext')[0].classList.toggle('show');">
