@@ -59,6 +59,7 @@ def register():
         session['user'] = user.nombre
         session['user_id'] = user.user_id
         session['admin'] = user.admin
+        session['lector'] = user.lector
         session['trimestre_id'] = str(mdl.Trimestre.objects.order_by("-fecha").first().id)
         session['is_last_trimestre'] = True
 
@@ -258,7 +259,7 @@ def comment():
             if user.nombre in receivers:
                 involucrados.append(user)
         print(receivers)
-        emails = [i.email for i in involucrados if i != redactor] + ['jjnestler@gmail.com']
+        emails = [i.email for i in involucrados if i != redactor]
 
         subject = "{} ha comentado la nota {}".format(redactor.nombre, nota.num)
         body = """Se ha hecho un nuevo comentario en {}:
@@ -294,6 +295,10 @@ def admin():
     
     admins = mdl.Usuario.objects(admin=True)
     admins2 = mdl.Usuario.objects(Q(admin=True) & Q(user_id__ne=session['user_id']))
+    query_usuarios = mdl.Usuario.objects
+    not_lectores = []
+    for user in query_usuarios:
+        if not user.lector: not_lectores.append(user)
     
     return render_template(
         'admin.html',
@@ -303,7 +308,9 @@ def admin():
         total = len(trimestre.notas),
         admins = admins,
         admins2 = admins2,
-        not_admins = mdl.Usuario.objects(admin=False)
+        not_admins = mdl.Usuario.objects(admin=False),
+        lectores = mdl.Usuario.objects(lector=True),
+        not_lectores = not_lectores
     )
 
 @app.route('/cierres', methods=['POST'])
@@ -381,6 +388,24 @@ def del_admin():
     usuario.admin = False
     usuario.save() 
     return jsonify(msg='{} ya no es Administrador'.format(request.form['user']), tipo='success')
+
+@app.route('/add_lector', methods=['POST'])
+def add_lector():
+    if request.form['user'] == 'Ninguno':
+        return jsonify(msg='Debe seleccionar a un Usuario', tipo='error')
+    usuario = mdl.Usuario.objects.get(nombre=request.form['user'])
+    usuario.lector = True
+    usuario.save() 
+    return jsonify(msg='{} es Lector'.format(request.form['user']), tipo='success')
+
+@app.route('/del_lector', methods=['POST'])
+def del_lector():
+    if request.form['user'] == 'Ninguno':
+        return jsonify(msg='Debe seleccionar a un Usuario', tipo='error')
+    usuario = mdl.Usuario.objects.get(nombre=request.form['user'])
+    usuario.lector = False
+    usuario.save() 
+    return jsonify(msg='{} ya no es Lector'.format(request.form['user']), tipo='success')
 
 @app.route('/add_nota', methods=['POST'])
 def add_nota():

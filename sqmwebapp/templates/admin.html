@@ -55,6 +55,28 @@
         </button>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-4">
+        <h3>Lectores:</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <ul class="list-group" id="system_lectores">
+            {% for user in lectores %}
+                <li class="list-group-item" id="{{ user.nombre }}">{{ user.nombre }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <button id="boton_add_lector" class="btn btn-default btn-block">
+                Agregar
+        </button>
+        <button id="boton_del_lector" class="btn btn-default btn-block">
+                Eliminar
+        </button>
+    </div>
+</div>
 
 {% endblock %}
 
@@ -95,6 +117,11 @@
         document.getElementById('addAdminModal').style.display = "block";
     };
 
+    document.getElementById("boton_add_lector").onclick = function() {
+        add_list_to_table('{{ not_lectores|tojson }}', 'sel3');
+        document.getElementById('addLectorModal').style.display = "block";
+    };
+
     $("#confirmAddAdmin").click(function() {
         $.post("{{ url_for('add_admin') }}", data={'user': document.getElementById("sel1").value}, function(data) {
             flash(data['msg'], data['tipo']);
@@ -103,6 +130,18 @@
             var li = document.createElement("li");
             li.appendChild(document.createTextNode(document.getElementById("sel1").value));
             li.setAttribute("class", "list-group-item", "id", document.getElementById("sel1").value)
+            ul.appendChild(li);
+        });
+    });
+
+    $("#confirmAddLector").click(function() {
+        $.post("{{ url_for('add_lector') }}", data={'user': document.getElementById("sel3").value}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeAddLectorModal();
+            var ul = document.getElementById("system_lectores");
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(document.getElementById("sel3").value));
+            li.setAttribute("class", "list-group-item", "id", document.getElementById("sel3").value)
             ul.appendChild(li);
         });
     });
@@ -134,5 +173,18 @@
             }
         }
     }
+
+    document.getElementById("boton_del_lector").onclick = function() {
+        add_list_to_table('{{ lectores|tojson }}', 'sel4');
+        document.getElementById('delLectorModal').style.display = "block";
+    };
+
+    $("#confirmDelLector").click(function() {
+        $.post("{{ url_for('del_lector') }}", data={'user': document.getElementById("sel4").value}, function(data) {
+            flash(data['msg'], data['tipo']);
+            closeDelLectorModal();
+            location.reload();
+        });
+    });    
 </script>
 {% endblock %}
