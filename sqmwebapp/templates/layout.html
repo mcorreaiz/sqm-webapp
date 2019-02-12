@@ -622,6 +622,62 @@
         </div>
     </div>
 
+    <div id="addLectorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeAddLectorModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Seleccione un usuario:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <p>El usuario que seleccione será un lector del sistema (no podrá editar las notas)</p>
+                </div>
+                <div class="row" align="center">
+                    <div class="col-md-12">
+                        <select class="form-control" id="sel3">
+                            <option>Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row"><p></p></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmAddLector"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelAddLector"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="delLectorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeDelLectorModal" class="close" style="padding-top:10px;">&times;</span>
+                <h2>Seleccione un usuario:</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row" align="center">
+                    <p>El usuario que seleccione será eliminado de la lista de lectores del sistema</p>
+                </div>
+                <div class="row" align="center">
+                    <div class="col-md-12">
+                        <select class="form-control" id="sel4">
+                            <option>Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row"><p></p></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"><button class="btn btn-success btn-block" id="confirmDelLector"> Confirmar</button></div>
+                    <div class="col-md-3"><button class="btn btn-danger btn-block" id="cancelDelLector"> Cancelar</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="deleteNotaModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -769,6 +825,14 @@
             document.getElementById('delAdminModal').style.display = "none"; 
         }
 
+        function closeAddLectorModal() {
+            document.getElementById('addLectorModal').style.display = "none"; 
+        }
+
+        function closeDelLectorModal() {
+            document.getElementById('delLectorModal').style.display = "none"; 
+        }
+
         function closeCreateNotaModal() {
             document.getElementById('createNotaModal').style.display = "none";
             document.getElementById('inputNumero').value = '';
@@ -834,6 +898,23 @@
             closeAddAdminModal();
         };
 
+        document.getElementById("cancelAddLector").onclick = function() {
+            closeAddLectorModal();
+        };
+
+        document.getElementById("closeAddLectorModal").onclick = function() {
+            closeAddLectorModal();
+        };
+
+        document.getElementById("cancelDelLector").onclick = function() {
+            closeDelLectorModal();
+        };
+
+        // When the user clicks on <span> (x), close the modal
+            document.getElementById('closeDelLectorModal').onclick = function() {
+            closeDelLectorModal();
+        };
+
         document.getElementById("cancelDelAdmin").onclick = function() {
             closeDelAdminModal();
         };
@@ -871,6 +952,12 @@
             };
             if (event.target == document.getElementById('delAdminModal')) {
                 closeDelAdminModal();
+            };
+            if (event.target == document.getElementById('addLectorModal')) {
+                closeAddLectorModal();
+            };
+            if (event.target == document.getElementById('delLectorModal')) {
+                closeDelLectorModal();
             };
             if (event.target == document.getElementById('createNotaModal')) {
                 closeCreateNotaModal();
